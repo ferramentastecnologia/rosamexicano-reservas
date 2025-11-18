@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Reservation {
+  id            String   @id @default(cuid())
+  paymentId     String   @unique // ID do pagamento no Asaas
+  externalRef   String   @unique // RESERVA-{timestamp}
+
+  // Dados pessoais
+  nome          String
+  email         String
+  telefone      String
+
+  // Detalhes da reserva
+  data          String   // YYYY-MM-DD
+  horario       String   // HH:MM
+  numeroPessoas Int
+
+  // Pagamento
+  valor         Float    // 50.00
+  status        String   @default("pending") // pending, confirmed, cancelled
+
+  // Timestamps
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relacionamento
+  voucher       Voucher?
+
+  @@index([email])
+  @@index([data])
+  @@index([status])
+}
+
+model Voucher {
+  id              String      @id @default(cuid())
+  reservationId   String      @unique
+  reservation     Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+
+  // Código do voucher
+  codigo          String      @unique // MOR-XXXXXXXX-XXXXXXXX
+
+  // Valor
+  valor           Float       // 50.00
+
+  // QR Code
+  qrCodeData      String      // Dados do QR Code
+
+  // Status
+  utilizado       Boolean     @default(false)
+  dataUtilizacao  DateTime?
+
+  // Validade
+  dataValidade    DateTime    // 31/12/2025
+
+  // PDF
+  pdfUrl          String?     // URL do PDF gerado
+
+  // Timestamps
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([codigo])
+  @@index([utilizado])
+}

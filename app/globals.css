@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+:root {
+  --background: #000000;
+  --foreground: #ffffff;
+  --mortadella-green: #0e9a20;
+  --mortadella-green-hover: #0a6b16;
+  --mortadella-gray: #666666;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-mortadella-green: var(--mortadella-green);
+  --color-mortadella-green-hover: var(--mortadella-green-hover);
+  --color-mortadella-gray: var(--mortadella-gray);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.text-shadow-lg {
+  text-shadow: 0 4px 6px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.font-serif {
+  font-family: var(--font-playfair), Georgia, serif;
+}
+
+/* Melhorias de imagem com CSS */
+.hero-image-enhanced {
+  /* Aumenta nitidez */
+  filter: contrast(1.1) brightness(1.05) saturate(1.1);
+
+  /* Suaviza pixelização */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+
+  /* Remove blur do browser */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
