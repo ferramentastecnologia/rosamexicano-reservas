@@ -1,10 +1,35 @@
 'use client';
 
-import { Calendar, Users, Clock, Check } from 'lucide-react';
+import { Calendar, Users, Clock, Check, AlertCircle } from 'lucide-react';
 import ReservaForm from './components/ReservaForm';
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
 
 export default function Home() {
+  const [isTimeAllowed, setIsTimeAllowed] = useState(true);
+
+  useEffect(() => {
+    // Verificar horário a cada minuto
+    const checkTime = () => {
+      const now = new Date();
+      const hour = now.getHours();
+      const minute = now.getMinutes();
+
+      // Bloqueado das 18:00 às 00:00
+      // Permitido das 00:01 às 17:59
+      if (hour >= 18 || hour === 0 && minute === 0) {
+        setIsTimeAllowed(false);
+      } else {
+        setIsTimeAllowed(true);
+      }
+    };
+
+    checkTime(); // Verificar imediatamente
+    const interval = setInterval(checkTime, 60000); // Verificar a cada minuto
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
@@ -32,6 +57,21 @@ export default function Home() {
           </div>
         </div>
       </header>
+
+      {/* Banner de Aviso de Horário */}
+      {!isTimeAllowed && (
+        <div className="bg-yellow-900/40 border-y border-yellow-700/50 backdrop-blur-sm">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center justify-center gap-3 text-center">
+              <AlertCircle className="w-5 h-5 text-yellow-400 flex-shrink-0" />
+              <p className="text-sm md:text-base text-yellow-200">
+                <strong className="font-semibold">Atenção:</strong> A compra de vouchers está bloqueada das <strong>18:00 às 00:00</strong>.
+                <span className="hidden md:inline"> Volte entre <strong>00:01 e 17:59</strong> para fazer sua reserva.</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Hero Section */}
       <section className="relative min-h-[600px] overflow-hidden flex items-center">

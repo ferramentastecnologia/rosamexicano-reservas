@@ -37,7 +37,27 @@ export default function ReservaForm() {
     setValue('data', date);
   };
 
+  // Função para verificar se está no horário permitido (00:01 às 17:59)
+  const isTimeAllowed = () => {
+    const now = new Date();
+    const hour = now.getHours();
+    const minute = now.getMinutes();
+
+    // Bloqueado das 18:00 às 00:00 (18h a 23h59)
+    // Permitido das 00:01 às 17:59
+    if (hour >= 18 || hour === 0 && minute === 0) {
+      return false;
+    }
+    return true;
+  };
+
   const onSubmit = async (data: ReservaFormData) => {
+    // Verificar horário antes de processar
+    if (!isTimeAllowed()) {
+      alert('⏰ A compra de vouchers está bloqueada das 18:00 às 00:00.\n\nVocê pode fazer sua reserva das 00:01 às 17:59.');
+      return;
+    }
+
     setLoading(true);
     setDadosReserva(data);
 
@@ -74,8 +94,44 @@ export default function ReservaForm() {
     }
   };
 
+  const timeAllowed = isTimeAllowed();
+
   return (
     <div className="bg-zinc-900 rounded-lg p-8 border border-zinc-800">
+      {/* Aviso de Horário */}
+      {!timeAllowed ? (
+        <div className="mb-6 bg-red-900/30 border border-red-800 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0 mt-0.5">
+              <Clock className="w-5 h-5 text-red-500" />
+            </div>
+            <div>
+              <h4 className="font-semibold text-red-400 mb-1">Compra de Vouchers Bloqueada</h4>
+              <p className="text-sm text-red-300">
+                A compra de vouchers está bloqueada das <strong>18:00 às 00:00</strong>.
+              </p>
+              <p className="text-sm text-red-300 mt-1">
+                Você pode fazer sua reserva das <strong>00:01 às 17:59</strong>.
+              </p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="mb-6 bg-green-900/30 border border-green-800 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0 mt-0.5">
+              <Clock className="w-5 h-5 text-green-500" />
+            </div>
+            <div>
+              <h4 className="font-semibold text-green-400 mb-1">Horário Disponível</h4>
+              <p className="text-sm text-green-300">
+                Você pode fazer sua reserva agora! Horário de compra: <strong>00:01 às 17:59</strong>
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
           {/* Coluna 1: Dados Pessoais */}
@@ -178,11 +234,13 @@ export default function ReservaForm() {
 
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !timeAllowed}
                   className="w-full bg-[#E53935] hover:bg-[#B71C1C] text-white font-bold text-lg py-5 rounded-lg transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
                 >
                   {loading ? (
                     'Processando...'
+                  ) : !timeAllowed ? (
+                    'Fora do Horário de Compra'
                   ) : (
                     <>
                       <CreditCard className="w-6 h-6" />
