@@ -34,6 +34,10 @@ export async function POST(request: Request) {
     // 1. Criar cliente no Asaas
     const cleanPhone = telefone.replace(/\D/g, '');
 
+    console.log('Criando cliente no Asaas...');
+    console.log('URL:', `${ASAAS_API_URL}/customers`);
+    console.log('Dados:', { name: nome, email, mobilePhone: cleanPhone });
+
     const customerResponse = await fetch(`${ASAAS_API_URL}/customers`, {
       method: 'POST',
       headers: {
@@ -48,11 +52,14 @@ export async function POST(request: Request) {
     });
 
     const customer = await customerResponse.json();
+    console.log('Resposta do Asaas (cliente):', JSON.stringify(customer, null, 2));
+    console.log('Status:', customerResponse.status);
 
     if (!customerResponse.ok) {
       console.error('Erro ao criar cliente:', customer);
+      const errorMsg = customer.errors?.[0]?.description || customer.message || 'Erro ao criar cliente no gateway de pagamento';
       return NextResponse.json(
-        { success: false, error: 'Erro ao criar cliente no gateway de pagamento' },
+        { success: false, error: errorMsg },
         { status: 500 }
       );
     }
@@ -64,29 +71,36 @@ export async function POST(request: Request) {
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 3);
 
+    console.log('Criando cobrança no Asaas...');
+    const paymentData = {
+      customer: customer.id,
+      billingType: 'UNDEFINED', // Permite escolher PIX, Boleto ou Cartão
+      value: 50.00,
+      dueDate: dueDate.toISOString().split('T')[0],
+      description: `Reserva Rosa Mexicano - ${dataReserva} às ${horario} - ${numeroPessoas} pessoas`,
+      externalReference: externalRef,
+      postalService: false,
+    };
+    console.log('Dados do pagamento:', paymentData);
+
     const paymentResponse = await fetch(`${ASAAS_API_URL}/payments`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'access_token': ASAAS_API_KEY,
       },
-      body: JSON.stringify({
-        customer: customer.id,
-        billingType: 'UNDEFINED', // Permite escolher PIX, Boleto ou Cartão
-        value: 50.00,
-        dueDate: dueDate.toISOString().split('T')[0],
-        description: `Reserva Mortadella - ${dataReserva} às ${horario} - ${numeroPessoas} pessoas`,
-        externalReference: externalRef,
-        postalService: false,
-      }),
+      body: JSON.stringify(paymentData),
     });
 
     const payment = await paymentResponse.json();
+    console.log('Resposta do Asaas (pagamento):', JSON.stringify(payment, null, 2));
+    console.log('Status:', paymentResponse.status);
 
     if (!paymentResponse.ok) {
       console.error('Erro ao criar cobrança:', payment);
+      const errorMsg = payment.errors?.[0]?.description || payment.message || 'Erro ao criar cobrança';
       return NextResponse.json(
-        { success: false, error: 'Erro ao criar cobrança' },
+        { success: false, error: errorMsg },
         { status: 500 }
       );
     }
