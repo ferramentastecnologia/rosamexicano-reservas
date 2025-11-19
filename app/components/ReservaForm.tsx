@@ -42,7 +42,30 @@ export default function ReservaForm() {
     setDadosReserva(data);
 
     try {
-      // Chamar API de criação de pagamento (PRODUÇÃO)
+      // Primeiro, verificar disponibilidade
+      const availabilityResponse = await fetch('/api/check-availability', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          data: data.data,
+          horario: data.horario,
+          numeroPessoas: data.numeroPessoas,
+        }),
+      });
+
+      const availabilityData = await availabilityResponse.json();
+
+      if (!availabilityData.available) {
+        alert(
+          `❌ Infelizmente não temos disponibilidade para ${data.numeroPessoas} pessoas neste horário.\n\n` +
+          `Capacidade disponível: ${availabilityData.capacity?.available || 0} pessoas\n\n` +
+          `Por favor, escolha outro horário ou reduza o número de pessoas.`
+        );
+        setLoading(false);
+        return;
+      }
+
+      // Se houver disponibilidade, prosseguir com o pagamento
       const response = await fetch('/api/create-payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -171,8 +194,11 @@ export default function ReservaForm() {
                   <p className="text-sm text-zinc-300 mb-2">
                     <strong className="text-[#E53935]">100% conversível</strong> em consumação
                   </p>
-                  <p className="text-xs text-zinc-400">
+                  <p className="text-xs text-zinc-400 mb-2">
                     Este valor retorna integralmente no dia da sua reserva
+                  </p>
+                  <p className="text-xs text-yellow-400 border-t border-zinc-700 pt-2 mt-2">
+                    ⚠️ <strong>Importante:</strong> Em caso de não comparecimento, o valor de R$ 50,00 ficará retido
                   </p>
                 </div>
 
@@ -250,30 +276,29 @@ export default function ReservaForm() {
 
             <div>
               <label className="block text-sm font-medium mb-2">Número de Pessoas *</label>
-              <input
+              <select
                 {...register('numeroPessoas', {
                   required: 'Número de pessoas é obrigatório',
                   valueAsNumber: true,
-                  min: {
-                    value: 1,
-                    message: 'Mínimo 1 pessoa'
-                  },
-                  max: {
-                    value: 100,
-                    message: 'Para grupos acima de 100 pessoas, entre em contato diretamente'
-                  }
                 })}
-                type="number"
-                min="1"
-                max="100"
-                placeholder="Digite o número de pessoas"
-                className="w-full px-4 py-3 bg-black border border-zinc-700 rounded-lg focus:outline-none focus:border-[#0e9a20] text-white"
-              />
+                className="w-full px-4 py-3 bg-black border border-zinc-700 rounded-lg focus:outline-none focus:border-[#E53935] text-white"
+              >
+                <option value="">Selecione o número de pessoas</option>
+                <option value="2">2 pessoas</option>
+                <option value="4">4 pessoas</option>
+                <option value="6">6 pessoas</option>
+                <option value="8">8 pessoas</option>
+                <option value="10">10 pessoas</option>
+                <option value="12">12 pessoas</option>
+              </select>
               {errors.numeroPessoas && (
                 <p className="text-red-500 text-sm mt-1">{errors.numeroPessoas.message}</p>
               )}
               <p className="text-xs text-zinc-500 mt-1">
-                Para grupos grandes, reserve com antecedência
+                Máximo 12 pessoas por reserva • Apenas múltiplos de 2
+              </p>
+              <p className="text-xs text-zinc-500 mt-1">
+                Para grupos maiores, faça reservas separadas
               </p>
             </div>
           </div>

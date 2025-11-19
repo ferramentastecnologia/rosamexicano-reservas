@@ -67,7 +67,7 @@ export default function Home() {
               </div>
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-[#E53935]" />
-                <span className="font-light">Grupos de todos os tamanhos</span>
+                <span className="font-light">Grupos de 2 a 12 pessoas</span>
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-[#E53935]" />
@@ -116,9 +116,38 @@ export default function Home() {
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
               <h3 className="text-4xl font-bold mb-4">Faça sua Reserva</h3>
-              <p className="text-zinc-400">
+              <p className="text-zinc-400 mb-6">
                 Preencha os dados abaixo e garanta sua mesa para o final de ano
               </p>
+
+              {/* Informações Importantes */}
+              <div className="max-w-3xl mx-auto mb-8 bg-zinc-900 border border-zinc-800 rounded-lg p-6">
+                <h4 className="text-lg font-semibold mb-4 text-[#E53935]">📋 Informações Importantes</h4>
+                <div className="grid md:grid-cols-2 gap-4 text-sm text-left">
+                  <div className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
+                    <span className="text-zinc-300">Reservas de <strong>2 a 12 pessoas</strong></span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
+                    <span className="text-zinc-300">Apenas <strong>múltiplos de 2</strong></span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
+                    <span className="text-zinc-300"><strong>15 mesas disponíveis</strong> por horário</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
+                    <span className="text-zinc-300">Capacidade: <strong>60 pessoas/horário</strong></span>
+                  </div>
+                  <div className="flex items-start gap-2 md:col-span-2">
+                    <Check className="w-4 h-4 text-yellow-500 flex-shrink-0 mt-0.5" />
+                    <span className="text-zinc-300">
+                      <strong className="text-yellow-400">R$ 50,00 retido</strong> em caso de não comparecimento
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
             <ReservaForm />
           </div>
