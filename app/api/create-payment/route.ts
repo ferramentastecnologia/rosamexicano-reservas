@@ -82,7 +82,7 @@ export async function POST(request: Request) {
     console.log('Criando cobrança no Asaas...');
     const paymentData = {
       customer: customer.id,
-      billingType: 'UNDEFINED', // Permite escolher PIX, Boleto ou Cartão
+      billingType: 'PIX', // Apenas PIX disponível
       value: 50.00,
       dueDate: dueDate.toISOString().split('T')[0],
       description: `Reserva Rosa Mexicano - ${dataReserva} às ${horario} - ${numeroPessoas} pessoas`,
