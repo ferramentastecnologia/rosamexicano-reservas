@@ -230,6 +230,8 @@ function PagamentoContent() {
               </div>
             </div>
           )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
