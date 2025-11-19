@@ -12,14 +12,9 @@ export default function Home() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <Image
-                src="/images/logo_mortadella_branco.png"
-                alt="Rosa Mexicano"
-                width={180}
-                height={60}
-                priority
-                className="h-14 w-auto drop-shadow-lg"
-              />
+              <h1 className="text-3xl md:text-4xl font-serif text-white font-bold">
+                Rosa Mexicano
+              </h1>
               <div className="hidden md:block border-l border-white/30 pl-4">
                 <p className="text-xs text-white/90 font-light tracking-wide">Restaurante Mexicano</p>
               </div>
@@ -38,7 +33,7 @@ export default function Home() {
         {/* Background Image com overlay */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/images/casa1.jpg"
+            src="/images/banners/rosa-mexicano-principal.jpg"
             alt="Rosa Mexicano - Fachada"
             fill
             className="object-cover hero-image-enhanced"
@@ -168,10 +163,10 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <h3 className="text-3xl font-bold text-center mb-12">Nosso Ambiente</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <div className="relative aspect-square overflow-hidden rounded-lg">
                 <Image
-                  src="/images/casa1.jpg"
+                  src="/images/ambiente/bnu01.jpg"
                   alt="Ambiente Rosa Mexicano"
                   fill
                   className="object-cover hover:scale-110 transition-transform duration-300"
@@ -179,15 +174,15 @@ export default function Home() {
               </div>
               <div className="relative aspect-square overflow-hidden rounded-lg">
                 <Image
-                  src="/images/01c1133c6536365448dd7d198d4a8ef2.jpg"
-                  alt="Pratos Mexicanos"
+                  src="/images/ambiente/bnu02.jpg"
+                  alt="Interior do Restaurante"
                   fill
                   className="object-cover hover:scale-110 transition-transform duration-300"
                 />
               </div>
               <div className="relative aspect-square overflow-hidden rounded-lg">
                 <Image
-                  src="/images/2650d814053d069f2e6e2368569860a2.jpg"
+                  src="/images/ambiente/bnu03.jpg"
                   alt="Gastronomia Mexicana"
                   fill
                   className="object-cover hover:scale-110 transition-transform duration-300"
@@ -195,7 +190,7 @@ export default function Home() {
               </div>
               <div className="relative aspect-square overflow-hidden rounded-lg">
                 <Image
-                  src="/images/2755a2adaf9597d74220a455bd84da51.jpg"
+                  src="/images/ambiente/bnu04.jpg"
                   alt="Especialidades"
                   fill
                   className="object-cover hover:scale-110 transition-transform duration-300"
@@ -203,7 +198,7 @@ export default function Home() {
               </div>
               <div className="relative aspect-square overflow-hidden rounded-lg">
                 <Image
-                  src="/images/310c0e0410743e04c3492173e41dccd4.jpg"
+                  src="/images/ambiente/bnu05.jpg"
                   alt="Culinária Mexicana"
                   fill
                   className="object-cover hover:scale-110 transition-transform duration-300"
@@ -211,23 +206,7 @@ export default function Home() {
               </div>
               <div className="relative aspect-square overflow-hidden rounded-lg">
                 <Image
-                  src="/images/4061e79349af52a1845078afba08dacb.jpg"
-                  alt="Pratos Especiais"
-                  fill
-                  className="object-cover hover:scale-110 transition-transform duration-300"
-                />
-              </div>
-              <div className="relative aspect-square overflow-hidden rounded-lg">
-                <Image
-                  src="/images/4333d7fe0b9418728b745ea4eba27297.jpg"
-                  alt="Gastronomia Premium"
-                  fill
-                  className="object-cover hover:scale-110 transition-transform duration-300"
-                />
-              </div>
-              <div className="relative aspect-square overflow-hidden rounded-lg">
-                <Image
-                  src="/images/4a98ed92f7a1d71d201684ae43aad900.jpg"
+                  src="/images/ambiente/a3b363b686c06baa2308326374f9406b.jpg"
                   alt="Experiência Rosa Mexicano"
                   fill
                   className="object-cover hover:scale-110 transition-transform duration-300"
@@ -316,13 +295,9 @@ export default function Home() {
       <footer className="py-12 bg-black border-t border-zinc-800">
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-center text-center text-zinc-400">
-            <Image
-              src="/images/logo_mortadella_branco.png"
-              alt="Rosa Mexicano"
-              width={160}
-              height={53}
-              className="h-12 w-auto mb-6 opacity-90"
-            />
+            <h2 className="text-2xl font-serif text-white font-bold mb-6">
+              Rosa Mexicano
+            </h2>
             <p className="mb-2 text-white">© 2025 Rosa Mexicano Restaurante</p>
             <p className="text-sm">Sabor Autêntico Mexicano</p>
             <p className="text-xs mt-4">Rua 7 de Setembro, 1234 - Centro, Blumenau/SC</p>
