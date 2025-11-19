@@ -21,8 +21,13 @@ export async function POST(request: Request) {
     }
 
     // Verificar se as variáveis de ambiente estão configuradas
-    if (!ASAAS_API_KEY || ASAAS_API_KEY === 'COLOQUE_SUA_CHAVE_ASAAS_AQUI') {
-      console.error('ASAAS_API_KEY não configurada');
+    console.log('ASAAS_API_KEY length:', ASAAS_API_KEY.length);
+    console.log('ASAAS_API_KEY primeiros 20 chars:', ASAAS_API_KEY.substring(0, 20));
+    console.log('ASAAS_API_KEY últimos 20 chars:', ASAAS_API_KEY.substring(ASAAS_API_KEY.length - 20));
+
+    if (!ASAAS_API_KEY || ASAAS_API_KEY.trim().length === 0 || ASAAS_API_KEY === 'COLOQUE_SUA_CHAVE_ASAAS_AQUI') {
+      console.error('ASAAS_API_KEY não configurada ou vazia');
+      console.error('Valor atual:', ASAAS_API_KEY);
       return NextResponse.json(
         { success: false, error: 'Configuração do gateway de pagamento pendente' },
         { status: 500 }
@@ -30,6 +35,7 @@ export async function POST(request: Request) {
     }
 
     console.log('Usando Asaas API URL:', ASAAS_API_URL);
+    console.log('ASAAS_API_KEY configurada com sucesso');
 
     // 1. Criar cliente no Asaas
     const cleanPhone = telefone.replace(/\D/g, '');
