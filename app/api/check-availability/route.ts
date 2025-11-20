@@ -4,7 +4,7 @@ import { TOTAL_TABLES, TOTAL_CAPACITY, calculateTablesNeeded } from '@/lib/table
 
 // Configurações do restaurante Rosa Mexicano
 const MAX_TABLES = TOTAL_TABLES; // 49 mesas
-const MAX_CAPACITY = TOTAL_CAPACITY; // ~216 pessoas
+const MAX_CAPACITY = TOTAL_CAPACITY; // 208 pessoas
 
 export async function POST(request: Request) {
   let numeroPessoas = 0;

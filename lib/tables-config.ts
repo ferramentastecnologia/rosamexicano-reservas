@@ -80,7 +80,7 @@ export const ALL_TABLES: TableConfig[] = [
 
 // Constantes
 export const TOTAL_TABLES = ALL_TABLES.length; // 49 mesas
-export const TOTAL_CAPACITY = ALL_TABLES.reduce((sum, table) => sum + table.capacity, 0); // ~216 pessoas
+export const TOTAL_CAPACITY = ALL_TABLES.reduce((sum, table) => sum + table.capacity, 0); // 208 pessoas
 
 // Helper functions
 export function getTablesByArea(area: TableArea): TableConfig[] {

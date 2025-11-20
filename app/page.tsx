@@ -126,7 +126,7 @@ export default function Home() {
                 <div className="grid md:grid-cols-2 gap-4 text-sm text-left">
                   <div className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
-                    <span className="text-zinc-300">Reservas de <strong>2 a 216 pessoas</strong></span>
+                    <span className="text-zinc-300">Reservas de <strong>2 a 208 pessoas</strong></span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
@@ -138,7 +138,7 @@ export default function Home() {
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
-                    <span className="text-zinc-300">Capacidade: <strong>216 pessoas/dia</strong></span>
+                    <span className="text-zinc-300">Capacidade: <strong>208 pessoas/dia</strong></span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
