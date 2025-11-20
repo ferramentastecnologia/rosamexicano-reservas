@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-
-const TOTAL_TABLES = 15;
-const PEOPLE_PER_TABLE = 4;
+import { ALL_TABLES, TOTAL_TABLES, getTableCapacity } from '@/lib/tables-config';
 
 export async function POST(request: Request) {
   try {
@@ -41,25 +39,24 @@ export async function POST(request: Request) {
       }
     });
 
-    // Criar array de todas as mesas com status
-    const tables = Array.from({ length: TOTAL_TABLES }, (_, i) => {
-      const tableNumber = i + 1;
-      return {
-        number: tableNumber,
-        available: !occupiedTables.has(tableNumber),
-        capacity: PEOPLE_PER_TABLE,
-      };
-    });
+    // Criar array de todas as mesas com status usando configuração real
+    const tables = ALL_TABLES.map(tableConfig => ({
+      number: tableConfig.number,
+      available: !occupiedTables.has(tableConfig.number),
+      capacity: tableConfig.capacity,
+      area: tableConfig.area,
+      description: tableConfig.description,
+    }));
 
-    // Contar mesas disponíveis
-    const availableTables = tables.filter(t => t.available).length;
-    const totalCapacity = availableTables * PEOPLE_PER_TABLE;
+    // Contar mesas disponíveis e capacidade total
+    const availableTablesList = tables.filter(t => t.available);
+    const totalCapacity = availableTablesList.reduce((sum, t) => sum + t.capacity, 0);
 
     return NextResponse.json({
       tables,
       summary: {
         totalTables: TOTAL_TABLES,
-        availableTables,
+        availableTables: availableTablesList.length,
         occupiedTables: occupiedTables.size,
         totalCapacity,
       }
@@ -68,12 +65,16 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Erro ao buscar mesas disponíveis:', error);
 
-    // Em caso de erro, retornar mesas padrão vazias para que o frontend possa usar o fallback
-    const tables = Array.from({ length: TOTAL_TABLES }, (_, i) => ({
-      number: i + 1,
+    // Em caso de erro, retornar mesas padrão vazias usando configuração real
+    const tables = ALL_TABLES.map(tableConfig => ({
+      number: tableConfig.number,
       available: true,
-      capacity: PEOPLE_PER_TABLE,
+      capacity: tableConfig.capacity,
+      area: tableConfig.area,
+      description: tableConfig.description,
     }));
+
+    const totalCapacity = tables.reduce((sum, t) => sum + t.capacity, 0);
 
     return NextResponse.json({
       tables,
@@ -81,7 +82,7 @@ export async function POST(request: Request) {
         totalTables: TOTAL_TABLES,
         availableTables: TOTAL_TABLES,
         occupiedTables: 0,
-        totalCapacity: TOTAL_TABLES * PEOPLE_PER_TABLE,
+        totalCapacity,
       },
       warning: 'Não foi possível verificar reservas existentes. Mostrando todas as mesas como disponíveis.'
     });

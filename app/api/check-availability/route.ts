@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { TOTAL_TABLES, TOTAL_CAPACITY, calculateTablesNeeded } from '@/lib/tables-config';
 
-// Configurações do restaurante
-const MAX_TABLES = 15;
-const PEOPLE_PER_TABLE = 4;
-const MAX_CAPACITY = MAX_TABLES * PEOPLE_PER_TABLE; // 60 pessoas
+// Configurações do restaurante Rosa Mexicano
+const MAX_TABLES = TOTAL_TABLES; // 49 mesas
+const MAX_CAPACITY = TOTAL_CAPACITY; // ~216 pessoas
 
 export async function POST(request: Request) {
   try {
@@ -36,9 +36,9 @@ export async function POST(request: Request) {
     const availableCapacity = MAX_CAPACITY - totalReserved;
     const canAccommodate = availableCapacity >= numeroPessoas;
 
-    // Calcular mesas necessárias para a nova reserva
-    const tablesNeeded = Math.ceil(numeroPessoas / PEOPLE_PER_TABLE);
-    const currentTablesUsed = Math.ceil(totalReserved / PEOPLE_PER_TABLE);
+    // Calcular mesas necessárias usando algoritmo inteligente
+    const tablesNeeded = calculateTablesNeeded(numeroPessoas);
+    const currentTablesUsed = calculateTablesNeeded(totalReserved);
     const tablesAvailable = MAX_TABLES - currentTablesUsed;
 
     return NextResponse.json({
@@ -62,7 +62,7 @@ export async function POST(request: Request) {
 
     // Em caso de erro de conexão, assumir que está disponível
     // (melhor permitir a reserva do que bloquear completamente)
-    const tablesNeeded = Math.ceil(numeroPessoas / PEOPLE_PER_TABLE);
+    const tablesNeeded = calculateTablesNeeded(numeroPessoas);
 
     return NextResponse.json({
       available: true,
