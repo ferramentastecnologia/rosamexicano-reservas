@@ -113,25 +113,23 @@ export default function MapaMesas({ data, horario, numeroPessoas, onMesasSelect 
         Seleção de Mesas
       </h4>
 
-      {/* Informações */}
-      <div className="mb-4 grid grid-cols-2 gap-3 text-sm">
-        <div className="bg-black rounded p-3 border border-zinc-700">
-          <p className="text-zinc-400 text-xs mb-1">Pessoas</p>
-          <p className="text-white font-semibold">{numeroPessoas}</p>
-        </div>
-        <div className="bg-black rounded p-3 border border-zinc-700">
-          <p className="text-zinc-400 text-xs mb-1">Mesas Necessárias</p>
-          <p className="text-white font-semibold">{mesasNecessarias}</p>
-        </div>
-        <div className="bg-black rounded p-3 border border-zinc-700">
-          <p className="text-zinc-400 text-xs mb-1">Mesas Selecionadas</p>
-          <p className={`font-semibold ${selecaoCompleta ? 'text-green-500' : 'text-yellow-500'}`}>
-            {selectedTables.length} / {mesasNecessarias}
-          </p>
-        </div>
-        <div className="bg-black rounded p-3 border border-zinc-700">
-          <p className="text-zinc-400 text-xs mb-1">Capacidade Total</p>
-          <p className="text-white font-semibold">{capacidadeSelecionada} lugares</p>
+      {/* Informações Compactas */}
+      <div className="mb-4 bg-black rounded-lg p-4 border border-zinc-700">
+        <div className="grid grid-cols-3 gap-4 text-center">
+          <div>
+            <p className="text-xs text-zinc-400 mb-1">Pessoas</p>
+            <p className="text-xl font-bold text-[#E53935]">{numeroPessoas}</p>
+          </div>
+          <div>
+            <p className="text-xs text-zinc-400 mb-1">Mesas Necessárias</p>
+            <p className="text-xl font-bold text-white">{mesasNecessarias}</p>
+          </div>
+          <div>
+            <p className="text-xs text-zinc-400 mb-1">Selecionadas</p>
+            <p className={`text-xl font-bold ${selecaoCompleta ? 'text-green-500' : 'text-yellow-500'}`}>
+              {selectedTables.length}/{mesasNecessarias}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -164,39 +162,55 @@ export default function MapaMesas({ data, horario, numeroPessoas, onMesasSelect 
           <p className="text-zinc-400 mt-2 text-sm">Carregando mesas...</p>
         </div>
       ) : (
-        <div className="grid grid-cols-5 gap-3">
-          {tables.map(table => {
-            const isSelected = selectedTables.includes(table.number);
-            const isAvailable = table.available;
+        <div>
+          <div className="mb-3 flex items-center justify-between">
+            <p className="text-sm text-zinc-400">
+              {tables.filter(t => t.available).length} mesas disponíveis
+            </p>
+            <p className="text-sm text-zinc-400">
+              Clique para selecionar
+            </p>
+          </div>
+          <div className="grid grid-cols-5 gap-3">
+            {tables.map(table => {
+              const isSelected = selectedTables.includes(table.number);
+              const isAvailable = table.available;
 
-            return (
-              <button
-                key={table.number}
-                type="button"
-                onClick={() => toggleTable(table.number)}
-                disabled={!isAvailable}
-                className={`
-                  aspect-square rounded-lg border-2 flex flex-col items-center justify-center
-                  transition-all duration-200 relative
-                  ${isSelected
-                    ? 'bg-[#E53935] border-[#E53935] text-white scale-105 shadow-lg'
-                    : isAvailable
-                      ? 'bg-zinc-800 border-zinc-700 text-white hover:border-[#E53935] hover:scale-105'
-                      : 'bg-zinc-950 border-zinc-800 text-zinc-600 cursor-not-allowed'
-                  }
-                `}
-              >
-                <span className="text-lg font-bold">{table.number}</span>
-                <span className="text-xs mt-1">
-                  {isAvailable ? (
-                    isSelected ? <Check className="w-4 h-4" /> : `${table.capacity}p`
-                  ) : (
-                    <X className="w-4 h-4" />
+              return (
+                <button
+                  key={table.number}
+                  type="button"
+                  onClick={() => toggleTable(table.number)}
+                  disabled={!isAvailable}
+                  title={isAvailable ? `Mesa ${table.number} - ${table.capacity} pessoas` : `Mesa ${table.number} - Ocupada`}
+                  className={`
+                    aspect-square rounded-lg border-2 flex flex-col items-center justify-center
+                    transition-all duration-200 relative group
+                    ${isSelected
+                      ? 'bg-[#E53935] border-[#E53935] text-white scale-105 shadow-lg shadow-[#E53935]/50'
+                      : isAvailable
+                        ? 'bg-zinc-800 border-zinc-700 text-white hover:border-[#E53935] hover:scale-105 hover:shadow-lg'
+                        : 'bg-zinc-950 border-zinc-800 text-zinc-600 cursor-not-allowed opacity-50'
+                    }
+                  `}
+                >
+                  {isSelected && (
+                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                      <Check className="w-3 h-3 text-white" />
+                    </div>
                   )}
-                </span>
-              </button>
-            );
-          })}
+                  <span className="text-lg font-bold">{table.number}</span>
+                  <span className="text-xs mt-1">
+                    {isAvailable ? (
+                      `${table.capacity}p`
+                    ) : (
+                      <X className="w-4 h-4" />
+                    )}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
 
