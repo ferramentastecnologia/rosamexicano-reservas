@@ -8,18 +8,18 @@ export async function POST(request: Request) {
   try {
     const { data, horario } = await request.json();
 
-    if (!data || !horario) {
+    if (!data) {
       return NextResponse.json(
-        { error: 'Data e horário são obrigatórios' },
+        { error: 'Data é obrigatória' },
         { status: 400 }
       );
     }
 
-    // Buscar todas as reservas para a data e horário
+    // Buscar TODAS as reservas da DATA (não apenas do horário específico)
+    // As mesas são compartilhadas entre todos os horários do dia
     const reservations = await prisma.reservation.findMany({
       where: {
         data: data,
-        horario: horario,
         status: {
           in: ['pending', 'confirmed']
         }
