@@ -46,11 +46,33 @@ export default function MapaMesas({ data, horario, numeroPessoas, onMesasSelect 
       });
 
       const result = await response.json();
-      if (result.tables) {
+
+      if (result.error) {
+        console.error('Erro na API:', result.error);
+        // Em caso de erro, mostrar todas as mesas como disponíveis
+        setTables(Array.from({ length: 15 }, (_, i) => ({
+          number: i + 1,
+          available: true,
+          capacity: 4,
+        })));
+      } else if (result.tables) {
         setTables(result.tables);
+      } else {
+        // Fallback: se não houver tables, criar array vazio padrão
+        setTables(Array.from({ length: 15 }, (_, i) => ({
+          number: i + 1,
+          available: true,
+          capacity: 4,
+        })));
       }
     } catch (error) {
       console.error('Erro ao carregar mesas:', error);
+      // Em caso de erro, mostrar todas as mesas como disponíveis
+      setTables(Array.from({ length: 15 }, (_, i) => ({
+        number: i + 1,
+        available: true,
+        capacity: 4,
+      })));
     } finally {
       setLoading(false);
     }
