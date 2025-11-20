@@ -134,11 +134,11 @@ export default function Home() {
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
-                    <span className="text-zinc-300"><strong>15 mesas disponíveis</strong> por horário</span>
+                    <span className="text-zinc-300"><strong>15 mesas disponíveis</strong> por data</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
-                    <span className="text-zinc-300">Capacidade: <strong>60 pessoas/horário</strong></span>
+                    <span className="text-zinc-300">Capacidade: <strong>60 pessoas/dia</strong></span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
