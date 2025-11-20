@@ -10,7 +10,7 @@ datasource db {
 
 model Reservation {
   id                String   @id @default(cuid())
-  paymentId         String   @unique
+  paymentId         String?  @unique
   externalRef       String   @unique
   nome              String
   email             String
@@ -24,6 +24,7 @@ model Reservation {
   updatedAt         DateTime @updatedAt
   cpfCnpj           String?
   mesasSelecionadas String?
+  observacoes       String?
   voucher           Voucher?
 
   @@index([email])

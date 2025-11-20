@@ -203,13 +203,24 @@ export default function AdminReservations() {
       <main className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold">Reservas</h1>
-          <button
-            onClick={loadReservations}
-            className="px-4 py-2 bg-[#E53935] hover:bg-[#B71C1C] rounded-lg transition flex items-center gap-2"
-          >
-            <RefreshCw className="w-4 h-4" />
-            Atualizar
-          </button>
+          <div className="flex gap-3">
+            <Link
+              href="/admin/create-reservation"
+              className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition flex items-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              Nova Reserva
+            </Link>
+            <button
+              onClick={loadReservations}
+              className="px-4 py-2 bg-[#E53935] hover:bg-[#B71C1C] rounded-lg transition flex items-center gap-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Atualizar
+            </button>
+          </div>
         </div>
 
         {/* Filters */}
