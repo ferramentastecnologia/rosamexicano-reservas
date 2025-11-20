@@ -69,9 +69,23 @@ export async function POST(request: Request) {
 
   } catch (error) {
     console.error('Erro ao buscar mesas disponíveis:', error);
-    return NextResponse.json(
-      { error: 'Erro ao buscar mesas disponíveis' },
-      { status: 500 }
-    );
+
+    // Em caso de erro, retornar mesas padrão vazias para que o frontend possa usar o fallback
+    const tables = Array.from({ length: TOTAL_TABLES }, (_, i) => ({
+      number: i + 1,
+      available: true,
+      capacity: PEOPLE_PER_TABLE,
+    }));
+
+    return NextResponse.json({
+      tables,
+      summary: {
+        totalTables: TOTAL_TABLES,
+        availableTables: TOTAL_TABLES,
+        occupiedTables: 0,
+        totalCapacity: TOTAL_TABLES * PEOPLE_PER_TABLE,
+      },
+      warning: 'Não foi possível verificar reservas existentes. Mostrando todas as mesas como disponíveis.'
+    });
   }
 }

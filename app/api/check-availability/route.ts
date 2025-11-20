@@ -60,9 +60,26 @@ export async function POST(request: Request) {
 
   } catch (error) {
     console.error('Erro ao verificar disponibilidade:', error);
-    return NextResponse.json(
-      { available: false, error: 'Erro ao verificar disponibilidade' },
-      { status: 500 }
-    );
+
+    // Em caso de erro de conexão, assumir que está disponível
+    // (melhor permitir a reserva do que bloquear completamente)
+    const tablesNeeded = Math.ceil(numeroPessoas / PEOPLE_PER_TABLE);
+
+    return NextResponse.json({
+      available: true,
+      capacity: {
+        maxCapacity: MAX_CAPACITY,
+        reserved: 0,
+        available: MAX_CAPACITY,
+        requested: numeroPessoas,
+      },
+      tables: {
+        total: MAX_TABLES,
+        used: 0,
+        available: MAX_TABLES,
+        needed: tablesNeeded,
+      },
+      warning: 'Não foi possível verificar reservas existentes. Assumindo disponibilidade.'
+    });
   }
 }
