@@ -85,7 +85,7 @@ export default function ReservaForm() {
       }
 
       // Se houver disponibilidade, prosseguir com o pagamento
-      const response = await fetch('/api/create-payment', {
+      const response = await fetch('app/api/create-payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
