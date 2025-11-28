@@ -6,59 +6,100 @@ import Image from 'next/image';
 import QRCode from 'qrcode';
 import { Check, Copy, Clock } from 'lucide-react';
 
+type ReservationData = {
+  nome: string;
+  email: string;
+  telefone: string;
+  data: string;
+  horario: string;
+  numeroPessoas: number;
+};
+
+type PaymentData = {
+  success: boolean;
+  reservationId: string;
+  paymentId: string;
+  pixQrCode?: string;
+  pixCopyPaste?: string;
+  pixEncodedImage?: string;
+  expirationDate?: string;
+  reservationData?: ReservationData;
+};
+
 function PagamentoContent() {
   const searchParams = useSearchParams();
   const [qrCodeImage, setQrCodeImage] = useState<string>('');
   const [copied, setCopied] = useState(false);
-  const [paymentData, setPaymentData] = useState<any>(null);
+  const [paymentData, setPaymentData] = useState<PaymentData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [timeLeft, setTimeLeft] = useState(600); // 10 minutos
+  const [timeLeft, setTimeLeft] = useState(600); // fallback: 10 minutos
 
+  // Lê os dados da URL (?data=...)
   useEffect(() => {
-    const data = searchParams.get('data');
-    if (data) {
-      try {
-        const parsed = JSON.parse(decodeURIComponent(data));
-        setPaymentData(parsed);
+    const raw = searchParams.get('data');
+    if (!raw) {
+      setLoading(false);
+      return;
+    }
 
-        // Gerar QR Code
-        if (parsed.pixQrCode) {
-          QRCode.toDataURL(parsed.pixQrCode, {
-            width: 300,
-            margin: 2,
-            color: {
-              dark: '#000000',
-              light: '#FFFFFF',
-            },
-          }).then(setQrCodeImage);
+    try {
+      const parsed = JSON.parse(decodeURIComponent(raw)) as PaymentData;
+      setPaymentData(parsed);
+
+      // Timer baseado na data de expiração, se vier do Asaas
+      if (parsed.expirationDate) {
+        const exp = new Date(parsed.expirationDate).getTime();
+        const now = Date.now();
+        const diffSeconds = Math.floor((exp - now) / 1000);
+
+        if (diffSeconds > 0 && diffSeconds < 3600) {
+          setTimeLeft(diffSeconds);
         }
-
-        setLoading(false);
-      } catch (error) {
-        console.error('Erro ao processar dados:', error);
-        setLoading(false);
       }
+
+      // Usa imagem do Asaas, se veio, senão gera o QR Code localmente
+      if (parsed.pixEncodedImage) {
+        const img = parsed.pixEncodedImage.startsWith('data:')
+          ? parsed.pixEncodedImage
+          : `data:image/png;base64,${parsed.pixEncodedImage}`;
+        setQrCodeImage(img);
+      } else if (parsed.pixQrCode || parsed.pixCopyPaste) {
+        const value = parsed.pixQrCode || parsed.pixCopyPaste!;
+        QRCode.toDataURL(value, {
+          width: 300,
+          margin: 2,
+          color: { dark: '#000000', light: '#FFFFFF' },
+        }).then(setQrCodeImage);
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.error('Erro ao processar dados de pagamento:', error);
+      setLoading(false);
     }
   }, [searchParams]);
 
-  // Countdown timer
+  // Countdown
   useEffect(() => {
+    if (!timeLeft) return;
+
     const timer = setInterval(() => {
-      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
+      setTimeLeft(prev => (prev > 0 ? prev - 1 : 0));
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [timeLeft]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   };
 
   const copyPixCode = () => {
-    if (paymentData?.pixCopyPaste) {
-      navigator.clipboard.writeText(paymentData.pixCopyPaste);
+    if (paymentData?.pixCopyPaste || paymentData?.pixQrCode) {
+      const value = paymentData.pixCopyPaste || paymentData.pixQrCode!;
+      navigator.clipboard.writeText(value);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
@@ -69,25 +110,30 @@ function PagamentoContent() {
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#E53935] mx-auto mb-4"></div>
-          <p className="text-zinc-400">Carregando...</p>
+          <p className="text-zinc-400">Carregando dados de pagamento...</p>
         </div>
       </div>
     );
   }
 
-  if (!paymentData) {
+  if (!paymentData || !paymentData.success) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-xl text-zinc-400">Dados de pagamento não encontrados</p>
+        <div className="text-center px-4">
+          <p className="text-xl text-zinc-200 mb-2">Não foi possível carregar os dados de pagamento.</p>
+          <p className="text-sm text-zinc-500">
+            Volte à página anterior e tente gerar a reserva novamente.
+          </p>
         </div>
       </div>
     );
   }
+
+  const valor = 'R$ 50,00'; // mesmo valor usado na API (value: 50.00)
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Header Compacto */}
+      {/* Header */}
       <header className="bg-gradient-to-r from-[#B71C1C] to-[#8B0000] shadow-lg">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-center">
@@ -105,34 +151,34 @@ function PagamentoContent() {
       <div className="container mx-auto px-4 py-4">
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-4">
-
-            {/* Coluna 1: QR Code e Pagamento */}
+            {/* Coluna 1 - Pagamento PIX */}
             <div className="space-y-4">
-              {/* QR Code e Pagamento Unificado */}
               <div className="bg-zinc-900 rounded-lg p-5 border border-zinc-800">
-                {/* Timer no topo */}
+                {/* Timer */}
                 <div className="flex items-center justify-between mb-4 pb-3 border-b border-zinc-800">
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-yellow-500" />
-                    <span className="text-sm font-medium">Aguardando Pagamento</span>
+                    <span className="text-sm font-medium">Aguardando pagamento</span>
                   </div>
                   <div className="text-right">
                     <p className="text-xs text-zinc-400">Expira em</p>
-                    <p className="text-lg font-bold text-[#E53935]">{formatTime(timeLeft)}</p>
+                    <p className="text-lg font-bold text-[#E53935]">
+                      {formatTime(timeLeft)}
+                    </p>
                   </div>
                 </div>
 
                 <h3 className="text-lg font-semibold mb-4 text-center">Pague com PIX</h3>
 
-                {/* QR Code Image */}
+                {/* QR Code */}
                 {qrCodeImage && (
                   <div className="bg-white rounded-lg p-3 mb-4 flex justify-center">
                     <Image
                       src={qrCodeImage}
                       alt="QR Code PIX"
-                      width={220}
-                      height={220}
-                      className="rounded-lg"
+                      width={260}
+                      height={260}
+                      className="h-auto w-auto"
                     />
                   </div>
                 )}
@@ -140,17 +186,19 @@ function PagamentoContent() {
                 {/* Valor */}
                 <div className="text-center mb-4">
                   <p className="text-xs text-zinc-400 mb-1">Valor a pagar</p>
-                  <p className="text-2xl font-bold text-[#E53935]">R$ 50,00</p>
+                  <p className="text-2xl font-bold text-[#E53935]">{valor}</p>
                 </div>
 
-                {/* Código PIX */}
-                {paymentData.pixCopyPaste && (
+                {/* Código PIX copia e cola */}
+                {(paymentData.pixCopyPaste || paymentData.pixQrCode) && (
                   <div>
-                    <label className="block text-xs font-medium mb-2">Código PIX Copia e Cola</label>
+                    <label className="block text-xs font-medium mb-2">
+                      Código PIX copia e cola
+                    </label>
                     <div className="flex gap-2">
                       <input
                         type="text"
-                        value={paymentData.pixCopyPaste}
+                        value={paymentData.pixCopyPaste || paymentData.pixQrCode || ''}
                         readOnly
                         className="flex-1 px-3 py-2 bg-black border border-zinc-700 rounded-lg text-white text-xs font-mono"
                       />
@@ -171,65 +219,85 @@ function PagamentoContent() {
                         )}
                       </button>
                     </div>
+                    <p className="mt-2 text-[11px] text-zinc-400">
+                      Você também pode pagar copiando e colando esse código no app do seu banco.
+                    </p>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Coluna 2: Instruções e Detalhes */}
+            {/* Coluna 2 - Instruções + detalhes */}
             <div className="space-y-4">
-
-          {/* Instruções */}
-          <div className="bg-zinc-900 rounded-lg p-5 border border-zinc-800">
-            <h3 className="text-base font-semibold mb-3">Como pagar com PIX</h3>
-            <ol className="space-y-2.5 text-sm text-zinc-300">
-              <li className="flex gap-2.5">
-                <span className="flex-shrink-0 w-5 h-5 bg-[#E53935] rounded-full flex items-center justify-center text-xs font-bold">1</span>
-                <span>Abra o app do seu banco</span>
-              </li>
-              <li className="flex gap-2.5">
-                <span className="flex-shrink-0 w-5 h-5 bg-[#E53935] rounded-full flex items-center justify-center text-xs font-bold">2</span>
-                <span>Escolha PIX QR Code ou PIX Copia e Cola</span>
-              </li>
-              <li className="flex gap-2.5">
-                <span className="flex-shrink-0 w-5 h-5 bg-[#E53935] rounded-full flex items-center justify-center text-xs font-bold">3</span>
-                <span>Escaneie o QR Code ou cole o código PIX</span>
-              </li>
-              <li className="flex gap-2.5">
-                <span className="flex-shrink-0 w-5 h-5 bg-[#E53935] rounded-full flex items-center justify-center text-xs font-bold">4</span>
-                <span>Confirme o pagamento de R$ 50,00</span>
-              </li>
-              <li className="flex gap-2.5">
-                <span className="flex-shrink-0 w-5 h-5 bg-[#E53935] rounded-full flex items-center justify-center text-xs font-bold">5</span>
-                <span>Aguarde a confirmação (geralmente instantânea)</span>
-              </li>
-            </ol>
-          </div>
-
-          {/* Detalhes da Reserva */}
-          {paymentData.reservationData && (
-            <div className="bg-zinc-900 rounded-lg p-5 border border-zinc-800">
-              <h3 className="text-base font-semibold mb-3">Detalhes da Reserva</h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-zinc-400">Nome:</span>
-                  <span className="font-medium">{paymentData.reservationData.nome}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-zinc-400">Data:</span>
-                  <span className="font-medium">{paymentData.reservationData.data}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-zinc-400">Horário:</span>
-                  <span className="font-medium">{paymentData.reservationData.horario}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-zinc-400">Pessoas:</span>
-                  <span className="font-medium">{paymentData.reservationData.numeroPessoas}</span>
-                </div>
+              {/* Instruções */}
+              <div className="bg-zinc-900 rounded-lg p-5 border border-zinc-800">
+                <h3 className="text-base font-semibold mb-3">Como pagar com PIX</h3>
+                <ol className="space-y-2.5 text-sm text-zinc-300">
+                  <li className="flex gap-2.5">
+                    <span className="flex-shrink-0 w-5 h-5 bg-[#E53935] rounded-full flex items-center justify-center text-xs font-bold">
+                      1
+                    </span>
+                    <span>Abra o app do seu banco.</span>
+                  </li>
+                  <li className="flex gap-2.5">
+                    <span className="flex-shrink-0 w-5 h-5 bg-[#E53935] rounded-full flex items-center justify-center text-xs font-bold">
+                      2
+                    </span>
+                    <span>Escolha a opção de pagamento via PIX.</span>
+                  </li>
+                  <li className="flex gap-2.5">
+                    <span className="flex-shrink-0 w-5 h-5 bg-[#E53935] rounded-full flex items-center justify-center text-xs font-bold">
+                      3
+                    </span>
+                    <span>Escaneie o QR Code ou use o código copia e cola.</span>
+                  </li>
+                  <li className="flex gap-2.5">
+                    <span className="flex-shrink-0 w-5 h-5 bg-[#E53935] rounded-full flex items-center justify-center text-xs font-bold">
+                      4
+                    </span>
+                    <span>Confirme o valor e finalize o pagamento.</span>
+                  </li>
+                  <li className="flex gap-2.5">
+                    <span className="flex-shrink-0 w-5 h-5 bg-[#E53935] rounded-full flex items-center justify-center text-xs font-bold">
+                      5
+                    </span>
+                    <span>Aguarde a confirmação (geralmente instantânea).</span>
+                  </li>
+                </ol>
               </div>
-            </div>
-          )}
+
+              {/* Detalhes da reserva */}
+              {paymentData.reservationData && (
+                <div className="bg-zinc-900 rounded-lg p-5 border border-zinc-800">
+                  <h3 className="text-base font-semibold mb-3">Detalhes da reserva</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-zinc-400">Nome:</span>
+                      <span className="font-medium">
+                        {paymentData.reservationData.nome}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-zinc-400">Data:</span>
+                      <span className="font-medium">
+                        {paymentData.reservationData.data}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-zinc-400">Horário:</span>
+                      <span className="font-medium">
+                        {paymentData.reservationData.horario}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-zinc-400">Pessoas:</span>
+                      <span className="font-medium">
+                        {paymentData.reservationData.numeroPessoas}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -240,14 +308,16 @@ function PagamentoContent() {
 
 export default function PagamentoPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#E53935] mx-auto mb-4"></div>
-          <p className="text-zinc-400">Carregando...</p>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-black text-white flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#E53935] mx-auto mb-4"></div>
+            <p className="text-zinc-400">Carregando...</p>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <PagamentoContent />
     </Suspense>
   );
