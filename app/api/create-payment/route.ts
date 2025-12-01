@@ -179,8 +179,26 @@ export async function POST(request: Request) {
 
   } catch (error) {
     console.error('Erro no processamento:', error);
+
+    // Identificar tipo de erro para melhor diagnóstico
+    let errorMessage = 'Erro interno do servidor';
+
+    if (error instanceof Error) {
+      console.error('Detalhes do erro:', error.message);
+      console.error('Stack:', error.stack);
+
+      // Erros comuns do Prisma/DB
+      if (error.message.includes('prisma') || error.message.includes('database') || error.message.includes('connect')) {
+        errorMessage = 'Erro de conexão com banco de dados. Tente novamente.';
+      }
+      // Erros de rede/fetch
+      else if (error.message.includes('fetch') || error.message.includes('network') || error.message.includes('ECONNREFUSED')) {
+        errorMessage = 'Erro de conexão com gateway de pagamento. Tente novamente.';
+      }
+    }
+
     return NextResponse.json(
-      { success: false, error: 'Erro interno do servidor' },
+      { success: false, error: errorMessage },
       { status: 500 }
     );
   }
