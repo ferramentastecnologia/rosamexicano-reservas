@@ -22,7 +22,7 @@ export async function generateQRCodeData(voucherCode: string, reservationData: a
   const qrData = {
     codigo: voucherCode,
     restaurante: 'Mortadella Ristorante',
-    valor: 50.00,
+    valor: 5.00,
     data: reservationData.data,
     horario: reservationData.horario,
     pessoas: reservationData.numeroPessoas,

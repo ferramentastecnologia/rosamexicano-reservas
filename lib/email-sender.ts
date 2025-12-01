@@ -88,13 +88,13 @@ export async function sendVoucherEmail(
 
                 <div class="detail-row" style="border-bottom: none;">
                   <span class="detail-label">💰 Valor Pago:</span>
-                  <span class="detail-value">R$ 50,00</span>
+                  <span class="detail-value">R$ 5,00</span>
                 </div>
               </div>
 
               <div class="highlight">
                 <strong style="color: #0e9a20;">✨ 100% Conversível em Consumação</strong><br>
-                <span style="font-size: 14px;">O valor de R$ 50,00 retorna integralmente no dia da sua reserva!</span>
+                <span style="font-size: 14px;">O valor de R$ 5,00 retorna integralmente no dia da sua reserva!</span>
               </div>
 
               <h3 style="color: #0e9a20;">📝 Próximos Passos</h3>

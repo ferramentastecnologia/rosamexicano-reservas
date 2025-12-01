@@ -139,7 +139,7 @@ export default function SucessoContent() {
 
           <div className="bg-[#E53935]/10 border border-[#E53935]/30 rounded-lg p-6 mb-8">
             <p className="text-sm text-zinc-400 mb-2 text-center">Valor Pago</p>
-            <p className="text-4xl font-bold text-[#E53935] mb-3 text-center">R$ 50,00</p>
+            <p className="text-4xl font-bold text-[#E53935] mb-3 text-center">R$ 5,00</p>
             <p className="text-base text-zinc-200 text-center font-medium">
               <span className="text-[#E53935]">✨ 100% conversível</span> em consumação
             </p>

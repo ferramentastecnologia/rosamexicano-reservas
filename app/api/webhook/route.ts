@@ -47,7 +47,7 @@ export async function POST(request: Request) {
         data: {
           reservationId: reservation.id,
           codigo: voucherCode,
-          valor: 50.00,
+          valor: 5.00,
           qrCodeData: qrCodeData,
           dataValidade: getExpiryDate(),
         },
