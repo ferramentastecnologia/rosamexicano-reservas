@@ -9,12 +9,15 @@ interface CalendarioReservaProps {
 }
 
 export default function CalendarioReserva({ onSelectDate, selectedDate }: CalendarioReservaProps) {
-  const [currentMonth, setCurrentMonth] = useState(10); // Novembro por padrão
-  const [currentYear] = useState(2025);
   const [today, setToday] = useState<Date | null>(null);
+  const [currentMonth, setCurrentMonth] = useState(() => new Date().getMonth());
+  const [currentYear, setCurrentYear] = useState(() => new Date().getFullYear());
 
   useEffect(() => {
-    setToday(new Date());
+    const now = new Date();
+    setToday(now);
+    setCurrentMonth(now.getMonth());
+    setCurrentYear(now.getFullYear());
   }, []);
 
   const monthNames = [
