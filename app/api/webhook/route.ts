@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { generateVoucherCode, generateQRCodeData, getExpiryDate } from '@/lib/voucher-helpers';
+import { sendVoucherEmail } from '@/lib/email-sender';
+import { generateVoucherPDF } from '@/lib/pdf-generator';
 
 export async function POST(request: Request) {
   try {
@@ -64,14 +66,35 @@ export async function POST(request: Request) {
 
       console.log('Reserva confirmada com sucesso!');
 
-      // TODO: Adicionar envio de email quando configurado
-      // Por enquanto, apenas confirma a reserva
-
-      return NextResponse.json({
+      // Retorna sucesso ANTES de enviar email (não bloqueia o webhook)
+      const response = NextResponse.json({
         received: true,
         voucherCode: voucher.codigo,
         reservationId: reservation.id,
       });
+
+      // Tenta enviar email em background (não bloqueia nem quebra se falhar)
+      try {
+        const pdfBuffer = await generateVoucherPDF(voucher);
+        console.log('PDF gerado, tamanho:', pdfBuffer.length);
+
+        const emailSent = await sendVoucherEmail(
+          reservation.email,
+          voucher,
+          pdfBuffer
+        );
+
+        if (emailSent) {
+          console.log('Email enviado com sucesso para:', reservation.email);
+        } else {
+          console.log('Email não enviado (configuração pendente)');
+        }
+      } catch (emailError) {
+        console.error('Erro ao enviar email (não crítico):', emailError);
+        // Não falha o webhook por causa do email
+      }
+
+      return response;
     }
 
     // Outros eventos
