@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useEffect, useState, Suspense, useCallback } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import QRCode from 'qrcode';
-import { Check, Copy, Clock } from 'lucide-react';
+import { Check, Copy, Clock, CheckCircle } from 'lucide-react';
 
 type ReservationData = {
   nome: string;
@@ -28,11 +28,50 @@ type PaymentData = {
 
 function PagamentoContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [qrCodeImage, setQrCodeImage] = useState<string>('');
   const [copied, setCopied] = useState(false);
   const [paymentData, setPaymentData] = useState<PaymentData | null>(null);
   const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState(600); // fallback: 10 minutos
+  const [paymentConfirmed, setPaymentConfirmed] = useState(false);
+  const [checkingPayment, setCheckingPayment] = useState(false);
+
+  // Função para verificar status do pagamento
+  const checkPaymentStatus = useCallback(async () => {
+    if (!paymentData?.paymentId || paymentConfirmed) return;
+
+    try {
+      setCheckingPayment(true);
+      const response = await fetch('/api/check-payment-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paymentId: paymentData.paymentId }),
+      });
+
+      const result = await response.json();
+
+      if (result.success && result.confirmed) {
+        setPaymentConfirmed(true);
+        // Redireciona para página de sucesso após 2 segundos
+        setTimeout(() => {
+          router.push(`/sucesso?reservationId=${paymentData.reservationId}`);
+        }, 2000);
+      }
+    } catch (error) {
+      console.error('Erro ao verificar pagamento:', error);
+    } finally {
+      setCheckingPayment(false);
+    }
+  }, [paymentData, paymentConfirmed, router]);
+
+  // Polling para verificar pagamento a cada 3 segundos
+  useEffect(() => {
+    if (!paymentData?.paymentId || paymentConfirmed) return;
+
+    const interval = setInterval(checkPaymentStatus, 3000);
+    return () => clearInterval(interval);
+  }, [paymentData, paymentConfirmed, checkPaymentStatus]);
 
   // Lê os dados da URL (?data=...)
   useEffect(() => {
@@ -129,6 +168,19 @@ function PagamentoContent() {
     );
   }
 
+  // Tela de pagamento confirmado
+  if (paymentConfirmed) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center px-4">
+          <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-4 animate-pulse" />
+          <h2 className="text-2xl font-bold text-green-500 mb-2">Pagamento Confirmado!</h2>
+          <p className="text-zinc-400">Redirecionando para a confirmação...</p>
+        </div>
+      </div>
+    );
+  }
+
   const valor = 'R$ 5,00'; // mesmo valor usado na API (value: 5.00)
 
   return (
@@ -157,8 +209,14 @@ function PagamentoContent() {
                 {/* Timer */}
                 <div className="flex items-center justify-between mb-4 pb-3 border-b border-zinc-800">
                   <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-yellow-500" />
-                    <span className="text-sm font-medium">Aguardando pagamento</span>
+                    {checkingPayment ? (
+                      <div className="w-4 h-4 border-2 border-yellow-500 border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <Clock className="w-4 h-4 text-yellow-500" />
+                    )}
+                    <span className="text-sm font-medium">
+                      {checkingPayment ? 'Verificando pagamento...' : 'Aguardando pagamento'}
+                    </span>
                   </div>
                   <div className="text-right">
                     <p className="text-xs text-zinc-400">Expira em</p>
