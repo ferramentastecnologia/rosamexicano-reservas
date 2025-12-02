@@ -90,9 +90,11 @@ export default function VouchersPage() {
 
     // Filtro por status
     if (statusFilter === 'used') {
-      filtered = filtered.filter(v => v.utilizado);
+      filtered = filtered.filter(v => getVoucherStatus(v) === 'used');
     } else if (statusFilter === 'available') {
-      filtered = filtered.filter(v => !v.utilizado);
+      filtered = filtered.filter(v => getVoucherStatus(v) === 'available');
+    } else if (statusFilter === 'expired') {
+      filtered = filtered.filter(v => getVoucherStatus(v) === 'expired');
     }
 
     // Filtro por busca (código, email ou telefone)
@@ -157,6 +159,26 @@ export default function VouchersPage() {
 
   const formatDateTime = (dateStr: string) => {
     return new Date(dateStr).toLocaleString('pt-BR');
+  };
+
+  const isExpired = (voucher: VoucherData) => {
+    if (!voucher.reservation?.data || !voucher.reservation?.horario) return false;
+
+    // Combinar data e horário da reserva
+    const [hours, minutes] = voucher.reservation.horario.split(':').map(Number);
+    const reservationDate = new Date(voucher.reservation.data + 'T00:00:00');
+    reservationDate.setHours(hours, minutes, 0, 0);
+
+    // Adicionar margem de 3 horas após o horário da reserva
+    const expirationDate = new Date(reservationDate.getTime() + 3 * 60 * 60 * 1000);
+
+    return new Date() > expirationDate;
+  };
+
+  const getVoucherStatus = (voucher: VoucherData): 'used' | 'expired' | 'available' => {
+    if (voucher.utilizado) return 'used';
+    if (isExpired(voucher)) return 'expired';
+    return 'available';
   };
 
   return (
@@ -239,6 +261,7 @@ export default function VouchersPage() {
               <option value="all">Todos</option>
               <option value="available">Disponíveis</option>
               <option value="used">Utilizados</option>
+              <option value="expired">Expirados</option>
             </select>
           </div>
         </div>
@@ -299,17 +322,31 @@ export default function VouchersPage() {
                         <span className="text-[#E53935] font-semibold">R$ {voucher.valor?.toFixed(2)}</span>
                       </td>
                       <td className="px-4 py-3">
-                        {voucher.utilizado ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-900/30 text-yellow-400 rounded text-xs">
-                            <CheckCircle className="w-3 h-3" />
-                            Utilizado
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-900/30 text-green-400 rounded text-xs">
-                            <AlertCircle className="w-3 h-3" />
-                            Disponível
-                          </span>
-                        )}
+                        {(() => {
+                          const status = getVoucherStatus(voucher);
+                          if (status === 'used') {
+                            return (
+                              <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-900/30 text-yellow-400 rounded text-xs">
+                                <CheckCircle className="w-3 h-3" />
+                                Utilizado
+                              </span>
+                            );
+                          } else if (status === 'expired') {
+                            return (
+                              <span className="inline-flex items-center gap-1 px-2 py-1 bg-red-900/30 text-red-400 rounded text-xs">
+                                <XCircle className="w-3 h-3" />
+                                Expirado
+                              </span>
+                            );
+                          } else {
+                            return (
+                              <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-900/30 text-green-400 rounded text-xs">
+                                <AlertCircle className="w-3 h-3" />
+                                Disponível
+                              </span>
+                            );
+                          }
+                        })()}
                       </td>
                       <td className="px-4 py-3 text-center">
                         <button
@@ -334,21 +371,38 @@ export default function VouchersPage() {
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
           <div className="bg-zinc-900 rounded-lg border border-zinc-800 max-w-lg w-full max-h-[90vh] overflow-y-auto">
             {/* Header do Modal */}
-            <div className={`p-4 ${selectedVoucher.utilizado ? 'bg-yellow-900/30' : 'bg-green-900/30'}`}>
+            <div className={`p-4 ${
+              getVoucherStatus(selectedVoucher) === 'used' ? 'bg-yellow-900/30' :
+              getVoucherStatus(selectedVoucher) === 'expired' ? 'bg-red-900/30' :
+              'bg-green-900/30'
+            }`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  {selectedVoucher.utilizado ? (
+                  {getVoucherStatus(selectedVoucher) === 'used' ? (
                     <AlertCircle className="w-6 h-6 text-yellow-400" />
+                  ) : getVoucherStatus(selectedVoucher) === 'expired' ? (
+                    <XCircle className="w-6 h-6 text-red-400" />
                   ) : (
                     <CheckCircle className="w-6 h-6 text-green-400" />
                   )}
                   <div>
-                    <p className={`font-bold ${selectedVoucher.utilizado ? 'text-yellow-400' : 'text-green-400'}`}>
-                      {selectedVoucher.utilizado ? 'VOUCHER UTILIZADO' : 'VOUCHER DISPONÍVEL'}
+                    <p className={`font-bold ${
+                      getVoucherStatus(selectedVoucher) === 'used' ? 'text-yellow-400' :
+                      getVoucherStatus(selectedVoucher) === 'expired' ? 'text-red-400' :
+                      'text-green-400'
+                    }`}>
+                      {getVoucherStatus(selectedVoucher) === 'used' ? 'VOUCHER UTILIZADO' :
+                       getVoucherStatus(selectedVoucher) === 'expired' ? 'VOUCHER EXPIRADO' :
+                       'VOUCHER DISPONÍVEL'}
                     </p>
                     {selectedVoucher.utilizado && selectedVoucher.dataUtilizacao && (
                       <p className="text-sm text-yellow-400/70">
                         Utilizado em: {formatDateTime(selectedVoucher.dataUtilizacao)}
+                      </p>
+                    )}
+                    {getVoucherStatus(selectedVoucher) === 'expired' && (
+                      <p className="text-sm text-red-400/70">
+                        Data da reserva já passou
                       </p>
                     )}
                   </div>
@@ -453,7 +507,7 @@ export default function VouchersPage() {
                     <p className="text-2xl font-bold text-[#E53935]">R$ {selectedVoucher.valor?.toFixed(2)}</p>
                   </div>
 
-                  {!selectedVoucher.utilizado && (
+                  {getVoucherStatus(selectedVoucher) === 'available' && (
                     <button
                       onClick={() => validarVoucher(selectedVoucher)}
                       disabled={validating}
@@ -466,6 +520,11 @@ export default function VouchersPage() {
                       )}
                       Validar Voucher
                     </button>
+                  )}
+                  {getVoucherStatus(selectedVoucher) === 'expired' && (
+                    <span className="text-red-400 text-sm">
+                      Voucher não pode ser utilizado
+                    </span>
                   )}
                 </div>
               </div>

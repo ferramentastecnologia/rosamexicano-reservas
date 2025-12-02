@@ -9,9 +9,10 @@ export async function POST(
   try {
     const { codigo } = await params;
 
-    // Buscar voucher
+    // Buscar voucher com reserva
     const voucher = await prisma.voucher.findUnique({
       where: { codigo: codigo.toUpperCase() },
+      include: { reservation: true },
     });
 
     if (!voucher) {
@@ -28,8 +29,23 @@ export async function POST(
       );
     }
 
-    // Verificar validade
-    if (new Date() > new Date(voucher.dataValidade)) {
+    // Verificar expiração baseada na data/horário da reserva
+    if (voucher.reservation) {
+      const [hours, minutes] = voucher.reservation.horario.split(':').map(Number);
+      const reservationDate = new Date(voucher.reservation.data + 'T00:00:00');
+      reservationDate.setHours(hours, minutes, 0, 0);
+
+      // Margem de 3 horas após o horário da reserva
+      const expirationDate = new Date(reservationDate.getTime() + 3 * 60 * 60 * 1000);
+
+      if (new Date() > expirationDate) {
+        return NextResponse.json(
+          { error: 'Voucher expirado - data da reserva já passou' },
+          { status: 400 }
+        );
+      }
+    } else if (new Date() > new Date(voucher.dataValidade)) {
+      // Fallback para dataValidade caso não tenha reserva
       return NextResponse.json(
         { error: 'Voucher expirado' },
         { status: 400 }
