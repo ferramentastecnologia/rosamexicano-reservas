@@ -17,7 +17,12 @@ import {
   Calendar,
   Clock,
   Users,
-  AlertCircle
+  AlertCircle,
+  Phone,
+  Mail,
+  Loader2,
+  Eye,
+  X
 } from 'lucide-react';
 
 type VoucherData = {
@@ -27,6 +32,7 @@ type VoucherData = {
   utilizado: boolean;
   dataUtilizacao: string | null;
   dataValidade: string;
+  createdAt: string;
   reservation: {
     id: string;
     nome: string;
@@ -39,59 +45,76 @@ type VoucherData = {
   };
 };
 
-export default function ValidarVoucher() {
+export default function VouchersPage() {
   const router = useRouter();
-  const [codigo, setCodigo] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [voucher, setVoucher] = useState<VoucherData | null>(null);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [vouchers, setVouchers] = useState<VoucherData[]>([]);
+  const [filteredVouchers, setFilteredVouchers] = useState<VoucherData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [selectedVoucher, setSelectedVoucher] = useState<VoucherData | null>(null);
+  const [validating, setValidating] = useState(false);
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
     if (!token) {
       router.push('/admin');
+    } else {
+      loadVouchers();
     }
   }, [router]);
+
+  useEffect(() => {
+    filterVouchers();
+  }, [searchTerm, statusFilter, vouchers]);
+
+  const loadVouchers = async () => {
+    try {
+      const response = await fetch('/api/admin/vouchers');
+      const data = await response.json();
+      if (data.vouchers) {
+        setVouchers(data.vouchers);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar vouchers:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filterVouchers = () => {
+    let filtered = [...vouchers];
+
+    // Filtro por status
+    if (statusFilter === 'used') {
+      filtered = filtered.filter(v => v.utilizado);
+    } else if (statusFilter === 'available') {
+      filtered = filtered.filter(v => !v.utilizado);
+    }
+
+    // Filtro por busca (código, email ou telefone)
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase().trim();
+      filtered = filtered.filter(v =>
+        v.codigo.toLowerCase().includes(term) ||
+        v.reservation?.email?.toLowerCase().includes(term) ||
+        v.reservation?.telefone?.includes(term) ||
+        v.reservation?.nome?.toLowerCase().includes(term)
+      );
+    }
+
+    setFilteredVouchers(filtered);
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('admin_token');
     router.push('/admin');
   };
 
-  const buscarVoucher = async () => {
-    if (!codigo.trim()) {
-      setError('Digite o código do voucher');
-      return;
-    }
-
-    setLoading(true);
-    setError('');
-    setVoucher(null);
-    setSuccess('');
-
-    try {
-      const response = await fetch(`/api/admin/voucher/${codigo.trim().toUpperCase()}`);
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.error || 'Voucher não encontrado');
-        return;
-      }
-
-      setVoucher(data);
-    } catch (err) {
-      setError('Erro ao buscar voucher');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const validarVoucher = async () => {
-    if (!voucher) return;
-
-    setLoading(true);
-    setError('');
+  const validarVoucher = async (voucher: VoucherData) => {
+    setValidating(true);
+    setMessage(null);
 
     try {
       const response = await fetch(`/api/admin/voucher/${voucher.codigo}/validar`, {
@@ -100,26 +123,38 @@ export default function ValidarVoucher() {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || 'Erro ao validar voucher');
+        setMessage({ type: 'error', text: data.error || 'Erro ao validar voucher' });
         return;
       }
 
-      setSuccess('Voucher validado com sucesso!');
-      setVoucher({ ...voucher, utilizado: true, dataUtilizacao: new Date().toISOString() });
+      setMessage({ type: 'success', text: 'Voucher validado com sucesso!' });
+
+      // Atualizar lista
+      setVouchers(prev => prev.map(v =>
+        v.codigo === voucher.codigo
+          ? { ...v, utilizado: true, dataUtilizacao: new Date().toISOString() }
+          : v
+      ));
+
+      // Atualizar voucher selecionado
+      setSelectedVoucher(prev => prev ? { ...prev, utilizado: true, dataUtilizacao: new Date().toISOString() } : null);
     } catch (err) {
-      setError('Erro ao validar voucher');
+      setMessage({ type: 'error', text: 'Erro ao validar voucher' });
     } finally {
-      setLoading(false);
+      setValidating(false);
     }
   };
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr + 'T00:00:00').toLocaleDateString('pt-BR', {
-      weekday: 'long',
       day: '2-digit',
-      month: 'long',
+      month: '2-digit',
       year: 'numeric'
     });
+  };
+
+  const formatDateTime = (dateStr: string) => {
+    return new Date(dateStr).toLocaleString('pt-BR');
   };
 
   return (
@@ -176,87 +211,191 @@ export default function ValidarVoucher() {
 
       {/* Content */}
       <main className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Validar Voucher</h1>
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold">Vouchers</h1>
+          <span className="text-zinc-400">{filteredVouchers.length} voucher(s)</span>
+        </div>
 
-        {/* Busca */}
-        <div className="bg-zinc-900 rounded-lg p-6 border border-zinc-800 mb-6">
-          <label className="block text-sm font-medium mb-2">Código do Voucher</label>
-          <div className="flex gap-3">
+        {/* Filtros */}
+        <div className="bg-zinc-900 rounded-lg p-4 border border-zinc-800 mb-6">
+          <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-1">
-              <QrCode className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
               <input
                 type="text"
-                value={codigo}
-                onChange={(e) => setCodigo(e.target.value.toUpperCase())}
-                onKeyDown={(e) => e.key === 'Enter' && buscarVoucher()}
-                placeholder="Ex: MOR-K7X9M2Q5-M7XQ9Z8W"
-                className="w-full pl-10 pr-4 py-3 bg-black border border-zinc-700 rounded-lg focus:outline-none focus:border-[#E53935] text-white font-mono text-lg"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Buscar por código, nome, email ou telefone..."
+                className="w-full pl-10 pr-4 py-2 bg-black border border-zinc-700 rounded-lg focus:outline-none focus:border-[#E53935] text-white"
               />
             </div>
-            <button
-              onClick={buscarVoucher}
-              disabled={loading}
-              className="px-6 py-3 bg-[#E53935] hover:bg-[#B71C1C] rounded-lg transition flex items-center gap-2 disabled:opacity-50"
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-4 py-2 bg-black border border-zinc-700 rounded-lg focus:outline-none focus:border-[#E53935] text-white"
             >
-              <Search className="w-5 h-5" />
-              Buscar
-            </button>
+              <option value="all">Todos</option>
+              <option value="available">Disponíveis</option>
+              <option value="used">Utilizados</option>
+            </select>
           </div>
         </div>
 
-        {/* Erro */}
-        {error && (
-          <div className="bg-red-900/30 border border-red-800 rounded-lg p-4 mb-6 flex items-center gap-3">
-            <XCircle className="w-5 h-5 text-red-400" />
-            <span className="text-red-400">{error}</span>
+        {/* Lista de Vouchers */}
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-[#E53935]" />
           </div>
-        )}
-
-        {/* Sucesso */}
-        {success && (
-          <div className="bg-green-900/30 border border-green-800 rounded-lg p-4 mb-6 flex items-center gap-3">
-            <CheckCircle className="w-5 h-5 text-green-400" />
-            <span className="text-green-400">{success}</span>
+        ) : filteredVouchers.length === 0 ? (
+          <div className="text-center py-20 text-zinc-500">
+            <QrCode className="w-16 h-16 mx-auto mb-4 opacity-50" />
+            <p>Nenhum voucher encontrado</p>
           </div>
-        )}
-
-        {/* Resultado */}
-        {voucher && (
+        ) : (
           <div className="bg-zinc-900 rounded-lg border border-zinc-800 overflow-hidden">
-            {/* Status do Voucher */}
-            <div className={`p-4 ${voucher.utilizado ? 'bg-yellow-900/30' : 'bg-green-900/30'}`}>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-zinc-800">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-zinc-400">Código</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-zinc-400">Cliente</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-zinc-400">Contato</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-zinc-400">Reserva</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-zinc-400">Valor</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-zinc-400">Status</th>
+                    <th className="px-4 py-3 text-center text-sm font-medium text-zinc-400">Ações</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-800">
+                  {filteredVouchers.map((voucher) => (
+                    <tr key={voucher.codigo} className="hover:bg-zinc-800/50">
+                      <td className="px-4 py-3">
+                        <span className="font-mono text-sm bg-zinc-800 px-2 py-1 rounded">
+                          {voucher.codigo}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <p className="font-medium">{voucher.reservation?.nome || '-'}</p>
+                      </td>
+                      <td className="px-4 py-3">
+                        <p className="text-sm text-zinc-400">{voucher.reservation?.email || '-'}</p>
+                        <p className="text-sm text-zinc-500">{voucher.reservation?.telefone || '-'}</p>
+                      </td>
+                      <td className="px-4 py-3">
+                        <p className="text-sm">{voucher.reservation?.data ? formatDate(voucher.reservation.data) : '-'}</p>
+                        <p className="text-sm text-zinc-500">{voucher.reservation?.horario || '-'}</p>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className="text-[#E53935] font-semibold">R$ {voucher.valor?.toFixed(2)}</span>
+                      </td>
+                      <td className="px-4 py-3">
+                        {voucher.utilizado ? (
+                          <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-900/30 text-yellow-400 rounded text-xs">
+                            <CheckCircle className="w-3 h-3" />
+                            Utilizado
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-900/30 text-green-400 rounded text-xs">
+                            <AlertCircle className="w-3 h-3" />
+                            Disponível
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <button
+                          onClick={() => setSelectedVoucher(voucher)}
+                          className="p-2 text-zinc-400 hover:text-white hover:bg-zinc-700 rounded transition"
+                          title="Ver detalhes"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </main>
+
+      {/* Modal de Detalhes */}
+      {selectedVoucher && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
+          <div className="bg-zinc-900 rounded-lg border border-zinc-800 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            {/* Header do Modal */}
+            <div className={`p-4 ${selectedVoucher.utilizado ? 'bg-yellow-900/30' : 'bg-green-900/30'}`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  {voucher.utilizado ? (
+                  {selectedVoucher.utilizado ? (
                     <AlertCircle className="w-6 h-6 text-yellow-400" />
                   ) : (
                     <CheckCircle className="w-6 h-6 text-green-400" />
                   )}
                   <div>
-                    <p className={`font-bold ${voucher.utilizado ? 'text-yellow-400' : 'text-green-400'}`}>
-                      {voucher.utilizado ? 'VOUCHER JÁ UTILIZADO' : 'VOUCHER VÁLIDO'}
+                    <p className={`font-bold ${selectedVoucher.utilizado ? 'text-yellow-400' : 'text-green-400'}`}>
+                      {selectedVoucher.utilizado ? 'VOUCHER UTILIZADO' : 'VOUCHER DISPONÍVEL'}
                     </p>
-                    {voucher.utilizado && voucher.dataUtilizacao && (
+                    {selectedVoucher.utilizado && selectedVoucher.dataUtilizacao && (
                       <p className="text-sm text-yellow-400/70">
-                        Utilizado em: {new Date(voucher.dataUtilizacao).toLocaleString('pt-BR')}
+                        Utilizado em: {formatDateTime(selectedVoucher.dataUtilizacao)}
                       </p>
                     )}
                   </div>
                 </div>
-                <span className="text-2xl font-mono font-bold">{voucher.codigo}</span>
+                <button
+                  onClick={() => {
+                    setSelectedVoucher(null);
+                    setMessage(null);
+                  }}
+                  className="p-1 hover:bg-zinc-800 rounded"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
             </div>
 
-            {/* Dados da Reserva */}
+            {/* Conteúdo */}
             <div className="p-6">
+              <div className="text-center mb-6">
+                <p className="text-sm text-zinc-400 mb-1">Código do Voucher</p>
+                <p className="text-2xl font-mono font-bold">{selectedVoucher.codigo}</p>
+              </div>
+
+              {/* Mensagens */}
+              {message && (
+                <div className={`mb-4 p-3 rounded-lg flex items-center gap-2 ${
+                  message.type === 'success' ? 'bg-green-900/30 text-green-400' : 'bg-red-900/30 text-red-400'
+                }`}>
+                  {message.type === 'success' ? <CheckCircle className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
+                  {message.text}
+                </div>
+              )}
+
               <h3 className="text-lg font-semibold mb-4">Dados da Reserva</h3>
 
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <User className="w-5 h-5 text-zinc-500" />
                   <div>
                     <p className="text-sm text-zinc-400">Cliente</p>
-                    <p className="font-medium">{voucher.reservation.nome}</p>
+                    <p className="font-medium">{selectedVoucher.reservation?.nome || '-'}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Mail className="w-5 h-5 text-zinc-500" />
+                  <div>
+                    <p className="text-sm text-zinc-400">Email</p>
+                    <p className="font-medium">{selectedVoucher.reservation?.email || '-'}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Phone className="w-5 h-5 text-zinc-500" />
+                  <div>
+                    <p className="text-sm text-zinc-400">Telefone</p>
+                    <p className="font-medium">{selectedVoucher.reservation?.telefone || '-'}</p>
                   </div>
                 </div>
 
@@ -264,7 +403,7 @@ export default function ValidarVoucher() {
                   <Calendar className="w-5 h-5 text-zinc-500" />
                   <div>
                     <p className="text-sm text-zinc-400">Data</p>
-                    <p className="font-medium">{formatDate(voucher.reservation.data)}</p>
+                    <p className="font-medium">{selectedVoucher.reservation?.data ? formatDate(selectedVoucher.reservation.data) : '-'}</p>
                   </div>
                 </div>
 
@@ -272,7 +411,7 @@ export default function ValidarVoucher() {
                   <Clock className="w-5 h-5 text-zinc-500" />
                   <div>
                     <p className="text-sm text-zinc-400">Horário</p>
-                    <p className="font-medium">{voucher.reservation.horario}</p>
+                    <p className="font-medium">{selectedVoucher.reservation?.horario || '-'}</p>
                   </div>
                 </div>
 
@@ -280,25 +419,29 @@ export default function ValidarVoucher() {
                   <Users className="w-5 h-5 text-zinc-500" />
                   <div>
                     <p className="text-sm text-zinc-400">Pessoas</p>
-                    <p className="font-medium">{voucher.reservation.numeroPessoas} pessoas</p>
+                    <p className="font-medium">{selectedVoucher.reservation?.numeroPessoas || '-'} pessoas</p>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-4 pt-4 border-t border-zinc-800">
+              <div className="mt-6 pt-4 border-t border-zinc-800">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-zinc-400">Valor do Voucher</p>
-                    <p className="text-2xl font-bold text-[#E53935]">R$ {voucher.valor.toFixed(2)}</p>
+                    <p className="text-2xl font-bold text-[#E53935]">R$ {selectedVoucher.valor?.toFixed(2)}</p>
                   </div>
 
-                  {!voucher.utilizado && (
+                  {!selectedVoucher.utilizado && (
                     <button
-                      onClick={validarVoucher}
-                      disabled={loading}
-                      className="px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg transition flex items-center gap-2 disabled:opacity-50 text-lg font-semibold"
+                      onClick={() => validarVoucher(selectedVoucher)}
+                      disabled={validating}
+                      className="px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg transition flex items-center gap-2 disabled:opacity-50 font-semibold"
                     >
-                      <CheckCircle className="w-5 h-5" />
+                      {validating ? (
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <CheckCircle className="w-5 h-5" />
+                      )}
                       Validar Voucher
                     </button>
                   )}
@@ -306,8 +449,8 @@ export default function ValidarVoucher() {
               </div>
             </div>
           </div>
-        )}
-      </main>
+        </div>
+      )}
     </div>
   );
 }
