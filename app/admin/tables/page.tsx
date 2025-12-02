@@ -16,8 +16,23 @@ import {
   CheckCircle,
   AlertCircle,
   RefreshCw,
-  X
+  X,
+  MapPin
 } from 'lucide-react';
+
+type TableArea = 'interno' | 'semi-externo' | 'externo';
+
+const AREA_NAMES: Record<TableArea, string> = {
+  'interno': 'Interno',
+  'semi-externo': 'Semi Externo',
+  'externo': 'Externo',
+};
+
+const AREA_DESCRIPTIONS: Record<TableArea, string> = {
+  'interno': 'Mesas 01-25',
+  'semi-externo': 'Mesas 26-37',
+  'externo': 'Mesas 38-51',
+};
 
 type Reservation = {
   id: string;
@@ -30,6 +45,9 @@ type Reservation = {
 
 type TableInfo = {
   tableNumber: number;
+  capacity: number;
+  area: TableArea;
+  areaName: string;
   occupied: boolean;
   reservation: Reservation | null;
   reservations: Reservation[];
@@ -38,6 +56,7 @@ type TableInfo = {
 type OccupancyData = {
   date: string;
   time: string;
+  area: string;
   tables: TableInfo[];
   summary: {
     total: number;
@@ -54,6 +73,7 @@ export default function AdminTables() {
   const [occupancyData, setOccupancyData] = useState<OccupancyData | null>(null);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('18:00');
+  const [selectedArea, setSelectedArea] = useState<TableArea | 'all'>('all');
   const [loading, setLoading] = useState(false);
   const [selectedTable, setSelectedTable] = useState<TableInfo | null>(null);
 
@@ -64,18 +84,15 @@ export default function AdminTables() {
       return;
     }
 
-    // Definir data de hoje como padrão
     const today = new Date().toISOString().split('T')[0];
     setSelectedDate(today);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (selectedDate && selectedTime) {
       loadOccupancy();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedDate, selectedTime]);
+  }, [selectedDate, selectedTime, selectedArea]);
 
   const loadOccupancy = async () => {
     setLoading(true);
@@ -86,6 +103,7 @@ export default function AdminTables() {
         body: JSON.stringify({
           data: selectedDate,
           horario: selectedTime,
+          area: selectedArea === 'all' ? null : selectedArea,
         }),
       });
 
@@ -114,22 +132,32 @@ export default function AdminTables() {
   };
 
   const getStatusBadge = (status: string) => {
-    const styles = {
+    const styles: Record<string, string> = {
       pending: 'bg-yellow-900/30 text-yellow-400 border-yellow-800',
       confirmed: 'bg-green-900/30 text-green-400 border-green-800',
     };
 
-    const labels = {
+    const labels: Record<string, string> = {
       pending: 'Pendente',
       confirmed: 'Confirmada',
     };
 
     return (
-      <span className={`px-2 py-1 rounded text-xs border ${styles[status as keyof typeof styles]}`}>
-        {labels[status as keyof typeof labels] || status}
+      <span className={`px-2 py-1 rounded text-xs border ${styles[status] || ''}`}>
+        {labels[status] || status}
       </span>
     );
   };
+
+  // Agrupar mesas por área para exibição
+  const groupedTables = occupancyData?.tables.reduce((acc, table) => {
+    const area = table.area;
+    if (!acc[area]) {
+      acc[area] = [];
+    }
+    acc[area].push(table);
+    return acc;
+  }, {} as Record<TableArea, TableInfo[]>);
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -173,14 +201,14 @@ export default function AdminTables() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Mapa de Mesas</h1>
           <p className="text-zinc-400">
-            Visualize a ocupação das mesas por data.
-            <span className="text-orange-400 ml-2">Limite: 15 mesas e 60 pessoas por dia</span>
+            Visualize a ocupação das mesas por data e área.
+            <span className="text-orange-400 ml-2">48 mesas disponíveis (3 áreas)</span>
           </p>
         </div>
 
         {/* Filters */}
         <div className="bg-zinc-900 rounded-lg p-6 border border-zinc-800 mb-6">
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-4 gap-4">
             <div>
               <label className="block text-sm font-medium mb-2 flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-[#E53935]" />
@@ -207,6 +235,23 @@ export default function AdminTables() {
                 {horarios.map(h => (
                   <option key={h} value={h}>{h}</option>
                 ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2 flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-[#E53935]" />
+                Área
+              </label>
+              <select
+                value={selectedArea}
+                onChange={(e) => setSelectedArea(e.target.value as TableArea | 'all')}
+                className="w-full px-4 py-2 bg-black border border-zinc-700 rounded-lg focus:outline-none focus:border-[#E53935] text-white"
+              >
+                <option value="all">Todas as Áreas</option>
+                <option value="interno">Interno (01-25)</option>
+                <option value="semi-externo">Semi Externo (26-37)</option>
+                <option value="externo">Externo (38-51)</option>
               </select>
             </div>
 
@@ -279,14 +324,15 @@ export default function AdminTables() {
                 Mesas - {new Date(selectedDate + 'T00:00:00').toLocaleDateString('pt-BR')}
               </h2>
               <p className="text-sm text-zinc-400 mb-4">
-                Mostrando reservas de {selectedTime} • As mesas são compartilhadas por TODOS os horários do dia
+                Mostrando reservas de {selectedTime}
+                {selectedArea !== 'all' && ` • Área: ${AREA_NAMES[selectedArea as TableArea]}`}
               </p>
 
               {/* Legend */}
               <div className="flex flex-wrap gap-4 text-sm">
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 bg-green-900/30 border border-green-800 rounded"></div>
-                  <span className="text-zinc-400">Disponível no dia</span>
+                  <span className="text-zinc-400">Disponível</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 bg-yellow-900/30 border border-yellow-800 rounded"></div>
@@ -299,30 +345,69 @@ export default function AdminTables() {
               </div>
             </div>
 
-            {/* Table Grid */}
-            <div className="grid grid-cols-5 gap-4">
-              {occupancyData.tables.map(table => (
-                <button
-                  key={table.tableNumber}
-                  onClick={() => setSelectedTable(table)}
-                  className={`
-                    aspect-square rounded-lg border-2 flex flex-col items-center justify-center
-                    transition-all cursor-pointer
-                    ${getTableColor(table)}
-                  `}
-                >
-                  <span className="text-2xl font-bold mb-1">{table.tableNumber}</span>
-                  {table.occupied ? (
-                    <>
-                      <Users className="w-5 h-5 mb-1" />
-                      <span className="text-xs">{table.reservation?.people}p</span>
-                    </>
-                  ) : (
-                    <span className="text-xs text-zinc-500">4p</span>
-                  )}
-                </button>
-              ))}
-            </div>
+            {/* Table Grid by Area */}
+            {selectedArea === 'all' && groupedTables ? (
+              <div className="space-y-8">
+                {(['interno', 'semi-externo', 'externo'] as TableArea[]).map(area => (
+                  groupedTables[area] && groupedTables[area].length > 0 && (
+                    <div key={area}>
+                      <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-[#E53935]" />
+                        {AREA_NAMES[area]}
+                        <span className="text-sm font-normal text-zinc-400">({AREA_DESCRIPTIONS[area]})</span>
+                      </h3>
+                      <div className="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-11 gap-3">
+                        {groupedTables[area].map(table => (
+                          <button
+                            key={table.tableNumber}
+                            onClick={() => setSelectedTable(table)}
+                            className={`
+                              aspect-square rounded-lg border-2 flex flex-col items-center justify-center
+                              transition-all cursor-pointer
+                              ${getTableColor(table)}
+                            `}
+                          >
+                            <span className="text-lg font-bold mb-0.5">{table.tableNumber}</span>
+                            {table.occupied ? (
+                              <>
+                                <Users className="w-4 h-4 mb-0.5" />
+                                <span className="text-xs">{table.reservation?.people}p</span>
+                              </>
+                            ) : (
+                              <span className="text-xs text-zinc-500">{table.capacity}p</span>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-4">
+                {occupancyData.tables.map(table => (
+                  <button
+                    key={table.tableNumber}
+                    onClick={() => setSelectedTable(table)}
+                    className={`
+                      aspect-square rounded-lg border-2 flex flex-col items-center justify-center
+                      transition-all cursor-pointer
+                      ${getTableColor(table)}
+                    `}
+                  >
+                    <span className="text-2xl font-bold mb-1">{table.tableNumber}</span>
+                    {table.occupied ? (
+                      <>
+                        <Users className="w-5 h-5 mb-1" />
+                        <span className="text-xs">{table.reservation?.people}p</span>
+                      </>
+                    ) : (
+                      <span className="text-xs text-zinc-500">{table.capacity}p</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         ) : (
           <div className="bg-zinc-900 rounded-lg p-12 border border-zinc-800 text-center">
@@ -337,7 +422,10 @@ export default function AdminTables() {
           <div className="bg-zinc-900 rounded-lg max-w-md w-full border border-zinc-800">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold">Mesa {selectedTable.tableNumber}</h2>
+                <div>
+                  <h2 className="text-2xl font-bold">Mesa {selectedTable.tableNumber}</h2>
+                  <p className="text-sm text-zinc-400">{selectedTable.areaName}</p>
+                </div>
                 <button
                   onClick={() => setSelectedTable(null)}
                   className="text-zinc-400 hover:text-white"
@@ -350,7 +438,7 @@ export default function AdminTables() {
                 <div className="space-y-4">
                   <div className="bg-orange-900/20 border border-orange-800 rounded-lg p-3 mb-4">
                     <p className="text-sm text-orange-400">
-                      Esta mesa possui {selectedTable.reservations.length} reserva(s) neste dia
+                      Esta mesa possui {selectedTable.reservations.length} reserva(s) neste horário
                     </p>
                   </div>
 
@@ -393,11 +481,11 @@ export default function AdminTables() {
                   <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
                   <p className="text-lg font-semibold mb-2">Mesa Disponível</p>
                   <p className="text-zinc-400 text-sm">
-                    Esta mesa está livre neste dia
+                    Esta mesa está livre neste horário
                   </p>
                   <div className="mt-4 p-4 bg-black rounded-lg">
                     <p className="text-sm text-zinc-400">Capacidade</p>
-                    <p className="text-2xl font-bold">4 pessoas</p>
+                    <p className="text-2xl font-bold">{selectedTable.capacity} pessoas</p>
                   </div>
                 </div>
               )}

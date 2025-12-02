@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-
-const TOTAL_TABLES = 15;
+import { ALL_TABLES, TOTAL_TABLES, TableArea, getTablesByArea, AREA_NAMES } from '@/lib/tables-config';
 
 export async function POST(request: Request) {
   try {
-    const { data, horario } = await request.json();
+    const { data, horario, area } = await request.json();
 
     if (!data) {
       return NextResponse.json(
@@ -15,13 +14,11 @@ export async function POST(request: Request) {
     }
 
     // Buscar todas as reservas CONFIRMADAS para a DATA
-    // Apenas reservas confirmadas (com pagamento) aparecem no mapa
-    const whereClause: any = {
+    const whereClause: Record<string, unknown> = {
       data,
-      status: 'confirmed' // Apenas confirmadas
+      status: 'confirmed'
     };
 
-    // Se horário for fornecido, filtra também por horário (apenas para visualização)
     if (horario) {
       whereClause.horario = horario;
     }
@@ -40,8 +37,14 @@ export async function POST(request: Request) {
     });
 
     // Criar mapa de mesas com informações
-    // Uma mesa pode ter múltiplas reservas (diferentes horários)
-    const tableMap = new Map<number, any[]>();
+    const tableMap = new Map<number, Array<{
+      id: string;
+      code: string;
+      name: string;
+      people: number;
+      status: string;
+      horario: string;
+    }>>();
 
     reservations.forEach(reservation => {
       if (reservation.mesasSelecionadas) {
@@ -66,37 +69,50 @@ export async function POST(request: Request) {
       }
     });
 
-    // Criar array completo de mesas (1-15)
-    const tables = Array.from({ length: TOTAL_TABLES }, (_, i) => {
-      const tableNumber = i + 1;
-      const reservationsForTable = tableMap.get(tableNumber);
+    // Filtrar mesas por área se especificada
+    const tablesToShow = area
+      ? getTablesByArea(area as TableArea)
+      : ALL_TABLES;
+
+    // Criar array de mesas com status de ocupação
+    const tables = tablesToShow.map(tableConfig => {
+      const reservationsForTable = tableMap.get(tableConfig.number);
 
       if (reservationsForTable && reservationsForTable.length > 0) {
         return {
-          tableNumber,
+          tableNumber: tableConfig.number,
+          capacity: tableConfig.capacity,
+          area: tableConfig.area,
+          areaName: AREA_NAMES[tableConfig.area],
           occupied: true,
           reservations: reservationsForTable,
-          // Para compatibilidade, manter a primeira reserva como "reservation"
           reservation: reservationsForTable[0],
         };
       }
 
       return {
-        tableNumber,
+        tableNumber: tableConfig.number,
+        capacity: tableConfig.capacity,
+        area: tableConfig.area,
+        areaName: AREA_NAMES[tableConfig.area],
         occupied: false,
         reservations: [],
         reservation: null,
       };
     });
 
+    // Contar ocupação
+    const occupiedCount = tables.filter(t => t.occupied).length;
+
     return NextResponse.json({
       date: data,
       time: horario,
+      area: area || 'all',
       tables,
       summary: {
-        total: TOTAL_TABLES,
-        occupied: tableMap.size,
-        available: TOTAL_TABLES - tableMap.size,
+        total: tablesToShow.length,
+        occupied: occupiedCount,
+        available: tablesToShow.length - occupiedCount,
         totalPeople: reservations.reduce((sum, r) => sum + r.numeroPessoas, 0),
       }
     });

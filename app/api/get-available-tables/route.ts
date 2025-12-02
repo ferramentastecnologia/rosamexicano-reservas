@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { ALL_TABLES, TOTAL_TABLES, getTableCapacity } from '@/lib/tables-config';
+import { ALL_TABLES, TOTAL_TABLES, TableArea, getTablesByArea } from '@/lib/tables-config';
 
 export async function POST(request: Request) {
   try {
-    const { data, horario } = await request.json();
+    const { data, horario, area } = await request.json();
 
     if (!data) {
       return NextResponse.json(
@@ -39,8 +39,13 @@ export async function POST(request: Request) {
       }
     });
 
-    // Criar array de todas as mesas com status usando configuração real
-    const tables = ALL_TABLES.map(tableConfig => ({
+    // Filtrar mesas por área se especificada
+    const tablesToShow = area
+      ? getTablesByArea(area as TableArea)
+      : ALL_TABLES;
+
+    // Criar array de mesas com status
+    const tables = tablesToShow.map(tableConfig => ({
       number: tableConfig.number,
       available: !occupiedTables.has(tableConfig.number),
       capacity: tableConfig.capacity,
@@ -56,10 +61,11 @@ export async function POST(request: Request) {
     return NextResponse.json({
       tables,
       summary: {
-        totalTables: TOTAL_TABLES,
+        totalTables: tablesToShow.length,
         availableTables: availableTablesList.length,
-        occupiedTables: occupiedTables.size,
+        occupiedTables: tables.length - availableTablesList.length,
         totalCapacity,
+        area: area || 'all',
       }
     }, {
       headers: {
@@ -70,8 +76,15 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Erro ao buscar mesas disponíveis:', error);
 
-    // Em caso de erro, retornar mesas padrão vazias usando configuração real
-    const tables = ALL_TABLES.map(tableConfig => ({
+    const { area } = await request.json().catch(() => ({ area: null }));
+
+    // Filtrar mesas por área se especificada
+    const tablesToShow = area
+      ? getTablesByArea(area as TableArea)
+      : ALL_TABLES;
+
+    // Em caso de erro, retornar mesas como disponíveis
+    const tables = tablesToShow.map(tableConfig => ({
       number: tableConfig.number,
       available: true,
       capacity: tableConfig.capacity,
@@ -84,10 +97,11 @@ export async function POST(request: Request) {
     return NextResponse.json({
       tables,
       summary: {
-        totalTables: TOTAL_TABLES,
-        availableTables: TOTAL_TABLES,
+        totalTables: tablesToShow.length,
+        availableTables: tablesToShow.length,
         occupiedTables: 0,
         totalCapacity,
+        area: area || 'all',
       },
       warning: 'Não foi possível verificar reservas existentes. Mostrando todas as mesas como disponíveis.'
     });
