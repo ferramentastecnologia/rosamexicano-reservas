@@ -83,7 +83,7 @@ export async function POST(request: Request) {
     const paymentData = {
       customer: customer.id,
       billingType: 'PIX', // Apenas PIX disponível
-      value: 5.00,
+      value: 50.00,
       dueDate: dueDate.toISOString().split('T')[0],
       description: `Reserva Rosa Mexicano - ${dataReserva} às ${horario} - ${numeroPessoas} pessoas`,
       externalReference: externalRef,
@@ -126,7 +126,7 @@ export async function POST(request: Request) {
         horario: horario,
         numeroPessoas: numeroPessoas,
         mesasSelecionadas: mesasSelecionadas || null,
-        valor: 5.00,
+        valor: 50.00,
         status: 'pending',
       },
     });

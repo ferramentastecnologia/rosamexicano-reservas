@@ -49,7 +49,7 @@ export default function PagamentoDemoContent() {
             <h2 className="text-xl font-semibold mb-4">Resumo do Pedido</h2>
             <div className="flex justify-between items-center">
               <span className="text-zinc-400">Reserva de Mesa</span>
-              <span className="text-2xl font-bold text-[#E53935]">R$ 5,00</span>
+              <span className="text-2xl font-bold text-[#E53935]">R$ 50,00</span>
             </div>
             <p className="text-sm text-zinc-500 mt-2">
               * Valor 100% conversível em consumação

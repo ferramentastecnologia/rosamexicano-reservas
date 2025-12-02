@@ -209,7 +209,7 @@ function PagamentoContent() {
     );
   }
 
-  const valor = 'R$ 5,00'; // mesmo valor usado na API (value: 5.00)
+  const valor = 'R$ 50,00'; // mesmo valor usado na API (value: 50.00)
 
   return (
     <div className="min-h-screen bg-black text-white">
