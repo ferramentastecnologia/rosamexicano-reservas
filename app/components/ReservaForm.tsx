@@ -302,7 +302,7 @@ export default function ReservaForm() {
               <div className="bg-black rounded-lg p-6 border border-zinc-700">
                 <div className="flex items-center justify-between pb-4 border-b border-zinc-700 mb-4">
                   <span className="text-lg text-zinc-400">Valor da Reserva:</span>
-                  <span className="text-3xl font-bold text-[#E53935]">R$ 50,00</span>
+                  <span className="text-3xl font-bold text-[#E53935]">R$ 5,00</span>
                 </div>
 
                 <div className="bg-zinc-800 rounded-lg p-4 mb-6">
@@ -313,7 +313,7 @@ export default function ReservaForm() {
                     Este valor retorna integralmente no dia da sua reserva
                   </p>
                   <p className="text-xs text-yellow-400 border-t border-zinc-700 pt-2 mt-2">
-                    ⚠️ <strong>Importante:</strong> Em caso de não comparecimento, o valor de R$ 50,00 ficará retido
+                    ⚠️ <strong>Importante:</strong> Em caso de não comparecimento, o valor de R$ 5,00 ficará retido
                   </p>
                 </div>
 

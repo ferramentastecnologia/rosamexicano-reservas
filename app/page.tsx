@@ -58,7 +58,7 @@ export default function Home() {
             </h2>
             <p className="text-lg md:text-xl text-zinc-200 mb-10 max-w-2xl mx-auto font-light leading-relaxed">
               Reserve sua mesa e garanta momentos inesquecíveis em nosso ambiente acolhedor.<br />
-              <span className="text-[#E53935] font-medium">R$ 50,00</span> <span className="text-sm">de reserva convertidos em consumação</span>
+              <span className="text-[#E53935] font-medium">R$ 5,00</span> <span className="text-sm">de reserva convertidos em consumação</span>
             </p>
             <div className="flex flex-wrap justify-center gap-8 text-sm text-zinc-300 border-t border-zinc-700 pt-6 max-w-2xl mx-auto">
               <div className="flex items-center gap-2">
@@ -151,7 +151,7 @@ export default function Home() {
                   <div className="flex items-start gap-2 md:col-span-2">
                     <Check className="w-4 h-4 text-yellow-500 flex-shrink-0 mt-0.5" />
                     <span className="text-zinc-300">
-                      <strong className="text-yellow-400">R$ 50,00 retido</strong> em caso de não comparecimento
+                      <strong className="text-yellow-400">R$ 5,00 retido</strong> em caso de não comparecimento
                     </span>
                   </div>
                 </div>
@@ -182,7 +182,7 @@ export default function Home() {
                   2
                 </div>
                 <div>
-                  <h4 className="text-xl font-semibold mb-2">Pagamento de R$ 50,00</h4>
+                  <h4 className="text-xl font-semibold mb-2">Pagamento de R$ 5,00</h4>
                   <p className="text-zinc-400">Valor simbólico que retorna 100% em consumação</p>
                 </div>
               </div>
