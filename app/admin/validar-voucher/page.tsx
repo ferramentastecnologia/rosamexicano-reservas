@@ -11,7 +11,6 @@ import {
   LogOut,
   LayoutDashboard,
   List,
-  TableIcon,
   BarChart3,
   QrCode,
   User,
@@ -155,27 +154,21 @@ export default function ValidarVoucher() {
       {/* Navigation */}
       <nav className="bg-zinc-900 border-b border-zinc-800">
         <div className="container mx-auto px-4">
-          <div className="flex gap-6">
-            <Link
-              href="/admin/dashboard"
-              className="flex items-center gap-2 px-4 py-3 border-b-2 border-transparent text-zinc-400 hover:text-white transition"
-            >
-              <LayoutDashboard className="w-4 h-4" />
-              Dashboard
+          <div className="flex gap-6 overflow-x-auto">
+            <Link href="/admin/dashboard" className="flex items-center gap-2 px-4 py-3 border-b-2 border-transparent text-zinc-400 hover:text-white transition whitespace-nowrap">
+              <LayoutDashboard className="w-4 h-4" />Dashboard
             </Link>
-            <Link
-              href="/admin/reservations"
-              className="flex items-center gap-2 px-4 py-3 border-b-2 border-transparent text-zinc-400 hover:text-white transition"
-            >
-              <List className="w-4 h-4" />
-              Reservas
+            <Link href="/admin/reservations" className="flex items-center gap-2 px-4 py-3 border-b-2 border-transparent text-zinc-400 hover:text-white transition whitespace-nowrap">
+              <List className="w-4 h-4" />Reservas
             </Link>
-            <Link
-              href="/admin/validar-voucher"
-              className="flex items-center gap-2 px-4 py-3 border-b-2 border-[#E53935] text-white"
-            >
-              <QrCode className="w-4 h-4" />
-              Validar Voucher
+            <Link href="/admin/validar-voucher" className="flex items-center gap-2 px-4 py-3 border-b-2 border-[#E53935] text-white whitespace-nowrap">
+              <QrCode className="w-4 h-4" />Voucher
+            </Link>
+            <Link href="/admin/reports" className="flex items-center gap-2 px-4 py-3 border-b-2 border-transparent text-zinc-400 hover:text-white transition whitespace-nowrap">
+              <BarChart3 className="w-4 h-4" />Relatórios
+            </Link>
+            <Link href="/admin/usuarios" className="flex items-center gap-2 px-4 py-3 border-b-2 border-transparent text-zinc-400 hover:text-white transition whitespace-nowrap">
+              <Users className="w-4 h-4" />Usuários
             </Link>
           </div>
         </div>
