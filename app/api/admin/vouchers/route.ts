@@ -1,11 +1,19 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-// Listar todos os vouchers
+// Listar todos os vouchers - otimizado
 export async function GET() {
   try {
+    // Selecionar apenas campos necessários (excluindo qrCodeData que é grande)
     const vouchers = await prisma.voucher.findMany({
-      include: {
+      select: {
+        id: true,
+        codigo: true,
+        valor: true,
+        utilizado: true,
+        dataUtilizacao: true,
+        dataValidade: true,
+        createdAt: true,
         reservation: {
           select: {
             id: true,
@@ -28,16 +36,11 @@ export async function GET() {
 
     return NextResponse.json({
       total: vouchers.length,
-      vouchers: vouchers.map(v => ({
-        id: v.id,
-        codigo: v.codigo,
-        valor: v.valor,
-        utilizado: v.utilizado,
-        dataUtilizacao: v.dataUtilizacao,
-        dataValidade: v.dataValidade,
-        createdAt: v.createdAt,
-        reservation: v.reservation
-      }))
+      vouchers
+    }, {
+      headers: {
+        'Cache-Control': 'private, max-age=15, stale-while-revalidate=30',
+      }
     });
   } catch (error) {
     console.error('Erro ao listar vouchers:', error);

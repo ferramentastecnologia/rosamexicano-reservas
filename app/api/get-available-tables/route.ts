@@ -52,6 +52,7 @@ export async function POST(request: Request) {
     const availableTablesList = tables.filter(t => t.available);
     const totalCapacity = availableTablesList.reduce((sum, t) => sum + t.capacity, 0);
 
+    // Adicionar headers de cache para melhorar performance
     return NextResponse.json({
       tables,
       summary: {
@@ -59,6 +60,10 @@ export async function POST(request: Request) {
         availableTables: availableTablesList.length,
         occupiedTables: occupiedTables.size,
         totalCapacity,
+      }
+    }, {
+      headers: {
+        'Cache-Control': 'private, max-age=10, stale-while-revalidate=30',
       }
     });
 

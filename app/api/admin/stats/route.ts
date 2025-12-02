@@ -3,71 +3,72 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
-    // Total de reservas
-    const totalReservations = await prisma.reservation.count();
-
-    // Reservas confirmadas
-    const confirmedReservations = await prisma.reservation.count({
-      where: { status: 'confirmed' }
-    });
-
-    // Reservas pendentes
-    const pendingReservations = await prisma.reservation.count({
-      where: { status: 'pending' }
-    });
-
-    // Reservas canceladas
-    const cancelledReservations = await prisma.reservation.count({
-      where: { status: 'cancelled' }
-    });
-
-    // Receita total (em centavos)
-    const reservations = await prisma.reservation.findMany({
-      where: {
-        status: {
-          in: ['pending', 'confirmed']
-        }
-      },
-      select: {
-        valor: true
-      }
-    });
-
-    const totalRevenue = reservations.reduce((sum, r) => sum + (r.valor * 100), 0);
-
-    // Total de pessoas
-    const allReservations = await prisma.reservation.findMany({
-      where: {
-        status: {
-          in: ['pending', 'confirmed']
-        }
-      },
-      select: {
-        numeroPessoas: true
-      }
-    });
-
-    const totalPeople = allReservations.reduce((sum, r) => sum + r.numeroPessoas, 0);
-
-    // Reservas de hoje
     const today = new Date().toISOString().split('T')[0];
-    const todayReservations = await prisma.reservation.count({
-      where: {
-        data: today,
-        status: {
-          in: ['pending', 'confirmed']
+
+    // Uma única query que busca tudo de uma vez
+    const [statsResult, todayCount] = await Promise.all([
+      // Query principal com agregação
+      prisma.reservation.groupBy({
+        by: ['status'],
+        _count: { id: true },
+        _sum: { valor: true, numeroPessoas: true },
+      }),
+      // Query para reservas de hoje (separada pois precisa de filtro de data)
+      prisma.reservation.count({
+        where: {
+          data: today,
+          status: { in: ['pending', 'confirmed', 'approved'] }
         }
+      })
+    ]);
+
+    // Processar resultados
+    let totalReservations = 0;
+    let confirmedReservations = 0;
+    let approvedReservations = 0;
+    let pendingReservations = 0;
+    let cancelledReservations = 0;
+    let totalRevenue = 0;
+    let totalPeople = 0;
+
+    statsResult.forEach(stat => {
+      const count = stat._count.id;
+      totalReservations += count;
+
+      switch (stat.status) {
+        case 'confirmed':
+          confirmedReservations = count;
+          totalRevenue += (stat._sum.valor || 0) * 100;
+          totalPeople += stat._sum.numeroPessoas || 0;
+          break;
+        case 'approved':
+          approvedReservations = count;
+          totalRevenue += (stat._sum.valor || 0) * 100;
+          totalPeople += stat._sum.numeroPessoas || 0;
+          break;
+        case 'pending':
+          pendingReservations = count;
+          totalRevenue += (stat._sum.valor || 0) * 100;
+          totalPeople += stat._sum.numeroPessoas || 0;
+          break;
+        case 'cancelled':
+          cancelledReservations = count;
+          break;
       }
     });
 
     return NextResponse.json({
       totalReservations,
-      confirmedReservations,
+      confirmedReservations: confirmedReservations + approvedReservations,
       pendingReservations,
       cancelledReservations,
       totalRevenue,
       totalPeople,
-      todayReservations,
+      todayReservations: todayCount,
+    }, {
+      headers: {
+        'Cache-Control': 'private, max-age=30, stale-while-revalidate=60',
+      }
     });
 
   } catch (error) {
