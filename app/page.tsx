@@ -269,8 +269,8 @@ export default function Home() {
               <div className="space-y-4">
                 <h4 className="text-xl font-semibold text-[#E53935]">Localização</h4>
                 <p className="text-zinc-300">
-                  Rua 7 de Setembro, 1234<br />
-                  Centro, Blumenau/SC
+                  Rua Carlos Rischbieter, 64<br />
+                  Victor Konder, Blumenau/SC
                 </p>
 
                 <h4 className="text-xl font-semibold text-[#E53935] mt-6">Contato</h4>
@@ -304,20 +304,20 @@ export default function Home() {
             {/* Mapa do Google Maps */}
             <div className="w-full h-[450px] rounded-lg overflow-hidden border-2 border-[#E53935]/30 shadow-2xl">
               <iframe
-                src="https://www.google.com/maps?q=Rua+7+de+Setembro,+1234+-+Centro,+Blumenau+-+SC&output=embed"
+                src="https://www.google.com/maps?q=Rua+Carlos+Rischbieter,+64+-+Victor+Konder,+Blumenau+-+SC&output=embed"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                title="Rosa Mexicano - Rua 7 de Setembro, 1234 - Blumenau/SC"
+                title="Rosa Mexicano - Rua Carlos Rischbieter, 64 - Blumenau/SC"
               ></iframe>
             </div>
 
             <div className="text-center mt-6">
               <a
-                href="https://www.google.com/maps/dir/?api=1&destination=Rua+7+de+Setembro,+1234+-+Centro,+Blumenau+-+SC"
+                href="https://www.google.com/maps/dir/?api=1&destination=Rua+Carlos+Rischbieter,+64+-+Victor+Konder,+Blumenau+-+SC"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-[#E53935] hover:bg-[#B71C1C] text-white px-8 py-3 rounded-lg transition font-medium shadow-lg"
@@ -346,7 +346,7 @@ export default function Home() {
             />
             <p className="mb-2 text-white">© 2025 Rosa Mexicano Restaurante</p>
             <p className="text-sm">Sabor Autêntico Mexicano</p>
-            <p className="text-xs mt-4">Rua 7 de Setembro, 1234 - Centro, Blumenau/SC</p>
+            <p className="text-xs mt-4">Rua Carlos Rischbieter, 64 - Victor Konder, Blumenau/SC</p>
             <p className="text-xs mt-2">(47) 3333-4444 | WhatsApp: (47) 99999-8888</p>
           </div>
         </div>

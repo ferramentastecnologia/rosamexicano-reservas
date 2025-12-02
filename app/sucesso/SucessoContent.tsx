@@ -190,7 +190,7 @@ export default function SucessoContent() {
               <strong>Rosa Mexicano Restaurante</strong>
             </p>
             <p className="text-zinc-400 mb-4">
-              Rua 7 de Setembro, 1234 - Centro<br />
+              Rua Carlos Rischbieter, 64 - Victor Konder<br />
               Blumenau/SC
             </p>
             <div className="flex flex-wrap gap-4">
