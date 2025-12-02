@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Check, X, Users } from 'lucide-react';
+import { MesasSkeleton } from './Skeleton';
 
 type Mesa = {
   number: number;
@@ -181,9 +182,10 @@ export default function MapaMesas({ data, horario, numeroPessoas, onMesasSelect 
 
       {/* Mapa de Mesas */}
       {loading ? (
-        <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#E53935] mx-auto"></div>
-          <p className="text-zinc-400 mt-2 text-sm">Carregando mesas...</p>
+        <div className="grid grid-cols-5 gap-3">
+          {Array.from({ length: 15 }).map((_, i) => (
+            <div key={i} className="aspect-square rounded-lg bg-zinc-800 animate-pulse" />
+          ))}
         </div>
       ) : (
         <div>

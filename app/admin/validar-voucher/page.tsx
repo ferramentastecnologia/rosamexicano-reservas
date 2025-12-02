@@ -25,6 +25,7 @@ import {
   X,
   Table as TableIcon
 } from 'lucide-react';
+import { TableSkeleton } from '@/app/components/Skeleton';
 
 type VoucherData = {
   id: string;
@@ -268,9 +269,7 @@ export default function VouchersPage() {
 
         {/* Lista de Vouchers */}
         {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 animate-spin text-[#E53935]" />
-          </div>
+          <TableSkeleton rows={8} cols={8} />
         ) : filteredVouchers.length === 0 ? (
           <div className="text-center py-20 text-zinc-500">
             <QrCode className="w-16 h-16 mx-auto mb-4 opacity-50" />

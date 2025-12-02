@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { DashboardSkeleton } from '@/app/components/Skeleton';
 
 type Stats = {
   totalReservations: number;
@@ -66,8 +67,22 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#E53935]"></div>
+      <div className="min-h-screen bg-black text-white">
+        {/* Header skeleton */}
+        <header className="bg-zinc-900 border-b border-zinc-800">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="h-10 w-28 bg-zinc-800 rounded animate-pulse" />
+                <span className="text-sm text-zinc-600 border-l border-zinc-700 pl-4">
+                  Carregando...
+                </span>
+              </div>
+            </div>
+          </div>
+        </header>
+        <nav className="bg-zinc-900 border-b border-zinc-800 h-12" />
+        <DashboardSkeleton />
       </div>
     );
   }
