@@ -21,7 +21,7 @@ export default function Home() {
                 className="h-14 w-auto drop-shadow-lg"
               />
               <div className="hidden md:block border-l border-white/30 pl-4">
-                <p className="text-xs text-white/90 font-light tracking-wide">Restaurante Mexicano</p>
+                <p className="text-xs text-white/90 font-light tracking-wide">Rosa Mexicano</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
@@ -50,7 +50,7 @@ export default function Home() {
         <div className="container mx-auto px-4 relative z-10 py-32">
           <div className="max-w-4xl mx-auto text-center">
             <p className="text-sm md:text-base text-zinc-300 mb-4 tracking-widest uppercase font-light">
-              Restaurante Mexicano
+              Rosa Mexicano
             </p>
             <h2 className="text-4xl md:text-6xl font-serif mb-6 leading-tight text-shadow-lg font-normal">
               Celebre o Final do Ano<br />
