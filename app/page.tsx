@@ -20,10 +20,10 @@ export default function Home() {
             <Image
               src="/images/logo-rosa-mexicano.png"
               alt="Rosa Mexicano"
-              width={140}
-              height={47}
+              width={200}
+              height={200}
               priority
-              className="h-10 md:h-12 w-auto drop-shadow-lg"
+              className="h-14 md:h-20 w-auto drop-shadow-lg"
             />
           </div>
           <div className="flex items-center">
