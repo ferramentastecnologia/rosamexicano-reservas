@@ -350,6 +350,33 @@ export default function ReservaForm() {
                 ))}
               </div>
             </div>
+          </div>
+
+          {/* Coluna 2: Data e Horário */}
+          <div className="space-y-5">
+            <h4 className="text-lg font-light flex items-center gap-2 text-white/90">
+              <Calendar className="w-4 h-4 text-[#f98f21]" />
+              Data e Horário
+            </h4>
+
+            {/* Calendário */}
+            <div>
+              <input type="hidden" {...register('data', { required: 'Selecione uma data' })} />
+              <CalendarioReserva
+                onSelectDate={handleDateSelect}
+                selectedDate={selectedDate}
+              />
+              {errors.data && <p className={errorClasses}>{errors.data.message}</p>}
+              {selectedDate && (
+                <p className="text-[#f98f21] text-xs mt-2">
+                  {new Date(selectedDate + 'T00:00:00').toLocaleDateString('pt-BR', {
+                    weekday: 'long',
+                    day: '2-digit',
+                    month: 'long',
+                  })}
+                </p>
+              )}
+            </div>
 
             {/* Horário */}
             <div>
@@ -398,32 +425,6 @@ export default function ReservaForm() {
                 )}
               </div>
               {errors.horario && <p className={errorClasses}>{errors.horario.message}</p>}
-            </div>
-          </div>
-
-          {/* Coluna 2: Calendário (altura total) */}
-          <div className="flex flex-col h-full">
-            <h4 className="text-lg font-light flex items-center gap-2 text-white/90 mb-5">
-              <Calendar className="w-4 h-4 text-[#f98f21]" />
-              Data da Reserva
-            </h4>
-
-            <div className="flex-1">
-              <input type="hidden" {...register('data', { required: 'Selecione uma data' })} />
-              <CalendarioReserva
-                onSelectDate={handleDateSelect}
-                selectedDate={selectedDate}
-              />
-              {errors.data && <p className={errorClasses}>{errors.data.message}</p>}
-              {selectedDate && (
-                <p className="text-[#f98f21] text-xs mt-2">
-                  {new Date(selectedDate + 'T00:00:00').toLocaleDateString('pt-BR', {
-                    weekday: 'long',
-                    day: '2-digit',
-                    month: 'long',
-                  })}
-                </p>
-              )}
             </div>
           </div>
         </div>
