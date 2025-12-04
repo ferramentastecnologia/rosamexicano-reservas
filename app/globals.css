@@ -38,17 +38,24 @@ body {
 
 /* Glass effect para cards */
 .glass {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .glass-strong {
-  background: rgba(0, 0, 0, 0.4);
+  background: linear-gradient(135deg, rgba(215, 25, 25, 0.08) 0%, rgba(249, 143, 33, 0.05) 50%, rgba(255, 201, 91, 0.03) 100%);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Card com borda colorida */
+.card-mexican {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-image: linear-gradient(135deg, var(--rosa-red), var(--rosa-orange), var(--rosa-yellow)) 1;
 }
 
 /* Botão com gradiente mexicano */
