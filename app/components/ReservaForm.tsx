@@ -294,6 +294,49 @@ export default function ReservaForm() {
                 )}
               </div>
             </div>
+
+            {/* Resumo e Pagamento - visível apenas no desktop */}
+            <div className="hidden md:block border-t border-zinc-800 pt-6">
+              <h4 className="text-xl font-semibold mb-4">Resumo da Reserva</h4>
+
+              <div className="bg-black rounded-lg p-6 border border-zinc-700">
+                <div className="flex items-center justify-between pb-4 border-b border-zinc-700 mb-4">
+                  <span className="text-lg text-zinc-400">Valor da Reserva:</span>
+                  <span className="text-3xl font-bold text-[#E53935]">R$ 50,00</span>
+                </div>
+
+                <div className="bg-zinc-800 rounded-lg p-4 mb-6">
+                  <p className="text-sm text-zinc-300 mb-2">
+                    <strong className="text-[#E53935]">100% conversível</strong> em consumação
+                  </p>
+                  <p className="text-xs text-zinc-400 mb-2">
+                    Este valor retorna integralmente no dia da sua reserva
+                  </p>
+                  <p className="text-xs text-yellow-400 border-t border-zinc-700 pt-2 mt-2">
+                    ⚠️ <strong>Importante:</strong> Em caso de não comparecimento, o valor de R$ 50,00 ficará retido
+                  </p>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-[#E53935] hover:bg-[#B71C1C] text-white font-bold text-lg py-5 rounded-lg transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+                >
+                  {loading ? (
+                    'Processando...'
+                  ) : (
+                    <>
+                      <CreditCard className="w-6 h-6" />
+                      Continuar para Pagamento
+                    </>
+                  )}
+                </button>
+
+                <p className="text-xs text-center text-zinc-500 mt-3">
+                  Pagamento seguro via Asaas
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Coluna 2: Detalhes da Reserva */}
@@ -393,8 +436,8 @@ export default function ReservaForm() {
             </div>
           </div>
 
-          {/* Resumo e Pagamento - sempre por último */}
-          <div className="order-3 md:col-span-2 border-t border-zinc-800 pt-6">
+          {/* Resumo e Pagamento - visível apenas no mobile */}
+          <div className="order-3 md:hidden border-t border-zinc-800 pt-6">
             <h4 className="text-xl font-semibold mb-4">Resumo da Reserva</h4>
 
             <div className="bg-black rounded-lg p-6 border border-zinc-700">
