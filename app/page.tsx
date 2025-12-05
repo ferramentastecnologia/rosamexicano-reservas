@@ -137,7 +137,7 @@ export default function Home() {
         </section>
 
         {/* Linhas decorativas para cortar a foto */}
-        <div className="w-full h-16 bg-gradient-to-b from-black to-[#C2185B]/20 flex items-center justify-center overflow-hidden">
+        <div className="w-full h-12 bg-black flex items-center justify-center overflow-hidden">
           <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 1200 60" fill="none">
             <path d="M0,30 Q300,10 600,30 T1200,30" stroke="#C2185B" strokeWidth="3" opacity="0.8"/>
             <path d="M0,40 Q300,20 600,40 T1200,40" stroke="#BA68C8" strokeWidth="2" opacity="0.6"/>
@@ -145,8 +145,8 @@ export default function Home() {
           </svg>
         </div>
 
-        {/* Benefícios com cores */}
-        <section className="py-16 px-4 bg-gradient-to-b from-[#C2185B]/15 via-[#BA68C8]/12 to-[#FFD700]/10">
+        {/* Benefícios com cores - começa com rosa vibrante */}
+        <section className="py-16 px-4 bg-gradient-to-b from-[#C2185B]/25 via-[#BA68C8]/18 to-[#FFD700]/15">
           <div className="container mx-auto max-w-5xl">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
               Por que escolher o <span className="text-[#FFD700]">Rosa Mexicano</span>?
@@ -189,7 +189,7 @@ export default function Home() {
         </section>
 
         {/* Formulário de Reserva */}
-        <section id="reserva" className="py-16 px-4 bg-gradient-to-b from-[#BA68C8]/15 via-[#C2185B]/10 to-[#FFD700]/15">
+        <section id="reserva" className="py-16 px-4 bg-gradient-to-b from-[#FFD700]/15 via-[#C2185B]/18 to-[#BA68C8]/20">
           <div className="container mx-auto max-w-6xl">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -242,7 +242,7 @@ export default function Home() {
         </section>
 
         {/* Como Funciona */}
-        <section className="py-16 px-4 bg-gradient-to-b from-[#FFD700]/15 via-[#BA68C8]/10 to-[#C2185B]/15">
+        <section className="py-16 px-4 bg-gradient-to-b from-[#BA68C8]/20 via-[#FFD700]/15 to-[#C2185B]/18">
           <div className="container mx-auto max-w-3xl">
             <h3 className="text-2xl md:text-3xl font-bold text-center mb-10">
               Como <span className="text-[#FFD700]">funciona</span>?
@@ -278,7 +278,7 @@ export default function Home() {
         </section>
 
         {/* Galeria */}
-        <section className="py-16 px-4 bg-gradient-to-b from-[#C2185B]/15 via-[#FFD700]/10 to-[#BA68C8]/15">
+        <section className="py-16 px-4 bg-gradient-to-b from-[#C2185B]/18 via-[#BA68C8]/15 to-[#FFD700]/18">
           <div className="container mx-auto max-w-5xl">
             <h3 className="text-2xl md:text-3xl font-bold text-center mb-10">
               Nosso <span className="text-[#FFD700]">Ambiente</span>
@@ -314,7 +314,7 @@ export default function Home() {
         </section>
 
         {/* Localização */}
-        <section className="py-16 px-4 bg-gradient-to-b from-[#BA68C8]/15 via-[#C2185B]/10 to-[#FFD700]/15">
+        <section className="py-16 px-4 bg-gradient-to-b from-[#FFD700]/18 via-[#C2185B]/15 to-[#BA68C8]/20">
           <div className="container mx-auto max-w-5xl">
             <div className="shimmer-gradient bg-gradient-to-r from-[#C2185B]/20 via-[#BA68C8]/20 to-[#FFD700]/20 rounded-2xl p-6 md:p-8 border border-white/30 backdrop-blur-sm shadow-lg shadow-[#BA68C8]/15">
               <div className="grid md:grid-cols-2 gap-8">
@@ -382,7 +382,7 @@ export default function Home() {
         </section>
 
         {/* Footer */}
-        <footer className="py-10 px-4 bg-gradient-to-b from-[#C2185B]/10 to-[#BA68C8]/15 border-t border-white/20">
+        <footer className="py-10 px-4 bg-gradient-to-b from-[#BA68C8]/20 to-[#C2185B]/15 border-t border-white/20">
           <div className="container mx-auto text-center">
             <Image
               src="/images/logo-rosa-mexicano.png"
