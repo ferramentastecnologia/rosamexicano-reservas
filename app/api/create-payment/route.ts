@@ -54,6 +54,7 @@ export async function POST(request: Request) {
         name: nome,
         email: email,
         mobilePhone: cleanPhone,
+        cpfCnpj: '00000000000191', // CPF padrão quando não fornecido
       }),
     });
 
