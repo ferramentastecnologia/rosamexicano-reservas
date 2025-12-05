@@ -86,6 +86,21 @@ body {
   }
 }
 
+/* Animação de brilho dinâmico */
+@keyframes shimmer {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.shimmer-gradient {
+  background-size: 200% 200%;
+  animation: shimmer 8s ease-in-out infinite;
+}
+
 * {
   box-sizing: border-box;
 }

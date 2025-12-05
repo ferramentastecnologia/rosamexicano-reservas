@@ -126,7 +126,7 @@ export default function Home() {
         </section>
 
         {/* Benefícios com cores */}
-        <section className="py-16 px-4 bg-gradient-to-b from-[#C2185B] via-[#BA68C8] to-[#1a0505]">
+        <section className="py-16 px-4 bg-gradient-to-b from-[#C2185B]/20 via-[#BA68C8]/10 to-[#1a0505]">
           <div className="container mx-auto max-w-5xl">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
               Por que escolher o <span className="text-[#FFD700]">Rosa Mexicano</span>?
@@ -174,7 +174,7 @@ export default function Home() {
               </div>
 
               {/* Info Box colorido */}
-              <div className="max-w-3xl mx-auto mb-8 bg-gradient-to-r from-[#C2185B]/25 via-[#BA68C8]/25 to-[#FFD700]/25 rounded-2xl p-6 border border-white/30 backdrop-blur-sm shadow-lg shadow-[#C2185B]/15">
+              <div className="max-w-3xl mx-auto mb-8 shimmer-gradient bg-gradient-to-r from-[#C2185B]/25 via-[#BA68C8]/25 to-[#FFD700]/25 rounded-2xl p-6 border border-white/30 backdrop-blur-sm shadow-lg shadow-[#C2185B]/15">
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-xs">
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-[#BA68C8]" />
@@ -283,7 +283,7 @@ export default function Home() {
         {/* Localização */}
         <section className="py-16 px-4 bg-gradient-to-b from-[#C2185B]/15 via-[#1a0505] to-[#BA68C8]/15">
           <div className="container mx-auto max-w-5xl">
-            <div className="bg-gradient-to-r from-[#C2185B]/20 via-[#BA68C8]/20 to-[#FFD700]/20 rounded-2xl p-6 md:p-8 border border-white/30 backdrop-blur-sm shadow-lg shadow-[#BA68C8]/15">
+            <div className="shimmer-gradient bg-gradient-to-r from-[#C2185B]/20 via-[#BA68C8]/20 to-[#FFD700]/20 rounded-2xl p-6 md:p-8 border border-white/30 backdrop-blur-sm shadow-lg shadow-[#BA68C8]/15">
               <div className="grid md:grid-cols-2 gap-8">
                 <div>
                   <h3 className="text-2xl md:text-3xl font-bold mb-6">
