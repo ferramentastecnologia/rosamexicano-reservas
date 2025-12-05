@@ -77,11 +77,13 @@ export default function Home() {
               </p>
 
               {/* Destaque do valor */}
-              <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-2xl px-6 py-4 mb-8 border border-white/20">
-                <span className="text-4xl font-bold text-[#ffc95b]">R$ 50</span>
-                <div className="text-left">
-                  <p className="text-white text-sm font-medium">Taxa de reserva</p>
-                  <p className="text-[#25bcc0] text-xs">100% convertido em consumação</p>
+              <div className="inline-flex flex-col items-center gap-2 bg-white/10 backdrop-blur-md rounded-2xl px-8 py-5 mb-8 border border-white/20">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl font-bold text-[#ffc95b]">R$ 50</span>
+                  <span className="text-white/60 text-lg">de reserva</span>
+                </div>
+                <div className="bg-[#25bcc0] text-black font-bold text-sm px-4 py-1.5 rounded-full">
+                  ✓ 100% VIRA CONSUMAÇÃO
                 </div>
               </div>
 
