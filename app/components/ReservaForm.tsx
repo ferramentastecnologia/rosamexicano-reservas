@@ -217,60 +217,6 @@ export default function ReservaForm() {
               </p>
             </div>
 
-            {/* Seleção de Área */}
-            <div>
-              <label className={labelClasses}>
-                <MapPin className="w-3.5 h-3.5 inline mr-1.5 text-[#f98f21]" />
-                Área do Restaurante *
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                {(['interno', 'semi-externo', 'externo'] as TableArea[]).map((area) => (
-                  <button
-                    key={area}
-                    type="button"
-                    onClick={() => setSelectedArea(area)}
-                    className={`
-                      p-3 rounded-xl border transition-all duration-200 text-center
-                      ${selectedArea === area
-                        ? 'bg-gradient-to-r from-[#d71919] to-[#f98f21] border-transparent text-white shadow-lg'
-                        : 'bg-white/5 border-white/10 text-white/70 hover:border-[#f98f21]/50 hover:bg-white/10'
-                      }
-                    `}
-                  >
-                    <p className="font-medium text-xs">{AREA_NAMES[area]}</p>
-                    <p className="text-[10px] mt-0.5 opacity-70">{AREA_DESCRIPTIONS[area]}</p>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Coluna 2: Data e Horário */}
-          <div className="space-y-5">
-            <h4 className="text-lg font-light flex items-center gap-2 text-white/90">
-              <Calendar className="w-4 h-4 text-[#f98f21]" />
-              Data e Horário
-            </h4>
-
-            {/* Calendário */}
-            <div>
-              <input type="hidden" {...register('data', { required: 'Selecione uma data' })} />
-              <CalendarioReserva
-                onSelectDate={handleDateSelect}
-                selectedDate={selectedDate}
-              />
-              {errors.data && <p className={errorClasses}>{errors.data.message}</p>}
-              {selectedDate && (
-                <p className="text-[#f98f21] text-xs mt-2">
-                  {new Date(selectedDate + 'T00:00:00').toLocaleDateString('pt-BR', {
-                    weekday: 'long',
-                    day: '2-digit',
-                    month: 'long',
-                  })}
-                </p>
-              )}
-            </div>
-
             {/* Horário */}
             <div>
               <label className={labelClasses}>
@@ -320,9 +266,63 @@ export default function ReservaForm() {
               {errors.horario && <p className={errorClasses}>{errors.horario.message}</p>}
             </div>
           </div>
+
+          {/* Coluna 2: Data */}
+          <div className="space-y-5">
+            <h4 className="text-lg font-light flex items-center gap-2 text-white/90">
+              <Calendar className="w-4 h-4 text-[#f98f21]" />
+              Data da Reserva
+            </h4>
+
+            {/* Calendário */}
+            <div>
+              <input type="hidden" {...register('data', { required: 'Selecione uma data' })} />
+              <CalendarioReserva
+                onSelectDate={handleDateSelect}
+                selectedDate={selectedDate}
+              />
+              {errors.data && <p className={errorClasses}>{errors.data.message}</p>}
+              {selectedDate && (
+                <p className="text-[#f98f21] text-xs mt-2">
+                  {new Date(selectedDate + 'T00:00:00').toLocaleDateString('pt-BR', {
+                    weekday: 'long',
+                    day: '2-digit',
+                    month: 'long',
+                  })}
+                </p>
+              )}
+            </div>
+          </div>
         </div>
 
-        {/* Linha 2: Mapa de Mesas (largura total) */}
+        {/* Seleção de Área (largura total) */}
+        <div className="border-t border-white/10 pt-6">
+          <h4 className="text-lg font-light flex items-center gap-2 text-white/90 mb-4">
+            <MapPin className="w-4 h-4 text-[#f98f21]" />
+            Área do Restaurante
+          </h4>
+          <div className="grid grid-cols-3 gap-3">
+            {(['interno', 'semi-externo', 'externo'] as TableArea[]).map((area) => (
+              <button
+                key={area}
+                type="button"
+                onClick={() => setSelectedArea(area)}
+                className={`
+                  p-4 rounded-xl border transition-all duration-200 text-center
+                  ${selectedArea === area
+                    ? 'bg-gradient-to-r from-[#d71919] to-[#f98f21] border-transparent text-white shadow-lg'
+                    : 'bg-white/5 border-white/10 text-white/70 hover:border-[#f98f21]/50 hover:bg-white/10'
+                  }
+                `}
+              >
+                <p className="font-medium text-sm">{AREA_NAMES[area]}</p>
+                <p className="text-xs mt-1 opacity-70">{AREA_DESCRIPTIONS[area]}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Mapa de Mesas (largura total) */}
         <div className="border-t border-white/10 pt-6">
           <MapaMesas
             data={watchedData || ''}
