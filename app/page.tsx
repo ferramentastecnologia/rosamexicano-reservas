@@ -143,8 +143,8 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                   viewport={{ once: true }}
-                  className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 text-center border border-white/10 hover:border-white/20 transition-all hover:scale-105"
-                  style={{ borderTopColor: item.color, borderTopWidth: '3px' }}
+                  className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md rounded-2xl p-6 text-center border border-white/20 hover:border-white/40 transition-all hover:scale-105 hover:shadow-lg hover:shadow-[#C2185B]/20"
+                  style={{ borderTopColor: item.color, borderTopWidth: '4px' }}
                 >
                   <div className="text-4xl mb-4">{item.icon}</div>
                   <h4 className="text-lg font-bold mb-2" style={{ color: item.color }}>{item.title}</h4>
@@ -156,7 +156,7 @@ export default function Home() {
         </section>
 
         {/* Formulário de Reserva */}
-        <section id="reserva" className="py-16 px-4 bg-[#1a0505]">
+        <section id="reserva" className="py-16 px-4 bg-gradient-to-b from-[#1a0505] via-[#C2185B]/15 to-[#1a0505]">
           <div className="container mx-auto max-w-6xl">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -174,7 +174,7 @@ export default function Home() {
               </div>
 
               {/* Info Box colorido */}
-              <div className="max-w-3xl mx-auto mb-8 bg-gradient-to-r from-[#C2185B]/20 via-[#BA68C8]/20 to-[#FFD700]/20 rounded-2xl p-5 border border-white/10">
+              <div className="max-w-3xl mx-auto mb-8 bg-gradient-to-r from-[#C2185B]/25 via-[#BA68C8]/25 to-[#FFD700]/25 rounded-2xl p-6 border border-white/30 backdrop-blur-sm shadow-lg shadow-[#C2185B]/15">
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-xs">
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-[#BA68C8]" />
@@ -209,7 +209,7 @@ export default function Home() {
         </section>
 
         {/* Como Funciona */}
-        <section className="py-16 px-4 bg-gradient-to-b from-[#1a0505] to-[#0f0808]">
+        <section className="py-16 px-4 bg-gradient-to-b from-[#BA68C8]/10 via-[#1a0505] to-[#BA68C8]/10">
           <div className="container mx-auto max-w-3xl">
             <h3 className="text-2xl md:text-3xl font-bold text-center mb-10">
               Como <span className="text-[#FFD700]">funciona</span>?
@@ -226,7 +226,7 @@ export default function Home() {
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: item.step * 0.1 }}
                   viewport={{ once: true }}
-                  className="flex gap-4 items-center bg-white/5 backdrop-blur-sm rounded-xl p-5 border border-white/10"
+                  className="flex gap-4 items-center bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-md rounded-xl p-5 border border-white/20 hover:border-white/40 transition-all hover:shadow-lg hover:shadow-[#BA68C8]/20"
                 >
                   <div
                     className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg"
@@ -245,7 +245,7 @@ export default function Home() {
         </section>
 
         {/* Galeria */}
-        <section className="py-16 px-4 bg-[#0f0808]">
+        <section className="py-16 px-4 bg-gradient-to-b from-[#FFD700]/10 via-[#1a0505] to-[#0f0808]">
           <div className="container mx-auto max-w-5xl">
             <h3 className="text-2xl md:text-3xl font-bold text-center mb-10">
               Nosso <span className="text-[#FFD700]">Ambiente</span>
@@ -281,9 +281,9 @@ export default function Home() {
         </section>
 
         {/* Localização */}
-        <section className="py-16 px-4 bg-gradient-to-b from-[#0f0808] to-[#1a0505]">
+        <section className="py-16 px-4 bg-gradient-to-b from-[#C2185B]/15 via-[#1a0505] to-[#BA68C8]/15">
           <div className="container mx-auto max-w-5xl">
-            <div className="bg-gradient-to-r from-[#C2185B]/10 via-[#BA68C8]/10 to-[#FFD700]/10 rounded-2xl p-6 md:p-8 border border-white/10">
+            <div className="bg-gradient-to-r from-[#C2185B]/20 via-[#BA68C8]/20 to-[#FFD700]/20 rounded-2xl p-6 md:p-8 border border-white/30 backdrop-blur-sm shadow-lg shadow-[#BA68C8]/15">
               <div className="grid md:grid-cols-2 gap-8">
                 <div>
                   <h3 className="text-2xl md:text-3xl font-bold mb-6">
@@ -349,7 +349,7 @@ export default function Home() {
         </section>
 
         {/* Footer */}
-        <footer className="py-10 px-4 bg-[#0a0303] border-t border-white/5">
+        <footer className="py-10 px-4 bg-gradient-to-b from-[#BA68C8]/10 to-[#C2185B]/10 border-t border-[#C2185B]/30">
           <div className="container mx-auto text-center">
             <Image
               src="/images/logo-rosa-mexicano.png"
