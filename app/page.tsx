@@ -98,7 +98,7 @@ export default function Home() {
                 <div className="flex flex-wrap justify-center gap-6 mt-6 text-sm text-white/80">
                   <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
                     <Calendar className="w-4 h-4 text-[#ffc95b]" />
-                    <span>Até 31/12</span>
+                    <span>Até 30/12</span>
                   </div>
                   <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
                     <Users className="w-4 h-4 text-[#25bcc0]" />
