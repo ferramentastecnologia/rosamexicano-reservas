@@ -77,24 +77,35 @@ export default function Home() {
               </p>
 
               {/* Destaque do valor */}
-              <div className="inline-flex flex-col items-center gap-2 bg-white/10 backdrop-blur-md rounded-2xl px-8 py-5 mb-8 border border-white/20">
+              <motion.div
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{ duration: 3, repeat: Infinity }}
+                className="inline-flex flex-col items-center gap-2 bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-3xl px-10 py-7 mb-8 border border-white/30 shadow-2xl shadow-[#C2185B]/20"
+              >
                 <div className="flex items-center gap-3">
-                  <span className="text-4xl font-bold text-[#FFD700]">R$ 50</span>
-                  <span className="text-white/60 text-lg">de reserva</span>
+                  <span className="text-5xl font-bold text-[#FFD700]">R$ 50</span>
+                  <span className="text-white/70 text-lg">de reserva</span>
                 </div>
-                <div className="bg-gradient-to-r from-[#C2185B] to-[#BA68C8] text-white font-bold text-sm px-4 py-1.5 rounded-full">
+                <div className="bg-gradient-to-r from-[#C2185B] via-[#BA68C8] to-[#FFD700] text-white font-bold text-sm px-6 py-2 rounded-full shadow-lg">
                   ✓ 100% VIRA CONSUMAÇÃO
                 </div>
-              </div>
+              </motion.div>
 
               {/* Botão CTA */}
               <div className="flex flex-col items-center gap-4">
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={scrollToReserva}
-                  className="bg-gradient-to-r from-[#C2185B] to-[#FFD700] hover:from-[#a8155a] hover:to-[#e6c200] text-white font-bold text-lg px-10 py-4 rounded-full transition-all shadow-xl shadow-[#C2185B]/40 hover:scale-105"
+                  className="relative bg-gradient-to-r from-[#C2185B] to-[#FFD700] text-white font-bold text-lg px-12 py-4 rounded-full transition-all shadow-2xl shadow-[#C2185B]/50 hover:shadow-[#C2185B]/70 border border-white/20"
                 >
-                  Fazer Reserva Agora
-                </button>
+                  <span className="relative z-10">Fazer Reserva Agora</span>
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-[#C2185B]/50 to-[#FFD700]/50 rounded-full blur-lg -z-10"
+                    animate={{ opacity: [0.5, 0.8, 0.5] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  />
+                </motion.button>
 
                 {/* Stats */}
                 <div className="flex flex-wrap justify-center gap-6 mt-6 text-sm text-white/80">
@@ -143,12 +154,25 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                   viewport={{ once: true }}
-                  className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md rounded-2xl p-6 text-center border border-white/20 hover:border-white/40 transition-all hover:scale-105 hover:shadow-lg hover:shadow-[#C2185B]/20"
+                  whileHover={{ y: -8 }}
+                  className="relative bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-lg rounded-2xl p-7 text-center border border-white/30 hover:border-white/50 transition-all hover:shadow-2xl"
                   style={{ borderTopColor: item.color, borderTopWidth: '4px' }}
                 >
-                  <div className="text-4xl mb-4">{item.icon}</div>
+                  <motion.div
+                    animate={{ rotate: [0, 5, -5, 0] }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                    className="text-5xl mb-4"
+                  >
+                    {item.icon}
+                  </motion.div>
                   <h4 className="text-lg font-bold mb-2" style={{ color: item.color }}>{item.title}</h4>
-                  <p className="text-white/60 text-sm">{item.desc}</p>
+                  <p className="text-white/70 text-sm">{item.desc}</p>
+                  <motion.div
+                    className="absolute top-0 right-0 w-20 h-20 rounded-full blur-2xl -z-10"
+                    style={{ background: `${item.color}30` }}
+                    animate={{ opacity: [0.3, 0.6, 0.3] }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                  />
                 </motion.div>
               ))}
             </div>
