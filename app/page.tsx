@@ -126,7 +126,7 @@ export default function Home() {
         </section>
 
         {/* Benefícios com cores */}
-        <section className="py-16 px-4 bg-gradient-to-b from-black/80 to-[#1a0505]">
+        <section className="py-16 px-4 bg-gradient-to-b from-[#C2185B] via-[#BA68C8] to-[#1a0505]">
           <div className="container mx-auto max-w-5xl">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
               Por que escolher o <span className="text-[#FFD700]">Rosa Mexicano</span>?
