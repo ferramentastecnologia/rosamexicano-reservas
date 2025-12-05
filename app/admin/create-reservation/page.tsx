@@ -17,7 +17,6 @@ import {
   Users,
   Mail,
   Phone,
-  CreditCard,
   CheckCircle
 } from 'lucide-react';
 
@@ -32,7 +31,6 @@ export default function AdminCreateReservation() {
     nome: '',
     email: '',
     telefone: '',
-    cpfCnpj: '',
     data: '',
     horario: '18:00',
     numeroPessoas: 2,
@@ -248,20 +246,6 @@ export default function AdminCreateReservation() {
                   onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
                   className="w-full px-4 py-2 bg-black border border-zinc-700 rounded-lg focus:outline-none focus:border-[#E53935] text-white"
                   placeholder="(11) 99999-9999"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2 flex items-center gap-2">
-                  <CreditCard className="w-4 h-4 text-[#E53935]" />
-                  CPF/CNPJ (opcional)
-                </label>
-                <input
-                  type="text"
-                  value={formData.cpfCnpj}
-                  onChange={(e) => setFormData({ ...formData, cpfCnpj: e.target.value })}
-                  className="w-full px-4 py-2 bg-black border border-zinc-700 rounded-lg focus:outline-none focus:border-[#E53935] text-white"
-                  placeholder="000.000.000-00"
                 />
               </div>
             </div>
