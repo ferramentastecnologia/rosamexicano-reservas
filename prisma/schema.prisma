@@ -1,0 +1,67 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.0.x", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Reservation {
+  id                String   @id @default(cuid())
+  paymentId         String?  @unique
+  externalRef       String   @unique
+  nome              String
+  email             String
+  telefone          String
+  data              String
+  horario           String
+  numeroPessoas     Int
+  valor             Float
+  status            String   @default("pending")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  mesasSelecionadas String?
+  observacoes       String?
+  voucher           Voucher?
+
+  @@index([email])
+  @@index([data])
+  @@index([horario])
+  @@index([status])
+  @@index([data, horario])
+  @@index([data, status])
+}
+
+model Voucher {
+  id             String      @id @default(cuid())
+  reservationId  String      @unique
+  codigo         String      @unique
+  valor          Float
+  qrCodeData     String
+  utilizado      Boolean     @default(false)
+  dataUtilizacao DateTime?
+  dataValidade   DateTime
+  pdfUrl         String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  reservation    Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+
+  @@index([codigo])
+  @@index([utilizado])
+}
+
+model Admin {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  password    String
+  name        String
+  role        String   @default("user") // admin, user
+  permissions String   @default("[]") // JSON array: ["dashboard", "reservations", "voucher", "reports", "users"]
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([email])
+}

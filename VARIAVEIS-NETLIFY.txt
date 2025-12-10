@@ -1,0 +1,45 @@
+VARIÁVEIS DE AMBIENTE PARA O NETLIFY
+=====================================
+
+Copie e cole cada variável no Netlify (Show advanced → New variable)
+
+1. DATABASE_URL
+postgresql://postgres:ftnMPtXJTtyhJxNTVFsbiumeUAHhgRjp@crossover.proxy.rlwy.net:32833/railway
+
+2. ASAAS_API_URL
+https://api.asaas.com/v3
+
+3. ASAAS_API_KEY
+[PEGAR NO PAINEL DO ASAAS]
+
+4. NEXT_PUBLIC_SITE_URL
+https://mortadellareservas.netlify.app
+
+5. EMAIL_HOST
+smtp.gmail.com
+
+6. EMAIL_PORT
+587
+
+7. EMAIL_USER
+ferramentas.starken@gmail.com
+
+8. EMAIL_PASS
+[GERAR SENHA DE APP DO GMAIL]
+
+=====================================
+
+COMO PEGAR AS CREDENCIAIS:
+
+ASAAS_API_KEY:
+1. Acesse: https://www.asaas.com
+2. Login
+3. Configurações → Integrações → API
+4. Copie a API Key
+
+EMAIL_PASS (Senha de App do Gmail):
+1. Acesse: https://myaccount.google.com/security
+2. Ative "Verificação em 2 etapas" (se não tiver)
+3. Procure "Senhas de app"
+4. Crie uma senha para "Email"
+5. Copie a senha de 16 caracteres
