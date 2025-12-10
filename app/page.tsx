@@ -7,6 +7,8 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 
 export default function Home() {
+  const MAINTENANCE_MODE = true; // 🚧 MODO DE MANUTENÇÃO - DESATIVE PARA LIBERAR RESERVAS
+
   const scrollToReserva = () => {
     document.getElementById('reserva')?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -14,8 +16,17 @@ export default function Home() {
   return (
     <ShaderBackground>
       <div className="min-h-screen text-white">
+        {/* Banner de Manutenção */}
+        {MAINTENANCE_MODE && (
+          <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 text-white py-3 px-4 text-center shadow-lg">
+            <p className="font-bold text-sm md:text-base">
+              🚧 SISTEMA EM MANUTENÇÃO - Reservas temporariamente indisponíveis
+            </p>
+          </div>
+        )}
+
         {/* Header */}
-        <header className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between p-4 md:p-6">
+        <header className={`absolute top-0 left-0 right-0 z-30 flex items-center justify-between p-4 md:p-6 ${MAINTENANCE_MODE ? 'mt-12' : ''}`}>
           <div className="flex items-center gap-3">
             <Image
               src="/images/logo-rosa-mexicano.png"
@@ -188,46 +199,83 @@ export default function Home() {
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <div className="text-center mb-10">
-                <h2 className="text-3xl md:text-4xl font-bold mb-3">
-                  Faça sua <span className="text-[#FFD700]">Reserva</span>
-                </h2>
-                <p className="text-white/60 text-sm">
-                  Preencha os dados abaixo e garanta sua mesa
-                </p>
-              </div>
-
-              {/* Info Box colorido */}
-              <div className="max-w-3xl mx-auto mb-8 shimmer-gradient bg-gradient-to-r from-[#C2185B]/25 via-[#BA68C8]/25 to-[#FFD700]/25 rounded-2xl p-6 border border-white/30 backdrop-blur-sm shadow-lg shadow-[#C2185B]/15">
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-xs">
-                  <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-[#BA68C8]" />
-                    <span className="text-white/80">2 a 208 pessoas</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-[#BA68C8]" />
-                    <span className="text-white/80">Múltiplos de 2</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-[#BA68C8]" />
-                    <span className="text-white/80">49 mesas por data</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-[#FFD700]" />
-                    <span className="text-white/80">208 pessoas/dia</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-[#FFD700]" />
-                    <span className="text-white/80">18:00 às 19:30</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-[#C2185B]" />
-                    <span className="text-white/80">Escolha suas mesas</span>
+              {MAINTENANCE_MODE ? (
+                // Mensagem de Manutenção
+                <div className="max-w-3xl mx-auto">
+                  <div className="bg-gradient-to-br from-yellow-500/20 via-orange-500/15 to-red-500/20 rounded-2xl p-12 border-2 border-orange-500/50 text-center backdrop-blur-sm">
+                    <div className="text-6xl mb-4">🚧</div>
+                    <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
+                      Sistema em Manutenção
+                    </h2>
+                    <p className="text-white/80 text-lg mb-6 leading-relaxed">
+                      Desculpe! Estamos realizando manutenção no sistema de reservas no momento.
+                    </p>
+                    <p className="text-white/70 text-base mb-6">
+                      Por favor, tente novamente em breve. Se tiver dúvidas, entre em contato conosco:
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                      <a
+                        href="tel:+554732883096"
+                        className="px-8 py-3 rounded-full bg-gradient-to-r from-[#C2185B] to-[#FFD700] text-white font-bold hover:opacity-90 transition-all shadow-lg"
+                      >
+                        📞 Ligar (47) 3288-3096
+                      </a>
+                      <a
+                        href="https://wa.me/554732883096"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-8 py-3 rounded-full bg-gradient-to-r from-green-500 to-green-600 text-white font-bold hover:opacity-90 transition-all shadow-lg"
+                      >
+                        💬 WhatsApp
+                      </a>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                // Formulário Normal
+                <>
+                  <div className="text-center mb-10">
+                    <h2 className="text-3xl md:text-4xl font-bold mb-3">
+                      Faça sua <span className="text-[#FFD700]">Reserva</span>
+                    </h2>
+                    <p className="text-white/60 text-sm">
+                      Preencha os dados abaixo e garanta sua mesa
+                    </p>
+                  </div>
 
-              <ReservaForm />
+                  {/* Info Box colorido */}
+                  <div className="max-w-3xl mx-auto mb-8 shimmer-gradient bg-gradient-to-r from-[#C2185B]/25 via-[#BA68C8]/25 to-[#FFD700]/25 rounded-2xl p-6 border border-white/30 backdrop-blur-sm shadow-lg shadow-[#C2185B]/15">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-xs">
+                      <div className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-[#BA68C8]" />
+                        <span className="text-white/80">2 a 208 pessoas</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-[#BA68C8]" />
+                        <span className="text-white/80">Múltiplos de 2</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-[#BA68C8]" />
+                        <span className="text-white/80">49 mesas por data</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-[#FFD700]" />
+                        <span className="text-white/80">208 pessoas/dia</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-[#FFD700]" />
+                        <span className="text-white/80">18:00 às 19:30</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-[#C2185B]" />
+                        <span className="text-white/80">Escolha suas mesas</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <ReservaForm />
+                </>
+              )}
             </motion.div>
           </div>
         </section>
