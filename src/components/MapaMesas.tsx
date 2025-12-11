@@ -124,16 +124,16 @@ export default function MapaMesas({
 
   return (
     <div className="w-full">
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <h3 className="text-xl font-bold mb-4">Seleção de Mesas</h3>
+      <div className="bg-white rounded-lg shadow-xl p-6 border border-gray-100">
+        <h3 style={{fontFamily: 'var(--font-playfair)', color: 'var(--rosa-red)'}} className="text-2xl font-bold mb-6">Seleção de Mesas</h3>
 
         {/* Info */}
-        <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded">
-          <p className="text-sm text-blue-800">
-            <strong>Mesas necessárias:</strong> {tablesNeeded} (para {numeroPessoas} pessoa{numeroPessoas !== 1 ? 's' : ''})
+        <div style={{background: 'linear-gradient(135deg, rgba(215, 25, 25, 0.05), rgba(249, 143, 33, 0.05))'}} className="mb-6 p-4 border border-red-200 rounded-lg">
+          <p className="text-sm text-gray-800 font-semibold">
+            <span style={{color: 'var(--rosa-red)'}}>●</span> Mesas necessárias: <strong>{tablesNeeded}</strong> (para {numeroPessoas} pessoa{numeroPessoas !== 1 ? 's' : ''})
           </p>
-          <p className="text-sm text-blue-800">
-            <strong>Selecionadas:</strong> {selectedMesas.length}/{tablesNeeded}
+          <p className="text-sm text-gray-800 font-semibold mt-2">
+            <span style={{color: 'var(--rosa-orange)'}}>●</span> Selecionadas: <strong>{selectedMesas.length}/{tablesNeeded}</strong>
           </p>
         </div>
 
@@ -146,7 +146,7 @@ export default function MapaMesas({
 
         {/* Grid de Mesas */}
         {!loading && availableTables.length > 0 ? (
-          <div className="grid grid-cols-5 sm:grid-cols-7 lg:grid-cols-10 gap-2 mb-4">
+          <div className="grid grid-cols-5 sm:grid-cols-7 lg:grid-cols-10 gap-3 mb-6">
             {filteredTables.map((table) => {
               const isAvailable = availableTables.includes(table.number);
               const isSelected = selectedMesas.includes(table.number);
@@ -156,12 +156,13 @@ export default function MapaMesas({
                   key={table.number}
                   onClick={() => handleTableClick(table.number)}
                   disabled={!isAvailable}
-                  className={`p-2 rounded font-semibold text-sm transition-colors ${
+                  style={isSelected ? {background: 'linear-gradient(135deg, var(--rosa-red), var(--rosa-orange))'} : {}}
+                  className={`p-3 rounded-lg font-bold text-sm transition-all ${
                     !isAvailable
                       ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                       : isSelected
-                      ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white'
-                      : 'bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-300'
+                      ? 'text-white shadow-lg'
+                      : 'bg-white hover:bg-gray-50 text-gray-800 border-2 border-gray-200 hover:border-red-300'
                   }`}
                   title={isAvailable ? `Mesa ${table.number}` : `Mesa ${table.number} (Indisponível)`}
                 >

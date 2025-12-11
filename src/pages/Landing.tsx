@@ -5,36 +5,36 @@ export default function Landing() {
   const MAINTENANCE_MODE = false; // ✅ MODO DE MANUTENÇÃO DESATIVADO - SISTEMA OPERACIONAL
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen bg-white">
       {/* Banner de Manutenção */}
       {MAINTENANCE_MODE && (
-        <div className="bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 text-white py-4 px-4 text-center shadow-lg">
+        <div style={{background: 'linear-gradient(to right, var(--rosa-yellow), var(--rosa-orange), var(--rosa-red))'}} className="text-white py-4 px-4 text-center shadow-lg">
           <p className="font-bold text-sm md:text-base">
-            🚧 SISTEMA EM MANUTENÇÃO - Reservas temporariamente indisponíveis
+            🚧 RESERVAS EM MANUTENÇÃO - Temporariamente indisponíveis
           </p>
         </div>
       )}
 
       {/* Hero Section */}
-      <section className="relative py-16 px-4 md:py-24">
+      <section className="relative py-20 px-4 md:py-32 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+          <h1 style={{fontFamily: 'var(--font-playfair)'}} className="text-6xl md:text-7xl font-bold text-gray-900 mb-6">
             Rosa Mexicano
           </h1>
-          <p className="text-xl md:text-2xl text-gray-600 mb-4">
+          <p style={{fontFamily: 'var(--font-open-sans)'}} className="text-2xl md:text-3xl text-gray-700 mb-4 font-light">
             Celebração de Fim de Ano
           </p>
-          <p className="text-lg text-gray-500 mb-8">
+          <p className="text-lg text-gray-500 mb-12">
             Reservas para 24 a 31 de Dezembro de 2024
           </p>
-          <div className="inline-block bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-3 rounded-lg font-semibold">
+          <div style={{background: 'linear-gradient(135deg, var(--rosa-red), var(--rosa-orange))'}} className="inline-block text-white px-8 py-4 rounded-lg font-semibold text-lg shadow-lg">
             R$ 50,00 por pessoa
           </div>
         </div>
       </section>
 
       {/* Formulário de Reserva */}
-      <section className="py-16 px-4 bg-gray-50">
+      <section className="py-20 px-4 bg-white">
         {MAINTENANCE_MODE ? (
           // Mensagem de Manutenção
           <div className="max-w-4xl mx-auto bg-gradient-to-br from-yellow-50 to-orange-50 rounded-lg shadow-lg p-12 text-center border-2 border-orange-500/50">

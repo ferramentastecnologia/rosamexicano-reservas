@@ -137,13 +137,24 @@ export default function ReservaForm() {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 py-8">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+    <div className="w-full max-w-7xl mx-auto px-4 py-12">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-12">
+        {/* Título Principal */}
+        <div className="text-center mb-12">
+          <h2 style={{fontFamily: 'var(--font-playfair)'}} className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
+            Faça sua Reserva
+          </h2>
+          <p className="text-lg text-gray-600">Preencha os dados abaixo e escolha suas mesas</p>
+        </div>
+
         {/* Grid principal com 3 colunas em desktop */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Coluna 1: Dados Pessoais + Horário */}
           <div className="lg:col-span-1 space-y-6">
-            <h2 className="text-2xl font-bold">Dados da Reserva</h2>
+            <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+              <User className="text-red-500" size={24} />
+              Dados Pessoais
+            </h3>
 
             {/* Nome */}
             <div>
@@ -330,7 +341,8 @@ export default function ReservaForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+          style={{background: loading ? 'rgba(215, 25, 25, 0.5)' : 'linear-gradient(135deg, var(--rosa-red), var(--rosa-orange))'}}
+          className="w-full py-4 text-white font-bold text-lg rounded-lg hover:opacity-90 disabled:cursor-not-allowed transition-all shadow-lg"
         >
           {loading ? 'Processando...' : 'Continuar para Pagamento'}
         </button>

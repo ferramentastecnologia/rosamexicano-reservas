@@ -104,39 +104,41 @@ export default function CalendarioReserva({ onSelectDate, selectedDate }: Calend
 
   return (
     <div className="w-full max-w-sm">
-      <div className="bg-white rounded-lg shadow-lg p-4">
+      <div className="bg-white rounded-lg shadow-xl p-6 border border-gray-100">
         {/* Header do mês */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-6">
           <button
             onClick={handlePrevMonth}
-            className="p-1 hover:bg-gray-100 rounded"
+            style={{color: 'var(--rosa-red)'}}
+            className="p-2 hover:bg-red-50 rounded-lg transition-colors"
             aria-label="Mês anterior"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-6 h-6" />
           </button>
-          <h3 className="text-lg font-semibold">
+          <h3 style={{fontFamily: 'var(--font-playfair)', color: 'var(--rosa-red)'}} className="text-xl font-bold">
             {monthNames[currentMonth]} {currentYear}
           </h3>
           <button
             onClick={handleNextMonth}
-            className="p-1 hover:bg-gray-100 rounded"
+            style={{color: 'var(--rosa-red)'}}
+            className="p-2 hover:bg-red-50 rounded-lg transition-colors"
             aria-label="Próximo mês"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-6 h-6" />
           </button>
         </div>
 
         {/* Dias da semana */}
-        <div className="grid grid-cols-7 gap-2 mb-3">
+        <div className="grid grid-cols-7 gap-2 mb-4">
           {weekDays.map((day) => (
-            <div key={day} className="text-center text-sm font-semibold text-gray-600">
+            <div key={day} style={{color: 'var(--rosa-red)'}} className="text-center text-xs font-bold">
               {day}
             </div>
           ))}
         </div>
 
         {/* Dias do mês */}
-        <div className="grid grid-cols-7 gap-2">
+        <div className="grid grid-cols-7 gap-2 mb-6">
           {days.map((day, index) => {
             const isSelected = day && selectedDate === day.fullDate.toISOString().split('T')[0];
             const isClosed = day ? !day.isAvailable : false;
@@ -147,15 +149,16 @@ export default function CalendarioReserva({ onSelectDate, selectedDate }: Calend
                 key={index}
                 onClick={() => handleDateClick(day)}
                 disabled={isClosed}
-                className={`p-2 text-sm rounded font-medium transition-colors ${
+                style={isSelected ? {background: 'linear-gradient(135deg, var(--rosa-red), var(--rosa-orange))'} : {}}
+                className={`p-2 text-sm rounded font-medium transition-all ${
                   !day
                     ? 'invisible'
                     : isClosed
                     ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                     : isSelected
-                    ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white'
+                    ? 'text-white shadow-lg'
                     : isCurrentDate
-                    ? 'bg-red-100 text-red-600 border border-red-300'
+                    ? 'bg-red-100 text-red-600 border-2 border-red-600 font-bold'
                     : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
                 }`}
               >
@@ -165,9 +168,9 @@ export default function CalendarioReserva({ onSelectDate, selectedDate }: Calend
           })}
         </div>
 
-        <div className="mt-4 text-xs text-gray-500">
+        <div className="text-xs text-gray-500 space-y-1">
           <p>🔴 Cinza = Data fechada</p>
-          <p>🔵 Azul = Data selecionada</p>
+          <p style={{color: 'var(--rosa-red)'}} className="font-semibold">❤️ Gradiente = Data selecionada</p>
         </div>
       </div>
     </div>
