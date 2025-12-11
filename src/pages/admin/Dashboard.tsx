@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   Calendar,
   Users,
@@ -8,16 +8,13 @@ import {
   Clock,
   CheckCircle,
   XCircle,
+  RefreshCw,
+  Table as TableIcon,
   AlertCircle,
-  LogOut,
-  LayoutDashboard,
-  List,
   BarChart3,
-  QrCode,
-  Table as TableIcon
+  List
 } from 'lucide-react';
-// Image removido - usar img tag
-import { Link } from 'react-router-dom';
+import AdminLayout from '@/components/AdminLayout';
 import { DashboardSkeleton } from '@/components/Skeleton';
 
 type Stats = {
@@ -59,90 +56,32 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('admin_token');
-    navigate('/admin');
-  };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black text-white">
-        {/* Header skeleton */}
-        <header className="bg-zinc-900 border-b border-zinc-800">
-          <div className="container mx-auto px-4 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="h-10 w-28 bg-zinc-800 rounded animate-pulse" />
-                <span className="text-sm text-zinc-600 border-l border-zinc-700 pl-4">
-                  Carregando...
-                </span>
-              </div>
-            </div>
-          </div>
-        </header>
-        <nav className="bg-zinc-900 border-b border-zinc-800 h-12" />
+      <AdminLayout
+        title="Dashboard"
+        currentPage="dashboard"
+      >
         <DashboardSkeleton />
-      </div>
+      </AdminLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-[#0f0f0f] to-black text-white">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 bg-black/80 backdrop-blur-md border-b border-white/10">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <img
-                src="/images/logo-rosa-mexicano.png"
-                alt="Rosa Mexicano"
-                className="h-12 w-auto drop-shadow-lg"
-              />
-              <div className="border-l border-white/20 pl-4">
-                <h1 className="text-lg font-bold text-white">Rosa Mexicano</h1>
-                <span className="text-xs text-[#FFD700]">Painel Administrativo</span>
-              </div>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#C2185B] to-[#E53935] text-white text-sm font-medium rounded-full hover:shadow-lg hover:shadow-[#C2185B]/50 transition"
-            >
-              <LogOut className="w-4 h-4" />
-              Sair
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* Navigation */}
-      <nav className="fixed top-20 left-0 right-0 z-30 bg-black/60 backdrop-blur-md border-b border-white/10">
-        <div className="container mx-auto px-4">
-          <div className="flex gap-1 overflow-x-auto scrollbar-hide">
-            <Link to="/admin/dashboard" className="flex items-center gap-2 px-4 py-3 border-b-2 border-[#FFD700] text-white font-medium whitespace-nowrap">
-              <LayoutDashboard className="w-4 h-4" />Dashboard
-            </Link>
-            <Link to="/admin/reservations" className="flex items-center gap-2 px-4 py-3 border-b-2 border-transparent text-white/60 hover:text-white transition whitespace-nowrap">
-              <List className="w-4 h-4" />Reservas
-            </Link>
-            <Link to="/admin/validar-voucher" className="flex items-center gap-2 px-4 py-3 border-b-2 border-transparent text-white/60 hover:text-white transition whitespace-nowrap">
-              <QrCode className="w-4 h-4" />Voucher
-            </Link>
-            <Link to="/admin/reports" className="flex items-center gap-2 px-4 py-3 border-b-2 border-transparent text-white/60 hover:text-white transition whitespace-nowrap">
-              <BarChart3 className="w-4 h-4" />Relatórios
-            </Link>
-            <Link to="/admin/usuarios" className="flex items-center gap-2 px-4 py-3 border-b-2 border-transparent text-white/60 hover:text-white transition whitespace-nowrap">
-              <Users className="w-4 h-4" />Usuários
-            </Link>
-          </div>
-        </div>
-      </nav>
-
-      {/* Content */}
-      <main className="container mx-auto px-4 pt-40 pb-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Bem-vindo ao Dashboard</h1>
-          <p className="text-white/60">Acompanhe as métricas e estatísticas em tempo real</p>
-        </div>
+    <AdminLayout
+      title="Bem-vindo ao Dashboard"
+      subtitle="Acompanhe as métricas e estatísticas em tempo real"
+      currentPage="dashboard"
+      actions={[
+        {
+          label: 'Atualizar',
+          onClick: loadStats,
+          icon: <RefreshCw className="w-4 h-4" />,
+          variant: 'secondary',
+        },
+      ]}
+    >
 
         {/* Stats Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -280,7 +219,6 @@ export default function AdminDashboard() {
             </div>
           </Link>
         </div>
-      </main>
-    </div>
+    </AdminLayout>
   );
 }
