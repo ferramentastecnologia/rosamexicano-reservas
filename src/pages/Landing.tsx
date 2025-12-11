@@ -3,7 +3,7 @@ import { Calendar, Users, Clock, ChevronDown } from 'lucide-react';
 import ReservaForm from '../components/ReservaForm';
 
 export default function Landing() {
-  const MAINTENANCE_MODE = true;
+  const MAINTENANCE_MODE = false;
 
   const scrollToReserva = () => {
     const elemento = document.getElementById('reserva');
