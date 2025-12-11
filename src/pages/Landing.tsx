@@ -146,7 +146,7 @@ export default function Landing() {
       </section>
 
       {/* Formulário de Reserva */}
-      <section id="reserva" className="py-16 px-4 bg-gradient-to-b from-[#FFD700]/15 via-[#C2185B]/18 to-[#BA68C8]/20">
+      <section id="reserva" className="py-16 bg-gradient-to-b from-[#FFD700]/15 via-[#C2185B]/18 to-[#BA68C8]/20">
         {MAINTENANCE_MODE ? (
           // Mensagem de Manutenção
           <div className="max-w-4xl mx-auto bg-gradient-to-br from-yellow-50 to-orange-50 rounded-lg shadow-lg p-12 text-center border-2 border-orange-500/50">
@@ -180,58 +180,60 @@ export default function Landing() {
         ) : (
           // Formulário Normal
           <>
-            <h2 className="text-4xl font-bold text-center mb-12">Faça sua Reserva</h2>
-            <ReservaForm />
+            <div className="max-w-6xl mx-auto px-4">
+              <h2 className="text-4xl font-bold text-center mb-12 text-white">Faça sua Reserva</h2>
+              <ReservaForm />
+            </div>
           </>
         )}
       </section>
 
       {/* Detalhes */}
-      <section className="py-16 px-4">
+      <section className="py-16 px-4 bg-black/50">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12">Benefícios da Reserva</h2>
+          <h2 className="text-4xl font-bold text-center mb-12 text-white">Benefícios da Reserva</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+            <div className="glass-strong rounded-2xl p-8 text-center border border-white/10">
               <div className="text-4xl mb-4">🎉</div>
-              <h3 className="text-xl font-bold mb-3">Lugar Garantido</h3>
-              <p className="text-gray-600">Garanta seu lugar com antecedência</p>
+              <h3 className="text-xl font-bold mb-3 text-white">Lugar Garantido</h3>
+              <p className="text-white/70">Garanta seu lugar com antecedência</p>
             </div>
-            <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+            <div className="glass-strong rounded-2xl p-8 text-center border border-white/10">
               <div className="text-4xl mb-4">🎁</div>
-              <h3 className="text-xl font-bold mb-3">Voucher Exclusivo</h3>
-              <p className="text-gray-600">Receba um voucher com QR code para validação</p>
+              <h3 className="text-xl font-bold mb-3 text-white">Voucher Exclusivo</h3>
+              <p className="text-white/70">Receba um voucher com QR code para validação</p>
             </div>
-            <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+            <div className="glass-strong rounded-2xl p-8 text-center border border-white/10">
               <div className="text-4xl mb-4">🍽️</div>
-              <h3 className="text-xl font-bold mb-3">Experiência Premium</h3>
-              <p className="text-gray-600">Defrute da melhor experiência culinária</p>
+              <h3 className="text-xl font-bold mb-3 text-white">Experiência Premium</h3>
+              <p className="text-white/70">Defrute da melhor experiência culinária</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 px-4">
+      <footer className="bg-black border-t border-white/10 text-white py-12 px-4">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
-            <h3 className="text-2xl font-bold mb-4">Rosa Mexicano</h3>
-            <p className="text-gray-400">
+            <h3 className="text-2xl font-bold mb-4 text-[#ffc95b]">Rosa Mexicano</h3>
+            <p className="text-white/70">
               O melhor lugar para celebrar o seu fim de ano com estilo, música e boa comida.
             </p>
           </div>
           <div>
-            <h4 className="text-lg font-bold mb-4">Contato</h4>
-            <p className="text-gray-400 mb-2">📞 (11) 3000-0000</p>
-            <p className="text-gray-400 mb-2">📧 contato@rosamexicano.com</p>
-            <p className="text-gray-400">
+            <h4 className="text-lg font-bold mb-4 text-[#f98f21]">Contato</h4>
+            <p className="text-white/70 mb-2">📞 (47) 3288-3096</p>
+            <p className="text-white/70 mb-2">📧 contato@rosamexicano.com</p>
+            <p className="text-white/70">
               Para suporte admin:{' '}
-              <Link to="/admin" className="text-red-500 hover:underline">
+              <Link to="/admin" className="text-[#f98f21] hover:text-[#ffc95b] transition">
                 Acesse aqui
               </Link>
             </p>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+        <div className="max-w-7xl mx-auto border-t border-white/10 mt-8 pt-8 text-center text-white/50">
           <p>&copy; 2024 Rosa Mexicano. Todos os direitos reservados.</p>
         </div>
       </footer>

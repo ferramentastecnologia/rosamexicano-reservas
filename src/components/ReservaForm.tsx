@@ -137,8 +137,8 @@ export default function ReservaForm() {
   const errorClasses = "text-[#d71919] text-xs mt-1";
 
   return (
-    <div className="glass-strong rounded-2xl p-6 md:p-8">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <div className="glass-strong rounded-2xl p-6 md:p-8 w-full">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full">
         {/* Linha 1: Dados Pessoais | Data e Horário */}
         <div className="grid md:grid-cols-2 gap-6 lg:gap-10">
           {/* Coluna 1: Dados Pessoais */}
