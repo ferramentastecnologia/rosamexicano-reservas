@@ -1,159 +1,263 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
+
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { adminAPI } from '../../services/api';
-import { BarChart3, Users, Calendar, DollarSign, LogOut, Clock } from 'lucide-react';
+import {
+  Calendar,
+  Users,
+  DollarSign,
+  Clock,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  LogOut,
+  LayoutDashboard,
+  List,
+  BarChart3,
+  QrCode,
+  Table as TableIcon
+} from 'lucide-react';
+// Image removido - usar img tag
+import { Link } from 'react-router-dom';
+import { DashboardSkeleton } from '@/components/Skeleton';
+
+type Stats = {
+  totalReservations: number;
+  confirmedReservations: number;
+  pendingReservations: number;
+  cancelledReservations: number;
+  totalRevenue: number;
+  totalPeople: number;
+  todayReservations: number;
+};
 
 export default function AdminDashboard() {
-  const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const response = await adminAPI.stats();
-        setStats(response.data.stats);
-      } catch (error) {
-        console.error('Erro ao buscar estatísticas:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    // Verificar autenticação
+    const token = localStorage.getItem('admin_token');
+    if (!token) {
+      navigate('/admin');
+      return;
+    }
 
-    fetchStats();
+    loadStats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const loadStats = async () => {
+    try {
+      const response = await fetch('/api/admin/stats');
+      const data = await response.json();
+      setStats(data);
+    } catch (error) {
+      console.error('Erro ao carregar estatísticas:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleLogout = () => {
-    logout();
+    localStorage.removeItem('admin_token');
     navigate('/admin');
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-            <p className="text-gray-600 mt-1">Bem-vindo, {user?.name}</p>
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black text-white">
+        {/* Header skeleton */}
+        <header className="bg-zinc-900 border-b border-zinc-800">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="h-10 w-28 bg-zinc-800 rounded animate-pulse" />
+                <span className="text-sm text-zinc-600 border-l border-zinc-700 pl-4">
+                  Carregando...
+                </span>
+              </div>
+            </div>
           </div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 font-semibold"
-          >
-            <LogOut className="w-5 h-5" />
-            Sair
-          </button>
+        </header>
+        <nav className="bg-zinc-900 border-b border-zinc-800 h-12" />
+        <DashboardSkeleton />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-black text-white">
+      {/* Header */}
+      <header className="bg-zinc-900 border-b border-zinc-800">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <img
+                src="/images/logo-rosa-mexicano.png"
+                alt="Rosa Mexicano"
+                
+                
+                className="h-10 w-auto"
+              />
+              <span className="text-sm text-zinc-400 border-l border-zinc-700 pl-4">
+                Painel Administrativo
+              </span>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition"
+            >
+              <LogOut className="w-4 h-4" />
+              Sair
+            </button>
+          </div>
         </div>
       </header>
 
-      {/* Conteúdo */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Stats Grid */}
-        {!loading && stats ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {/* Total de Reservas */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-600 text-sm">Total de Reservas</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-1">
-                    {stats.total_reservations}
-                  </p>
-                </div>
-                <Calendar className="w-12 h-12 text-blue-500 opacity-20" />
-              </div>
-            </div>
-
-            {/* Confirmadas */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-600 text-sm">Confirmadas</p>
-                  <p className="text-3xl font-bold text-green-600 mt-1">
-                    {stats.confirmed_count}
-                  </p>
-                </div>
-                <Users className="w-12 h-12 text-green-500 opacity-20" />
-              </div>
-            </div>
-
-            {/* Pendentes */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-600 text-sm">Pendentes</p>
-                  <p className="text-3xl font-bold text-yellow-600 mt-1">
-                    {stats.pending_count}
-                  </p>
-                </div>
-                <Clock className="w-12 h-12 text-yellow-500 opacity-20" />
-              </div>
-            </div>
-
-            {/* Receita Total */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-600 text-sm">Receita Total</p>
-                  <p className="text-3xl font-bold text-red-600 mt-1">
-                    R$ {stats.total_revenue.toFixed(2)}
-                  </p>
-                </div>
-                <DollarSign className="w-12 h-12 text-red-500 opacity-20" />
-              </div>
-            </div>
+      {/* Navigation */}
+      <nav className="bg-zinc-900 border-b border-zinc-800">
+        <div className="container mx-auto px-4">
+          <div className="flex gap-6 overflow-x-auto">
+            <Link to="/admin/dashboard" className="flex items-center gap-2 px-4 py-3 border-b-2 border-[#E53935] text-white whitespace-nowrap">
+              <LayoutDashboard className="w-4 h-4" />Dashboard
+            </Link>
+            <Link to="/admin/reservations" className="flex items-center gap-2 px-4 py-3 border-b-2 border-transparent text-zinc-400 hover:text-white transition whitespace-nowrap">
+              <List className="w-4 h-4" />Reservas
+            </Link>
+            <Link to="/admin/validar-voucher" className="flex items-center gap-2 px-4 py-3 border-b-2 border-transparent text-zinc-400 hover:text-white transition whitespace-nowrap">
+              <QrCode className="w-4 h-4" />Voucher
+            </Link>
+            <Link to="/admin/reports" className="flex items-center gap-2 px-4 py-3 border-b-2 border-transparent text-zinc-400 hover:text-white transition whitespace-nowrap">
+              <BarChart3 className="w-4 h-4" />Relatórios
+            </Link>
+            <Link to="/admin/usuarios" className="flex items-center gap-2 px-4 py-3 border-b-2 border-transparent text-zinc-400 hover:text-white transition whitespace-nowrap">
+              <Users className="w-4 h-4" />Usuários
+            </Link>
           </div>
-        ) : (
-          <div className="text-center py-8">
-            <p className="text-gray-600">Carregando estatísticas...</p>
-          </div>
-        )}
+        </div>
+      </nav>
 
-        {/* Menu Rápido */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer p-6">
-            <div className="flex items-center gap-4">
-              <Calendar className="w-10 h-10 text-blue-500" />
-              <div>
-                <h3 className="font-bold text-gray-900">Reservas</h3>
-                <p className="text-gray-600 text-sm">Gerenciar reservas</p>
+      {/* Content */}
+      <main className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
+
+        {/* Stats Cards */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {/* Total Reservas */}
+          <div className="bg-zinc-900 rounded-lg p-6 border border-zinc-800">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-blue-900/30 rounded-lg">
+                <Calendar className="w-6 h-6 text-blue-400" />
               </div>
+              <span className="text-2xl font-bold">{stats?.totalReservations || 0}</span>
             </div>
+            <h3 className="text-zinc-400 text-sm">Total de Reservas</h3>
           </div>
 
-          <div className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer p-6">
-            <div className="flex items-center gap-4">
-              <BarChart3 className="w-10 h-10 text-green-500" />
-              <div>
-                <h3 className="font-bold text-gray-900">Vouchers</h3>
-                <p className="text-gray-600 text-sm">Validar vouchers</p>
+          {/* Confirmadas */}
+          <div className="bg-zinc-900 rounded-lg p-6 border border-zinc-800">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-green-900/30 rounded-lg">
+                <CheckCircle className="w-6 h-6 text-green-400" />
               </div>
+              <span className="text-2xl font-bold">{stats?.confirmedReservations || 0}</span>
             </div>
+            <h3 className="text-zinc-400 text-sm">Confirmadas</h3>
           </div>
 
-          <div className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer p-6">
-            <div className="flex items-center gap-4">
-              <Users className="w-10 h-10 text-purple-500" />
-              <div>
-                <h3 className="font-bold text-gray-900">Usuários</h3>
-                <p className="text-gray-600 text-sm">Gerenciar admins</p>
+          {/* Pendentes */}
+          <div className="bg-zinc-900 rounded-lg p-6 border border-zinc-800">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-yellow-900/30 rounded-lg">
+                <AlertCircle className="w-6 h-6 text-yellow-400" />
               </div>
+              <span className="text-2xl font-bold">{stats?.pendingReservations || 0}</span>
             </div>
+            <h3 className="text-zinc-400 text-sm">Pendentes</h3>
+          </div>
+
+          {/* Receita Total */}
+          <div className="bg-zinc-900 rounded-lg p-6 border border-zinc-800">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-[#E53935]/30 rounded-lg">
+                <DollarSign className="w-6 h-6 text-[#E53935]" />
+              </div>
+              <span className="text-2xl font-bold">
+                R$ {((stats?.totalRevenue || 0) / 100).toFixed(2)}
+              </span>
+            </div>
+            <h3 className="text-zinc-400 text-sm">Receita Total</h3>
+          </div>
+
+          {/* Total de Pessoas */}
+          <div className="bg-zinc-900 rounded-lg p-6 border border-zinc-800">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-purple-900/30 rounded-lg">
+                <Users className="w-6 h-6 text-purple-400" />
+              </div>
+              <span className="text-2xl font-bold">{stats?.totalPeople || 0}</span>
+            </div>
+            <h3 className="text-zinc-400 text-sm">Total de Pessoas</h3>
+          </div>
+
+          {/* Hoje */}
+          <div className="bg-zinc-900 rounded-lg p-6 border border-zinc-800">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-orange-900/30 rounded-lg">
+                <Clock className="w-6 h-6 text-orange-400" />
+              </div>
+              <span className="text-2xl font-bold">{stats?.todayReservations || 0}</span>
+            </div>
+            <h3 className="text-zinc-400 text-sm">Reservas Hoje</h3>
+          </div>
+
+          {/* Canceladas */}
+          <div className="bg-zinc-900 rounded-lg p-6 border border-zinc-800">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-red-900/30 rounded-lg">
+                <XCircle className="w-6 h-6 text-red-400" />
+              </div>
+              <span className="text-2xl font-bold">{stats?.cancelledReservations || 0}</span>
+            </div>
+            <h3 className="text-zinc-400 text-sm">Canceladas</h3>
           </div>
         </div>
 
-        {/* Info */}
-        <div className="mt-12 bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="font-bold text-blue-900 mb-3">Informações Importantes</h3>
-          <ul className="space-y-2 text-sm text-blue-800">
-            <li>• O sistema está funcionando normalmente</li>
-            <li>• As reservas estão sendo processadas em tempo real</li>
-            <li>• Para mais funcionalidades, consulte a documentação da API</li>
-            <li>• Entre em contato com o suporte em caso de dúvidas</li>
-          </ul>
+        {/* Quick Actions */}
+        <div className="grid md:grid-cols-3 gap-6">
+          <Link
+            to="/admin/reservations"
+            className="bg-zinc-900 rounded-lg p-6 border border-zinc-800 hover:border-[#E53935] transition"
+          >
+            <List className="w-8 h-8 text-[#E53935] mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Ver Todas as Reservas</h3>
+            <p className="text-sm text-zinc-400">
+              Gerencie e visualize todas as reservas do sistema
+            </p>
+          </Link>
+
+          <Link
+            to="/admin/tables"
+            className="bg-zinc-900 rounded-lg p-6 border border-zinc-800 hover:border-[#E53935] transition"
+          >
+            <TableIcon className="w-8 h-8 text-[#E53935] mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Mapa de Mesas</h3>
+            <p className="text-sm text-zinc-400">
+              Visualize a ocupação das mesas por horário
+            </p>
+          </Link>
+
+          <Link
+            to="/admin/reports"
+            className="bg-zinc-900 rounded-lg p-6 border border-zinc-800 hover:border-[#E53935] transition"
+          >
+            <BarChart3 className="w-8 h-8 text-[#E53935] mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Relatórios</h3>
+            <p className="text-sm text-zinc-400">
+              Analise estatísticas e gere relatórios
+            </p>
+          </Link>
         </div>
       </main>
     </div>
