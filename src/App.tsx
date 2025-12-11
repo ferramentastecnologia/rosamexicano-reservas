@@ -7,6 +7,7 @@ import Payment from './pages/Payment';
 import Success from './pages/Success';
 import AdminLogin from './pages/admin/Login';
 import AdminDashboard from './pages/admin/Dashboard';
+import Maintenance from './pages/Maintenance';
 
 // Protected Route Component
 interface ProtectedRouteProps {
@@ -28,6 +29,16 @@ function ProtectedRoute({ children }: ProtectedRouteProps) {
 }
 
 function AppRoutes() {
+  const isMaintenanceMode = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
+
+  if (isMaintenanceMode) {
+    return (
+      <Routes>
+        <Route path="*" element={<Maintenance />} />
+      </Routes>
+    );
+  }
+
   return (
     <Routes>
       {/* Rotas Públicas */}
