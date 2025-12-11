@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/login`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -56,16 +56,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error(error.error || 'Erro ao fazer login');
       }
 
-      const data: AuthToken = await response.json();
+      const data: any = await response.json();
+
+      // Converter snake_case do backend para camelCase
+      const accessToken = data.access_token || data.accessToken;
+      const refreshToken = data.refresh_token || data.refreshToken;
+      const user = data.user || {
+        id: data.user?.id,
+        email: data.user?.email,
+        name: data.user?.name,
+        role: data.user?.role,
+      };
 
       // Salvar tokens e usuário
-      localStorage.setItem('authToken', data.accessToken);
-      localStorage.setItem('refreshToken', data.refreshToken);
-      localStorage.setItem('user', JSON.stringify(data.user));
+      localStorage.setItem('authToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('user', JSON.stringify(user));
 
-      setAccessToken(data.accessToken);
-      setRefreshToken(data.refreshToken);
-      setUser(data.user);
+      setAccessToken(accessToken);
+      setRefreshToken(refreshToken);
+      setUser(user);
       setIsAuthenticated(true);
     } catch (error) {
       console.error('Erro no login:', error);
@@ -91,7 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/refresh`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/refresh`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refresh_token: refreshTokenValue }),
@@ -102,9 +112,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error('Erro ao renovar token');
       }
 
-      const data = await response.json();
-      localStorage.setItem('authToken', data.access_token);
-      setAccessToken(data.access_token);
+      const data: any = await response.json();
+      const newAccessToken = data.access_token || data.accessToken;
+      localStorage.setItem('authToken', newAccessToken);
+      setAccessToken(newAccessToken);
     } catch (error) {
       console.error('Erro ao renovar token:', error);
       logout();
