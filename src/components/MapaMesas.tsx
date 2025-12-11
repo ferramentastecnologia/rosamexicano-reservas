@@ -1,190 +1,263 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { Check, X, Users } from 'lucide-react';
 import { paymentAPI } from '../services/api';
-import { calculateTablesNeeded, ALL_TABLES } from '../lib/tables-config';
-import { TableArea } from '../types';
+import { AREA_NAMES, TableArea } from '../lib/tables-config';
 
-interface MapaMesasProps {
+type Mesa = {
+  number: number;
+  available: boolean;
+  capacity: number;
+  area: TableArea;
+};
+
+type MapaMesasProps = {
   data: string;
   horario: string;
   numeroPessoas: number;
   selectedArea: TableArea | null;
   onMesasSelect: (mesas: number[]) => void;
-}
+};
 
-export default function MapaMesas({
-  data,
-  horario,
-  numeroPessoas,
-  selectedArea,
-  onMesasSelect,
-}: MapaMesasProps) {
-  const [availableTables, setAvailableTables] = useState<number[]>([]);
-  const [selectedMesas, setSelectedMesas] = useState<number[]>([]);
+// Cache local para evitar requisições repetidas
+const tablesCache = new Map<string, { tables: Mesa[]; timestamp: number }>();
+const CACHE_TTL = 30000; // 30 segundos
+
+export default function MapaMesas({ data, horario, numeroPessoas, selectedArea, onMesasSelect }: MapaMesasProps) {
+  const [tables, setTables] = useState<Mesa[]>([]);
+  const [selectedTables, setSelectedTables] = useState<number[]>([]);
   const [loading, setLoading] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
-  const cacheRef = useRef<{ timestamp: number; data: number[] }>({ timestamp: 0, data: [] });
 
-  // Buscar mesas disponíveis
-  useEffect(() => {
-    const fetchAvailableTables = async () => {
-      if (!data || !horario || !numeroPessoas || !selectedArea) {
-        setAvailableTables([]);
-        setSelectedMesas([]);
-        return;
-      }
+  const loadAvailableTables = useCallback(async () => {
+    if (!selectedArea || !data) return;
 
-      // Usar cache se disponível (30 segundos)
-      const now = Date.now();
-      if (now - cacheRef.current.timestamp < 30000) {
-        setAvailableTables(cacheRef.current.data);
-        return;
-      }
+    // Verificar cache local
+    const cacheKey = `${data}-${selectedArea}`;
+    const cached = tablesCache.get(cacheKey);
 
-      setLoading(true);
+    if (cached && (Date.now() - cached.timestamp) < CACHE_TTL) {
+      setTables(cached.tables);
+      return;
+    }
 
-      // Cancelar requisição anterior se existir
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
+    // Cancelar requisição anterior se existir
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    abortControllerRef.current = new AbortController();
 
-      abortControllerRef.current = new AbortController();
+    setLoading(true);
+    try {
+      const response = await paymentAPI.getAvailableTables({
+        data,
+        area: selectedArea,
+      });
 
-      try {
-        const response = await paymentAPI.getAvailableTables({
-          data,
-          horario,
-          numero_pessoas: numeroPessoas,
-        });
+      const result = response.data;
 
-        if (response.data.available_tables) {
-          setAvailableTables(response.data.available_tables);
-          cacheRef.current = {
-            timestamp: now,
-            data: response.data.available_tables,
-          };
-          setSelectedMesas([]); // Limpar seleção ao carregar novas mesas
-        }
-      } catch (error: any) {
-        if (error.name !== 'AbortError') {
-          console.error('Erro ao buscar mesas disponíveis:', error);
-          setAvailableTables([]);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAvailableTables();
-
-    return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-    };
-  }, [data, horario, numeroPessoas, selectedArea]);
-
-  // Notificar mudanças nas mesas selecionadas
-  useEffect(() => {
-    onMesasSelect(selectedMesas);
-  }, [selectedMesas, onMesasSelect]);
-
-  const handleTableClick = (tableNumber: number) => {
-    const tablesNeeded = calculateTablesNeeded(numeroPessoas);
-
-    setSelectedMesas((prev) => {
-      if (prev.includes(tableNumber)) {
-        return prev.filter((t) => t !== tableNumber);
+      if (result && result.length > 0) {
+        const tables = result as Mesa[];
+        setTables(tables);
+        // Salvar no cache
+        tablesCache.set(cacheKey, { tables, timestamp: Date.now() });
       } else {
-        if (prev.length >= tablesNeeded) {
-          return prev;
+        setTables([]);
+      }
+    } catch (error) {
+      if ((error as any).name !== 'AbortError') {
+        console.error('Erro ao carregar mesas:', error);
+        setTables([]);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [data, selectedArea]);
+
+  useEffect(() => {
+    if (data && selectedArea) {
+      loadAvailableTables();
+    }
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, [data, selectedArea, loadAvailableTables]);
+
+  useEffect(() => {
+    if (numeroPessoas > 0) {
+      setSelectedTables([]);
+    }
+  }, [numeroPessoas]);
+
+  useEffect(() => {
+    setSelectedTables([]);
+    onMesasSelect([]);
+  }, [selectedArea]);
+
+  const toggleTable = (tableNumber: number) => {
+    const table = tables.find(t => t.number === tableNumber);
+    if (!table || !table.available) return;
+
+    const mesasNecessarias = Math.ceil(numeroPessoas / 4);
+
+    setSelectedTables(prev => {
+      const isSelected = prev.includes(tableNumber);
+
+      if (isSelected) {
+        const newSelection = prev.filter(num => num !== tableNumber);
+        onMesasSelect(newSelection);
+        return newSelection;
+      } else {
+        if (prev.length < mesasNecessarias) {
+          const newSelection = [...prev, tableNumber].sort((a, b) => a - b);
+          onMesasSelect(newSelection);
+          return newSelection;
         }
-        return [...prev, tableNumber].sort((a, b) => a - b);
+        return prev;
       }
     });
   };
 
+  const pessoasValidas = numeroPessoas && !isNaN(numeroPessoas) && numeroPessoas > 0;
+  const mesasNecessarias = pessoasValidas ? Math.ceil(numeroPessoas / 4) : 0;
+  const selecaoCompleta = mesasNecessarias > 0 && selectedTables.length === mesasNecessarias;
+
+  if (!data || !horario) {
+    return (
+      <div className="bg-black/20 rounded-xl p-8 border border-white/5 text-center">
+        <Users className="w-10 h-10 text-white/20 mx-auto mb-3" />
+        <p className="text-white/40 text-sm">
+          Selecione a <span className="text-[#f98f21]">data</span> e o <span className="text-[#f98f21]">horário</span> para ver as mesas
+        </p>
+      </div>
+    );
+  }
+
+  if (!pessoasValidas) {
+    return (
+      <div className="bg-black/20 rounded-xl p-8 border border-white/5 text-center">
+        <Users className="w-10 h-10 text-white/20 mx-auto mb-3" />
+        <p className="text-white/40 text-sm">
+          Informe o <span className="text-[#f98f21]">número de pessoas</span> para selecionar mesas
+        </p>
+      </div>
+    );
+  }
+
   if (!selectedArea) {
     return (
-      <div className="w-full text-center py-8 bg-gray-50 rounded-lg">
-        <p className="text-gray-600">Selecione uma área para ver as mesas disponíveis</p>
+      <div className="bg-black/20 rounded-xl p-8 border border-white/5 text-center">
+        <Users className="w-10 h-10 text-white/20 mx-auto mb-3" />
+        <p className="text-white/40 text-sm">
+          Selecione a <span className="text-[#f98f21]">área do restaurante</span> para ver as mesas
+        </p>
       </div>
     );
   }
-
-  if (!data || !horario || !numeroPessoas) {
-    return (
-      <div className="w-full text-center py-8 bg-gray-50 rounded-lg">
-        <p className="text-gray-600">Preencha os dados da reserva para continuar</p>
-      </div>
-    );
-  }
-
-  const tablesNeeded = calculateTablesNeeded(numeroPessoas);
-  const filteredTables = ALL_TABLES.filter((t) => t.area === selectedArea);
 
   return (
-    <div className="w-full">
-      <div className="bg-white rounded-lg shadow-xl p-6 border border-gray-100">
-        <h3 style={{fontFamily: 'var(--font-playfair)', color: 'var(--rosa-red)'}} className="text-2xl font-bold mb-6">Seleção de Mesas</h3>
+    <div className="bg-black/20 rounded-xl p-4 md:p-6 border border-white/5">
+      <div className="flex items-center justify-between mb-4">
+        <h4 className="text-sm font-medium flex items-center gap-2 text-white/90">
+          <Users className="w-4 h-4 text-[#f98f21]" />
+          Mesas - {AREA_NAMES[selectedArea]}
+        </h4>
+        <div className="flex items-center gap-2 text-xs">
+          <span className="text-white/40">Selecionadas:</span>
+          <span className={`font-bold ${selecaoCompleta ? 'text-[#25bcc0]' : 'text-[#ffc95b]'}`}>
+            {selectedTables.length}/{mesasNecessarias}
+          </span>
+        </div>
+      </div>
 
-        {/* Info */}
-        <div style={{background: 'linear-gradient(135deg, rgba(215, 25, 25, 0.05), rgba(249, 143, 33, 0.05))'}} className="mb-6 p-4 border border-red-200 rounded-lg">
-          <p className="text-sm text-gray-800 font-semibold">
-            <span style={{color: 'var(--rosa-red)'}}>●</span> Mesas necessárias: <strong>{tablesNeeded}</strong> (para {numeroPessoas} pessoa{numeroPessoas !== 1 ? 's' : ''})
-          </p>
-          <p className="text-sm text-gray-800 font-semibold mt-2">
-            <span style={{color: 'var(--rosa-orange)'}}>●</span> Selecionadas: <strong>{selectedMesas.length}/{tablesNeeded}</strong>
+      {/* Status da Seleção */}
+      {selectedTables.length > 0 && (
+        <div className={`mb-4 p-3 rounded-lg border ${
+          selecaoCompleta
+            ? 'bg-[#25bcc0]/10 border-[#25bcc0]/30'
+            : 'bg-[#ffc95b]/10 border-[#ffc95b]/30'
+        }`}>
+          <p className={`text-xs font-medium ${selecaoCompleta ? 'text-[#25bcc0]' : 'text-[#ffc95b]'}`}>
+            {selecaoCompleta ? (
+              <>
+                <Check className="w-3.5 h-3.5 inline mr-1" />
+                Seleção completa! Mesas: {selectedTables.join(', ')}
+              </>
+            ) : (
+              <>Selecione mais {mesasNecessarias - selectedTables.length} mesa(s)</>
+            )}
           </p>
         </div>
+      )}
 
-        {/* Loading */}
-        {loading && (
-          <div className="text-center py-4">
-            <p className="text-gray-600">Carregando mesas disponíveis...</p>
+      {/* Grid de Mesas */}
+      {loading ? (
+        <div className="grid grid-cols-5 sm:grid-cols-7 md:grid-cols-10 gap-2">
+          {Array.from({ length: 20 }).map((_, i) => (
+            <div key={i} className="aspect-square rounded-lg bg-white/5 animate-pulse" />
+          ))}
+        </div>
+      ) : tables.length > 0 ? (
+        <>
+          <div className="mb-3 text-xs text-white/40">
+            {tables.filter(t => t.available).length} mesas disponíveis • Clique para selecionar
           </div>
-        )}
-
-        {/* Grid de Mesas */}
-        {!loading && availableTables.length > 0 ? (
-          <div className="grid grid-cols-5 sm:grid-cols-7 lg:grid-cols-10 gap-3 mb-6">
-            {filteredTables.map((table) => {
-              const isAvailable = availableTables.includes(table.number);
-              const isSelected = selectedMesas.includes(table.number);
+          <div className="grid grid-cols-5 sm:grid-cols-7 md:grid-cols-10 gap-2">
+            {tables.map(table => {
+              const isSelected = selectedTables.includes(table.number);
+              const isAvailable = table.available;
 
               return (
                 <button
                   key={table.number}
-                  onClick={() => handleTableClick(table.number)}
+                  type="button"
+                  onClick={() => toggleTable(table.number)}
                   disabled={!isAvailable}
-                  style={isSelected ? {background: 'linear-gradient(135deg, var(--rosa-red), var(--rosa-orange))'} : {}}
-                  className={`p-3 rounded-lg font-bold text-sm transition-all ${
-                    !isAvailable
-                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                      : isSelected
-                      ? 'text-white shadow-lg'
-                      : 'bg-white hover:bg-gray-50 text-gray-800 border-2 border-gray-200 hover:border-red-300'
-                  }`}
-                  title={isAvailable ? `Mesa ${table.number}` : `Mesa ${table.number} (Indisponível)`}
+                  className={`
+                    aspect-square rounded-lg border flex flex-col items-center justify-center
+                    transition-all duration-200 relative
+                    ${isSelected
+                      ? 'bg-gradient-to-br from-[#d71919] to-[#f98f21] border-transparent text-white scale-105 shadow-lg shadow-[#d71919]/30'
+                      : isAvailable
+                        ? 'bg-white/5 border-white/10 text-white/70 hover:border-[#f98f21]/50 hover:bg-white/10 hover:scale-105'
+                        : 'bg-black/30 border-white/5 text-white/20 cursor-not-allowed'
+                    }
+                  `}
                 >
-                  {table.number}
+                  {isSelected && (
+                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#25bcc0] rounded-full flex items-center justify-center shadow-lg">
+                      <Check className="w-2.5 h-2.5 text-white" />
+                    </div>
+                  )}
+                  <span className="text-sm font-bold">{table.number}</span>
+                  <span className="text-[9px]">
+                    {isAvailable ? `${table.capacity}p` : <X className="w-3 h-3" />}
+                  </span>
                 </button>
               );
             })}
           </div>
-        ) : !loading ? (
-          <div className="text-center py-6 text-gray-600">
-            <p>Nenhuma mesa disponível para este horário</p>
-            <p className="text-sm mt-2">Tente selecionar outro horário ou data</p>
-          </div>
-        ) : null}
 
-        {/* Status */}
-        {selectedMesas.length > 0 && (
-          <div className="p-3 bg-green-50 border border-green-200 rounded text-sm text-green-800">
-            <strong>Mesas selecionadas:</strong> {selectedMesas.join(', ')}
+          {/* Legenda */}
+          <div className="mt-4 pt-3 border-t border-white/5 flex flex-wrap gap-4 text-[10px] text-white/40 justify-center">
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 bg-white/5 border border-white/10 rounded"></div>
+              <span>Disponível</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 bg-gradient-to-br from-[#d71919] to-[#f98f21] rounded"></div>
+              <span>Selecionada</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 bg-black/30 border border-white/5 rounded"></div>
+              <span>Ocupada</span>
+            </div>
           </div>
-        )}
-      </div>
+        </>
+      ) : (
+        <div className="text-center py-8 text-white/40">
+          <p className="text-sm">Nenhuma mesa disponível nesta área</p>
+        </div>
+      )}
     </div>
   );
 }
