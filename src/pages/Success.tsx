@@ -48,22 +48,24 @@ export default function Success() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-white flex items-center justify-center px-4 py-8">
       <div className="max-w-2xl w-full">
         {/* Sucesso */}
-        <div className="text-center mb-8">
-          <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-4" />
-          <h1 className="text-4xl font-bold text-green-600 mb-2">Reserva Confirmada!</h1>
+        <div className="text-center mb-12">
+          <div className="bg-green-100 rounded-full p-4 w-fit mx-auto mb-4">
+            <CheckCircle className="w-16 h-16 text-green-600" />
+          </div>
+          <h1 style={{fontFamily: 'var(--font-playfair)'}} className="text-5xl font-bold text-green-600 mb-2">Reserva Confirmada!</h1>
           <p className="text-gray-600 text-lg">
             Seu pagamento foi processado com sucesso
           </p>
         </div>
 
         {/* Voucher Card */}
-        <div className="bg-white rounded-lg shadow-2xl overflow-hidden mb-8">
+        <div className="bg-white rounded-lg shadow-2xl overflow-hidden mb-8 border border-gray-100">
           {/* Header com gradiente vermelho */}
-          <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white p-6 text-center">
-            <h2 className="text-3xl font-bold mb-2">ROSA MEXICANO</h2>
+          <div style={{background: 'linear-gradient(135deg, var(--rosa-red), var(--rosa-orange))'}} className="text-white p-8 text-center">
+            <h2 style={{fontFamily: 'var(--font-playfair)'}} className="text-4xl font-bold mb-2">ROSA MEXICANO</h2>
             <p className="text-sm opacity-90">Celebração de Fim de Ano 2024/2025</p>
           </div>
 
@@ -142,17 +144,18 @@ export default function Success() {
         </div>
 
         {/* Ações */}
-        <div className="flex flex-col gap-3 mb-8">
+        <div className="flex flex-col gap-4 mb-8">
           <button
             onClick={handleDownloadPDF}
-            className="w-full flex items-center justify-center gap-2 py-3 bg-red-500 text-white font-bold rounded-lg hover:bg-red-600 transition-colors"
+            style={{background: 'linear-gradient(135deg, var(--rosa-red), var(--rosa-orange))'}}
+            className="w-full flex items-center justify-center gap-2 py-4 text-white font-bold rounded-lg hover:opacity-90 transition-all shadow-lg"
           >
             <Download className="w-5 h-5" />
             Baixar Voucher em PDF
           </button>
           <button
             onClick={handleShare}
-            className="w-full flex items-center justify-center gap-2 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition-colors"
+            className="w-full flex items-center justify-center gap-2 py-4 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition-all shadow-lg"
           >
             <Share2 className="w-5 h-5" />
             Compartilhar
@@ -160,8 +163,8 @@ export default function Success() {
         </div>
 
         {/* Próximos passos */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-          <h3 className="font-bold text-lg mb-4">Próximos Passos</h3>
+        <div className="bg-gray-50 rounded-lg shadow-lg p-8 mb-8 border border-gray-200">
+          <h3 style={{fontFamily: 'var(--font-playfair)', color: 'var(--rosa-red)'}} className="font-bold text-2xl mb-6">Próximos Passos</h3>
           <div className="space-y-3 text-sm text-gray-600">
             <div className="flex gap-3">
               <span className="text-red-500 font-bold">1.</span>

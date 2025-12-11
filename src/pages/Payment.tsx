@@ -31,30 +31,36 @@ export default function Payment() {
   const isExpired = status?.status === 'EXPIRED';
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-white flex items-center justify-center px-4 py-8">
       <div className="max-w-md w-full">
         {/* Card */}
-        <div className="bg-white rounded-lg shadow-2xl p-8">
+        <div className="bg-white rounded-lg shadow-2xl p-8 border border-gray-100">
           {/* Status */}
           <div className="text-center mb-8">
             {isConfirmed ? (
               <div className="flex justify-center mb-4">
-                <CheckCircle className="w-16 h-16 text-green-500" />
+                <div className="bg-green-100 rounded-full p-4">
+                  <CheckCircle className="w-12 h-12 text-green-600" />
+                </div>
               </div>
             ) : isExpired ? (
               <div className="flex justify-center mb-4">
-                <AlertCircle className="w-16 h-16 text-red-500" />
+                <div className="bg-red-100 rounded-full p-4">
+                  <AlertCircle className="w-12 h-12 text-red-600" />
+                </div>
               </div>
             ) : (
               <div className="flex justify-center mb-4">
-                <Clock className="w-16 h-16 text-blue-500 animate-spin" />
+                <div className="bg-blue-100 rounded-full p-4">
+                  <Clock className="w-12 h-12 text-blue-600 animate-spin" />
+                </div>
               </div>
             )}
 
-            <h1 className="text-3xl font-bold mb-2">
+            <h1 style={{fontFamily: 'var(--font-playfair)', color: isConfirmed ? '#16a34a' : isExpired ? 'var(--rosa-red)' : '#2563eb'}} className="text-3xl font-bold mb-2">
               {isConfirmed ? 'Pagamento Confirmado!' : isExpired ? 'QR Expirado' : 'Aguardando Pagamento'}
             </h1>
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-sm">
               {isConfirmed
                 ? 'Seu pagamento foi confirmado com sucesso!'
                 : isExpired
@@ -65,7 +71,7 @@ export default function Payment() {
 
           {/* QR Code */}
           {!isConfirmed && !isExpired && (
-            <div className="bg-white rounded-lg p-4 mb-6 flex justify-center border-2 border-gray-200">
+            <div style={{background: 'linear-gradient(135deg, rgba(215, 25, 25, 0.05), rgba(249, 143, 33, 0.05))'}} className="rounded-lg p-4 mb-6 flex justify-center border-2 border-red-200">
               <img
                 src={`data:image/png;base64,${paymentData.pix_qr_code}`}
                 alt="QR Code PIX"
@@ -75,7 +81,7 @@ export default function Payment() {
           )}
 
           {/* Detalhes */}
-          <div className="space-y-3 mb-6 p-4 bg-gray-50 rounded-lg">
+          <div className="space-y-3 mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
             <div className="flex justify-between">
               <span className="text-gray-600">Valor:</span>
               <span className="font-bold">R$ {paymentData.amount.toFixed(2)}</span>
