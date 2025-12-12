@@ -17,7 +17,9 @@ import {
   AlertCircle,
   RefreshCw,
   X,
-  MapPin
+  MapPin,
+  ChevronUp,
+  ChevronDown
 } from 'lucide-react';
 
 type TableArea = 'interno' | 'semi-externo' | 'externo';
@@ -68,6 +70,9 @@ type OccupancyData = {
 
 const horarios = ['18:00', '18:30', '19:00', '19:30'];
 
+type SortColumn = 'number' | 'capacity' | null;
+type SortDirection = 'asc' | 'desc';
+
 export default function AdminTables() {
   const router = useRouter();
   const [occupancyData, setOccupancyData] = useState<OccupancyData | null>(null);
@@ -76,6 +81,8 @@ export default function AdminTables() {
   const [selectedArea, setSelectedArea] = useState<TableArea | 'all'>('all');
   const [loading, setLoading] = useState(false);
   const [selectedTable, setSelectedTable] = useState<TableInfo | null>(null);
+  const [sortColumn, setSortColumn] = useState<SortColumn>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
@@ -119,6 +126,49 @@ export default function AdminTables() {
   const handleLogout = () => {
     localStorage.removeItem('admin_token');
     router.push('/admin');
+  };
+
+  const handleSort = (column: SortColumn) => {
+    if (sortColumn === column) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
+  };
+
+  const renderSortIcon = (column: SortColumn) => {
+    if (sortColumn !== column) return null;
+    return sortDirection === 'asc'
+      ? <ChevronUp className="w-4 h-4 ml-1 inline" />
+      : <ChevronDown className="w-4 h-4 ml-1 inline" />;
+  };
+
+  const sortTables = (tables: TableInfo[]) => {
+    const sorted = [...tables];
+    if (!sortColumn) return sorted;
+
+    sorted.sort((a, b) => {
+      let aValue: any = '';
+      let bValue: any = '';
+
+      switch (sortColumn) {
+        case 'number':
+          aValue = a.tableNumber;
+          bValue = b.tableNumber;
+          break;
+        case 'capacity':
+          aValue = a.capacity;
+          bValue = b.capacity;
+          break;
+      }
+
+      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return sorted;
   };
 
   const getTableColor = (table: TableInfo) => {
@@ -320,13 +370,33 @@ export default function AdminTables() {
         ) : occupancyData ? (
           <div className="bg-zinc-900 rounded-lg p-6 border border-zinc-800">
             <div className="mb-6">
-              <h2 className="text-xl font-semibold mb-2">
-                Mesas - {new Date(selectedDate + 'T00:00:00').toLocaleDateString('pt-BR')}
-              </h2>
-              <p className="text-sm text-zinc-400 mb-4">
-                Mostrando reservas de {selectedTime}
-                {selectedArea !== 'all' && ` • Área: ${AREA_NAMES[selectedArea as TableArea]}`}
-              </p>
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-xl font-semibold mb-2">
+                    Mesas - {new Date(selectedDate + 'T00:00:00').toLocaleDateString('pt-BR')}
+                  </h2>
+                  <p className="text-sm text-zinc-400">
+                    Mostrando reservas de {selectedTime}
+                    {selectedArea !== 'all' && ` • Área: ${AREA_NAMES[selectedArea as TableArea]}`}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleSort('number')}
+                    className="px-3 py-1 bg-zinc-800 hover:bg-zinc-700 rounded text-sm transition flex items-center gap-1"
+                    title="Ordenar por número da mesa"
+                  >
+                    Nº {renderSortIcon('number')}
+                  </button>
+                  <button
+                    onClick={() => handleSort('capacity')}
+                    className="px-3 py-1 bg-zinc-800 hover:bg-zinc-700 rounded text-sm transition flex items-center gap-1"
+                    title="Ordenar por capacidade"
+                  >
+                    Cap. {renderSortIcon('capacity')}
+                  </button>
+                </div>
+              </div>
 
               {/* Legend */}
               <div className="flex flex-wrap gap-4 text-sm">
@@ -357,7 +427,7 @@ export default function AdminTables() {
                         <span className="text-sm font-normal text-zinc-400">({AREA_DESCRIPTIONS[area]})</span>
                       </h3>
                       <div className="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-11 gap-3">
-                        {groupedTables[area].map(table => (
+                        {sortTables(groupedTables[area]).map(table => (
                           <button
                             key={table.tableNumber}
                             onClick={() => setSelectedTable(table)}
@@ -385,7 +455,7 @@ export default function AdminTables() {
               </div>
             ) : (
               <div className="grid grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-4">
-                {occupancyData.tables.map(table => (
+                {sortTables(occupancyData.tables).map(table => (
                   <button
                     key={table.tableNumber}
                     onClick={() => setSelectedTable(table)}

@@ -16,7 +16,9 @@ import {
   Trash2,
   X,
   Check,
-  Shield
+  Shield,
+  ChevronUp,
+  ChevronDown
 } from 'lucide-react';
 
 type Admin = {
@@ -37,14 +39,20 @@ const PERMISSIONS_LIST = [
   { id: 'users', label: 'Usuários', description: 'Gerenciar usuários' },
 ];
 
+type SortColumn = 'name' | 'email' | 'role' | 'createdAt' | null;
+type SortDirection = 'asc' | 'desc';
+
 export default function AdminUsuarios() {
   const router = useRouter();
   const [users, setUsers] = useState<Admin[]>([]);
+  const [sortedUsers, setSortedUsers] = useState<Admin[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingUser, setEditingUser] = useState<Admin | null>(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [sortColumn, setSortColumn] = useState<SortColumn>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
 
   // Form state
   const [formData, setFormData] = useState({
@@ -65,6 +73,11 @@ export default function AdminUsuarios() {
     loadUsers();
   }, [router]);
 
+  useEffect(() => {
+    applySort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [users, sortColumn, sortDirection]);
+
   const loadUsers = async () => {
     try {
       const response = await fetch('/api/admin/users');
@@ -75,6 +88,58 @@ export default function AdminUsuarios() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const applySort = () => {
+    let sorted = [...users];
+
+    if (sortColumn) {
+      sorted.sort((a, b) => {
+        let aValue: any = '';
+        let bValue: any = '';
+
+        switch (sortColumn) {
+          case 'name':
+            aValue = a.name.toLowerCase();
+            bValue = b.name.toLowerCase();
+            break;
+          case 'email':
+            aValue = a.email.toLowerCase();
+            bValue = b.email.toLowerCase();
+            break;
+          case 'role':
+            aValue = a.role.toLowerCase();
+            bValue = b.role.toLowerCase();
+            break;
+          case 'createdAt':
+            aValue = new Date(a.createdAt).getTime();
+            bValue = new Date(b.createdAt).getTime();
+            break;
+        }
+
+        if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+        if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+
+    setSortedUsers(sorted);
+  };
+
+  const handleSort = (column: SortColumn) => {
+    if (sortColumn === column) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
+  };
+
+  const renderSortIcon = (column: SortColumn) => {
+    if (sortColumn !== column) return null;
+    return sortDirection === 'asc'
+      ? <ChevronUp className="w-4 h-4 ml-1 inline" />
+      : <ChevronDown className="w-4 h-4 ml-1 inline" />;
   };
 
   const handleLogout = () => {
@@ -270,16 +335,31 @@ export default function AdminUsuarios() {
             <table className="w-full">
               <thead className="bg-zinc-800">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400">Nome</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400">Email</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400">Tipo</th>
+                  <th
+                    onClick={() => handleSort('name')}
+                    className="px-4 py-3 text-left text-xs font-medium text-zinc-400 cursor-pointer hover:text-white transition"
+                  >
+                    Nome {renderSortIcon('name')}
+                  </th>
+                  <th
+                    onClick={() => handleSort('email')}
+                    className="px-4 py-3 text-left text-xs font-medium text-zinc-400 cursor-pointer hover:text-white transition"
+                  >
+                    Email {renderSortIcon('email')}
+                  </th>
+                  <th
+                    onClick={() => handleSort('role')}
+                    className="px-4 py-3 text-left text-xs font-medium text-zinc-400 cursor-pointer hover:text-white transition"
+                  >
+                    Tipo {renderSortIcon('role')}
+                  </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400">Permissões</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400">Status</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400">Ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-800">
-                {users.map((user) => {
+                {sortedUsers.map((user) => {
                   const perms = JSON.parse(user.permissions || '[]');
                   return (
                     <tr key={user.id} className="hover:bg-zinc-800/50">

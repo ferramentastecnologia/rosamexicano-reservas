@@ -17,7 +17,9 @@ import {
   BarChart3,
   QrCode,
   RefreshCw,
-  X
+  X,
+  ChevronUp,
+  ChevronDown
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -47,6 +49,9 @@ type Reservation = {
   voucher?: Voucher | null;
 };
 
+type SortColumn = 'data' | 'horario' | 'nome' | 'valor' | 'status' | 'createdAt' | null;
+type SortDirection = 'asc' | 'desc';
+
 export default function AdminReservations() {
   const router = useRouter();
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -55,6 +60,8 @@ export default function AdminReservations() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
+  const [sortColumn, setSortColumn] = useState<SortColumn>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
@@ -70,7 +77,7 @@ export default function AdminReservations() {
   useEffect(() => {
     filterReservations();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTerm, statusFilter, reservations]);
+  }, [searchTerm, statusFilter, reservations, sortColumn, sortDirection]);
 
   const loadReservations = async () => {
     try {
@@ -103,7 +110,64 @@ export default function AdminReservations() {
       );
     }
 
+    // Ordenação
+    if (sortColumn) {
+      filtered.sort((a, b) => {
+        let aValue: any = '';
+        let bValue: any = '';
+
+        switch (sortColumn) {
+          case 'data':
+            aValue = new Date(a.data).getTime();
+            bValue = new Date(b.data).getTime();
+            break;
+          case 'horario':
+            aValue = a.horario;
+            bValue = b.horario;
+            break;
+          case 'nome':
+            aValue = a.nome.toLowerCase();
+            bValue = b.nome.toLowerCase();
+            break;
+          case 'valor':
+            aValue = a.valor;
+            bValue = b.valor;
+            break;
+          case 'status':
+            aValue = a.status.toLowerCase();
+            bValue = b.status.toLowerCase();
+            break;
+          case 'createdAt':
+            aValue = new Date(a.createdAt).getTime();
+            bValue = new Date(b.createdAt).getTime();
+            break;
+        }
+
+        if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+        if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+
     setFilteredReservations(filtered);
+  };
+
+  const handleSort = (column: SortColumn) => {
+    if (sortColumn === column) {
+      // Se já está ordenando por esta coluna, muda a direção
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      // Se é uma coluna nova, ordena em ordem ascendente
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
+  };
+
+  const renderSortIcon = (column: SortColumn) => {
+    if (sortColumn !== column) return null;
+    return sortDirection === 'asc'
+      ? <ChevronUp className="w-4 h-4 ml-1 inline" />
+      : <ChevronDown className="w-4 h-4 ml-1 inline" />;
   };
 
   const handleLogout = () => {
@@ -280,11 +344,36 @@ export default function AdminReservations() {
                 <thead className="bg-zinc-800">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400">Código</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400">Cliente</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400">Data/Hora</th>
+                    <th
+                      onClick={() => handleSort('nome')}
+                      className="px-4 py-3 text-left text-xs font-medium text-zinc-400 cursor-pointer hover:text-white transition"
+                    >
+                      Cliente {renderSortIcon('nome')}
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400">
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleSort('data')}
+                          className="cursor-pointer hover:text-white transition"
+                        >
+                          Data {renderSortIcon('data')}
+                        </button>
+                        <button
+                          onClick={() => handleSort('horario')}
+                          className="cursor-pointer hover:text-white transition"
+                        >
+                          Hora {renderSortIcon('horario')}
+                        </button>
+                      </div>
+                    </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400">Pessoas</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400">Mesas</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400">Status</th>
+                    <th
+                      onClick={() => handleSort('status')}
+                      className="px-4 py-3 text-left text-xs font-medium text-zinc-400 cursor-pointer hover:text-white transition"
+                    >
+                      Status {renderSortIcon('status')}
+                    </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400">Ações</th>
                   </tr>
                 </thead>
