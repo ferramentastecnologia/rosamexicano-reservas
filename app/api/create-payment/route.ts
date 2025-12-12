@@ -74,23 +74,24 @@ export async function POST(request: Request) {
     // 2. Criar referência externa única
     const externalRef = `RESERVA-${Date.now()}`;
 
-    // 3. Gerar PIX sem criar cobrança no Asaas (evita SMS automático)
-    // Vamos usar a Chave PIX estática ou gerar dinamicamente sem criar payment
+    // 3. Gerar PIX dinâmico - criar payment temporário para obter QR Code
     console.log('Gerando PIX dinâmico via Asaas...');
 
-    // Para manter compatibilidade, vamos criar um payment com notificação desativada
     const dueDate = new Date();
-    dueDate.setDate(dueDate.getDate() + 3);
+    dueDate.setMinutes(dueDate.getMinutes() + 10); // Expira em 10 minutos
 
     const paymentData = {
       customer: customer.id,
       billingType: 'PIX',
       value: 50.00,
       dueDate: dueDate.toISOString().split('T')[0],
+      dueTime: dueDate.toISOString().split('T')[1].substring(0, 8), // Hora exata de expiração
       description: `Reserva Rosa Mexicano - ${dataReserva} às ${horario} - ${numeroPessoas} pessoas`,
       externalReference: externalRef,
       postalService: false,
-      notificationDisabled: true, // DESATIVA NOTIFICAÇÕES (SMS, EMAIL) DO ASAAS
+      // IMPORTANTE: Desabilita TODAS as notificações (SMS, EMAIL, WHATSAPP)
+      sendNotificationByEmail: false,
+      sendNotificationBySms: false,
     };
     console.log('Criando pagamento com notificações desativadas...');
 
