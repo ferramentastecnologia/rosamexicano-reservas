@@ -80,6 +80,30 @@ export async function POST(request: Request) {
   }
 }
 
+// Verificar status real do pagamento no Asaas
+async function getPaymentStatusFromAsaas(paymentId: string): Promise<string | null> {
+  try {
+    const response = await fetch(`${ASAAS_API_URL}/payments/${paymentId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'access_token': ASAAS_API_KEY || '',
+      },
+    });
+
+    if (!response.ok) {
+      console.error(`Erro ao verificar status de ${paymentId} no Asaas`);
+      return null;
+    }
+
+    const data = await response.json();
+    return data.status;
+  } catch (error) {
+    console.error(`Erro ao conectar com Asaas para verificar ${paymentId}:`, error);
+    return null;
+  }
+}
+
 // GET: Limpar todas as reservas pendentes com mais de 10 minutos
 export async function GET() {
   try {
@@ -95,33 +119,63 @@ export async function GET() {
       }
     });
 
-    console.log(`Encontradas ${oldPendingReservations.length} reservas pendentes para cancelar`);
+    console.log(`Encontradas ${oldPendingReservations.length} reservas pendentes para validar`);
 
     let cancelled = 0;
+    let confirmed = 0;
     for (const reservation of oldPendingReservations) {
       try {
-        // Cancelar no Asaas se tiver paymentId
+        // Verificar status REAL do pagamento no Asaas
+        let asaasStatus = null;
         if (reservation.paymentId) {
-          await cancelPaymentInAsaas(reservation.paymentId);
+          asaasStatus = await getPaymentStatusFromAsaas(reservation.paymentId);
         }
 
-        // Cancelar no banco
-        await prisma.reservation.update({
-          where: { id: reservation.id },
-          data: { status: 'cancelled' }
-        });
+        // Se o pagamento foi CONFIRMADO no Asaas, atualizar status para 'confirmed'
+        // (o webhook pode ter sido entregue atrasado)
+        if (asaasStatus === 'RECEIVED' || asaasStatus === 'CONFIRMED') {
+          console.log(`✅ Reserva ${reservation.id} tem pagamento confirmado no Asaas (status: ${asaasStatus}). Atualizando para 'confirmed'...`);
+          await prisma.reservation.update({
+            where: { id: reservation.id },
+            data: { status: 'confirmed' }
+          });
+          confirmed++;
+          continue;
+        }
 
-        cancelled++;
-        console.log(`Reserva ${reservation.id} cancelada`);
+        // Se o pagamento foi CANCELADO/DELETADO/EXPIRADO no Asaas, cancelar a reserva
+        if (asaasStatus === 'CANCELLED' || asaasStatus === 'DELETED' || asaasStatus === 'OVERDUE') {
+          console.log(`❌ Reserva ${reservation.id} tem pagamento cancelado no Asaas (status: ${asaasStatus}). Cancelando...`);
+          if (reservation.paymentId) {
+            await cancelPaymentInAsaas(reservation.paymentId);
+          }
+          await prisma.reservation.update({
+            where: { id: reservation.id },
+            data: { status: 'cancelled' }
+          });
+          cancelled++;
+          continue;
+        }
+
+        // Se não conseguiu verificar o status no Asaas, deixar pendente (safe approach)
+        if (asaasStatus === null) {
+          console.log(`⚠️  Reserva ${reservation.id}: Não foi possível verificar status no Asaas. Deixando pendente.`);
+          continue;
+        }
+
+        // Status desconhecido - deixar pendente
+        console.log(`⚠️  Reserva ${reservation.id}: Status desconhecido no Asaas (${asaasStatus}). Deixando pendente.`);
+
       } catch (err) {
-        console.error(`Erro ao cancelar reserva ${reservation.id}:`, err);
+        console.error(`Erro ao processar reserva ${reservation.id}:`, err);
       }
     }
 
     return NextResponse.json({
       success: true,
-      message: `${cancelled} reservas canceladas`,
+      message: `Processadas ${oldPendingReservations.length} reservas: ${confirmed} confirmadas, ${cancelled} canceladas`,
       total: oldPendingReservations.length,
+      confirmed,
       cancelled
     });
 
