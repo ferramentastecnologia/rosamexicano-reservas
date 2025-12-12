@@ -49,7 +49,7 @@ type Reservation = {
   voucher?: Voucher | null;
 };
 
-type SortColumn = 'dataHora' | 'nome' | 'valor' | 'status' | 'createdAt' | null;
+type SortColumn = 'dataHora' | 'nome' | 'status' | null;
 type SortDirection = 'asc' | 'desc';
 
 export default function AdminReservations() {
@@ -60,8 +60,8 @@ export default function AdminReservations() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
-  const [sortColumn, setSortColumn] = useState<SortColumn>(null);
-  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+  const [sortColumn, setSortColumn] = useState<SortColumn>('dataHora'); // Padrão: ordenar por Data/Hora
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc'); // Mais recentes primeiro
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
@@ -132,17 +132,9 @@ export default function AdminReservations() {
             aValue = a.nome.toLowerCase();
             bValue = b.nome.toLowerCase();
             break;
-          case 'valor':
-            aValue = a.valor;
-            bValue = b.valor;
-            break;
           case 'status':
             aValue = a.status.toLowerCase();
             bValue = b.status.toLowerCase();
-            break;
-          case 'createdAt':
-            aValue = new Date(a.createdAt).getTime();
-            bValue = new Date(b.createdAt).getTime();
             break;
         }
 
@@ -363,12 +355,7 @@ export default function AdminReservations() {
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400">Pessoas</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400">Mesas</th>
-                    <th
-                      onClick={() => handleSort('valor')}
-                      className="px-4 py-3 text-left text-xs font-medium text-zinc-400 cursor-pointer hover:text-white transition"
-                    >
-                      Valor {renderSortIcon('valor')}
-                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400">Valor</th>
                     <th
                       onClick={() => handleSort('status')}
                       className="px-4 py-3 text-left text-xs font-medium text-zinc-400 cursor-pointer hover:text-white transition"
