@@ -354,7 +354,7 @@ function PagamentoContent() {
 
               {/* Detalhes da reserva */}
               {paymentData.reservationData && (
-                <div className="bg-zinc-900 rounded-lg p-5 border border-zinc-800">
+                <div className="bg-black/90 rounded-lg p-5 border border-zinc-900">
                   <h3 className="text-base font-semibold mb-3">Detalhes da reserva</h3>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
