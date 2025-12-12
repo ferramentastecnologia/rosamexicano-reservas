@@ -214,7 +214,7 @@ function PagamentoContent() {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
-      <header className="bg-gradient-to-r from-[#B71C1C] to-[#8B0000] shadow-lg">
+      <header className="bg-[#B71C1C] shadow-lg">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-center">
             <Image

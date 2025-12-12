@@ -7,7 +7,7 @@ import Image from 'next/image';
 export default function PagamentoDemoPage() {
   return (
     <div className="min-h-screen bg-black text-white">
-      <header className="bg-gradient-to-r from-[#8b1a1a] to-[#5a1212] shadow-lg">
+      <header className="bg-[#8b1a1a] shadow-lg">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-center">
             <Image
