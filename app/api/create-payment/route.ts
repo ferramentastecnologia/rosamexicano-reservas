@@ -55,6 +55,7 @@ export async function POST(request: Request) {
         email: email,
         mobilePhone: cleanPhone,
         cpfCnpj: '00000000000191', // CPF padrão quando não fornecido
+        notificationDisabled: true, // DESATIVA TODAS AS NOTIFICAÇÕES AUTOMÁTICAS DO ASAAS
       }),
     });
 
@@ -85,13 +86,11 @@ export async function POST(request: Request) {
       billingType: 'PIX',
       value: 50.00,
       dueDate: dueDate.toISOString().split('T')[0],
-      dueTime: dueDate.toISOString().split('T')[1].substring(0, 8), // Hora exata de expiração
+      dueTime: dueDate.toISOString().split('T')[1].substring(0, 8), // Expira em 10 minutos
       description: `Reserva Rosa Mexicano - ${dataReserva} às ${horario} - ${numeroPessoas} pessoas`,
       externalReference: externalRef,
       postalService: false,
-      // IMPORTANTE: Desabilita TODAS as notificações (SMS, EMAIL, WHATSAPP)
-      sendNotificationByEmail: false,
-      sendNotificationBySms: false,
+      // Notificações são desabilitadas no nível do cliente (customer)
     };
     console.log('Criando pagamento com notificações desativadas...');
 
