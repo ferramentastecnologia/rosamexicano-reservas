@@ -369,6 +369,12 @@ export default function AdminReservations() {
                     <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400">Pessoas</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400">Mesas</th>
                     <th
+                      onClick={() => handleSort('valor')}
+                      className="px-4 py-3 text-left text-xs font-medium text-zinc-400 cursor-pointer hover:text-white transition"
+                    >
+                      Valor {renderSortIcon('valor')}
+                    </th>
+                    <th
                       onClick={() => handleSort('status')}
                       className="px-4 py-3 text-left text-xs font-medium text-zinc-400 cursor-pointer hover:text-white transition"
                     >
@@ -400,6 +406,7 @@ export default function AdminReservations() {
                         </td>
                         <td className="px-4 py-3 text-sm">{reservation.numeroPessoas}</td>
                         <td className="px-4 py-3 text-sm">{mesas}</td>
+                        <td className="px-4 py-3 text-sm font-medium text-[#E53935]">R$ {reservation.valor.toFixed(2)}</td>
                         <td className="px-4 py-3">{getStatusBadge(reservation.status)}</td>
                         <td className="px-4 py-3">
                           <div className="flex gap-2">
