@@ -27,6 +27,7 @@ export default function MapaMesas({ data, horario, numeroPessoas, selectedArea, 
   const [tables, setTables] = useState<Mesa[]>([]);
   const [selectedTables, setSelectedTables] = useState<number[]>([]);
   const [loading, setLoading] = useState(false);
+  const [alertMessage, setAlertMessage] = useState<string>('');
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const loadAvailableTables = useCallback(async () => {
@@ -107,27 +108,22 @@ export default function MapaMesas({ data, horario, numeroPessoas, selectedArea, 
       if (isSelected) {
         const newSelection = prev.filter(num => num !== tableNumber);
         onMesasSelect(newSelection);
+        setAlertMessage('');
         return newSelection;
       } else {
         if (prev.length < mesasNecessarias) {
           // Mostrar alerta se a mesa não pode ser combinada
           if (!canTableBeCombined(tableNumber)) {
-            let mensagem = `⚠️ ATENÇÃO: A mesa ${tableNumber} NÃO PODE ser combinada com outras mesas.\n\n`;
-            mensagem += `Mesas que não podem ser combinadas:\n`;
-            mensagem += `• Mesas 1 a 8\n`;
-            mensagem += `• Mesas 10, 11, 12\n\n`;
-            mensagem += `Você está selecionando a mesa ${tableNumber} sozinha?`;
-            alert(mensagem);
+            let mensagem = `⚠️ Mesa ${tableNumber} não pode ser combinada com outras mesas\n`;
+            mensagem += `Mesas com restrição: 1-8, 10, 11, 12`;
+            setAlertMessage(mensagem);
           } else {
             // Validar se pode combinar com as mesas já selecionadas
             for (const selectedTable of prev) {
               if (!canTablesBeJoined(tableNumber, selectedTable)) {
-                let mensagem = `⚠️ ATENÇÃO: A mesa ${tableNumber} NÃO PODE ser combinada com a mesa ${selectedTable}.\n\n`;
-                mensagem += `Combinações permitidas:\n`;
-                mensagem += `• Mesas 14 e 16 (vinculadas)\n`;
-                mensagem += `• Demais mesas (exceto 1-8, 10-12)\n\n`;
-                mensagem += `Você selecionou: mesas ${[...prev, tableNumber].sort((a, b) => a - b).join(', ')}`;
-                alert(mensagem);
+                let mensagem = `⚠️ Mesa ${tableNumber} não pode combinar com mesa ${selectedTable}\n`;
+                mensagem += `Combinações permitidas: 14+16 (vinculadas) ou demais mesas`;
+                setAlertMessage(mensagem);
               }
             }
           }
@@ -209,6 +205,14 @@ export default function MapaMesas({ data, horario, numeroPessoas, selectedArea, 
             ) : (
               <>Selecione mais {mesasNecessarias - selectedTables.length} mesa(s)</>
             )}
+          </p>
+        </div>
+      )}
+
+      {alertMessage && (
+        <div className="mb-4 p-3 rounded-lg border bg-amber-950/30 border-amber-600/40">
+          <p className="text-xs font-medium text-amber-200 whitespace-pre-line">
+            {alertMessage}
           </p>
         </div>
       )}
