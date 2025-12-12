@@ -112,12 +112,22 @@ export default function MapaMesas({ data, horario, numeroPessoas, selectedArea, 
         if (prev.length < mesasNecessarias) {
           // Mostrar alerta se a mesa não pode ser combinada
           if (!canTableBeCombined(tableNumber)) {
-            alert(`⚠️ Atenção: A mesa ${tableNumber} não pode ser combinada com outras mesas.`);
+            let mensagem = `⚠️ ATENÇÃO: A mesa ${tableNumber} NÃO PODE ser combinada com outras mesas.\n\n`;
+            mensagem += `Mesas que não podem ser combinadas:\n`;
+            mensagem += `• Mesas 1 a 8\n`;
+            mensagem += `• Mesas 10, 11, 12\n\n`;
+            mensagem += `Você está selecionando a mesa ${tableNumber} sozinha?`;
+            alert(mensagem);
           } else {
             // Validar se pode combinar com as mesas já selecionadas
             for (const selectedTable of prev) {
               if (!canTablesBeJoined(tableNumber, selectedTable)) {
-                alert(`⚠️ Atenção: A mesa ${tableNumber} não pode ser combinada com a mesa ${selectedTable}.`);
+                let mensagem = `⚠️ ATENÇÃO: A mesa ${tableNumber} NÃO PODE ser combinada com a mesa ${selectedTable}.\n\n`;
+                mensagem += `Combinações permitidas:\n`;
+                mensagem += `• Mesas 14 e 16 (vinculadas)\n`;
+                mensagem += `• Demais mesas (exceto 1-8, 10-12)\n\n`;
+                mensagem += `Você selecionou: mesas ${[...prev, tableNumber].sort((a, b) => a - b).join(', ')}`;
+                alert(mensagem);
               }
             }
           }
