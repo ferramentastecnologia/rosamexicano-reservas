@@ -199,8 +199,17 @@ export default function Home() {
                 </p>
               </div>
 
+              {/* Alerta de Expiração */}
+              <div className="max-w-3xl mx-auto mb-8 bg-amber-950/50 border-l-4 border-amber-500 rounded-lg p-4 flex items-start gap-3">
+                <span className="text-amber-400 text-xl flex-shrink-0">⚠️</span>
+                <div>
+                  <p className="text-amber-100 font-semibold text-sm">Importante: Sua reserva expira em 10 minutos</p>
+                  <p className="text-amber-100/70 text-xs mt-1">Se a reserva for para as 18:00, você precisa estar no restaurante até 18:10. Após este tempo, a mesa será liberada.</p>
+                </div>
+              </div>
+
               {/* Info Box colorido */}
-              <div className="max-w-3xl mx-auto mb-8 shimmer-gradient bg-gradient-to-r from-[#C2185B]/25 via-[#BA68C8]/25 to-[#FFD700]/25 rounded-2xl p-6 border border-white/30 backdrop-blur-sm shadow-lg shadow-[#C2185B]/15">
+              <div className="max-w-3xl mx-auto mb-8 bg-black/60 rounded-2xl p-6 border border-white/20 shadow-lg shadow-[#C2185B]/10">
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-xs">
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-[#BA68C8]" />
