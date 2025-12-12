@@ -182,7 +182,7 @@ export default function Home() {
         </section>
 
         {/* Formulário de Reserva */}
-        <section id="reserva" className="py-16 px-4 bg-gradient-to-b from-[#FFD700]/15 via-[#C2185B]/18 to-[#BA68C8]/20">
+        <section id="reserva" className="py-16 px-4 bg-[#C2185B]/15">
           <div className="container mx-auto max-w-6xl">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
