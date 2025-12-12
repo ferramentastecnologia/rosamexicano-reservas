@@ -99,12 +99,6 @@ export default function MapaMesas({ data, horario, numeroPessoas, selectedArea, 
     const table = tables.find(t => t.number === tableNumber);
     if (!table || !table.available) return;
 
-    // Validar se a mesa pode ser combinada
-    if (!canTableBeCombined(tableNumber)) {
-      alert(`A mesa ${tableNumber} não pode ser combinada com outras mesas.`);
-      return;
-    }
-
     const mesasNecessarias = Math.ceil(numeroPessoas / 4);
 
     setSelectedTables(prev => {
@@ -116,11 +110,15 @@ export default function MapaMesas({ data, horario, numeroPessoas, selectedArea, 
         return newSelection;
       } else {
         if (prev.length < mesasNecessarias) {
-          // Validar se pode combinar com as mesas já selecionadas
-          for (const selectedTable of prev) {
-            if (!canTablesBeJoined(tableNumber, selectedTable)) {
-              alert(`A mesa ${tableNumber} não pode ser combinada com a mesa ${selectedTable}.`);
-              return prev;
+          // Mostrar alerta se a mesa não pode ser combinada
+          if (!canTableBeCombined(tableNumber)) {
+            alert(`⚠️ Atenção: A mesa ${tableNumber} não pode ser combinada com outras mesas.`);
+          } else {
+            // Validar se pode combinar com as mesas já selecionadas
+            for (const selectedTable of prev) {
+              if (!canTablesBeJoined(tableNumber, selectedTable)) {
+                alert(`⚠️ Atenção: A mesa ${tableNumber} não pode ser combinada com a mesa ${selectedTable}.`);
+              }
             }
           }
 
