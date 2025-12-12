@@ -83,7 +83,7 @@ export default function SucessoContent() {
 
           {voucher && (
             <>
-              <div className="bg-gradient-to-br from-[#E53935]/20 to-[#B71C1C]/20 border-2 border-[#E53935] rounded-lg p-8 mb-8 text-center">
+              <div className="bg-[#E53935]/20 border-2 border-[#E53935] rounded-lg p-8 mb-8 text-center">
                 <div className="flex items-center justify-center gap-2 mb-4">
                   <Ticket className="w-6 h-6 text-[#E53935]" />
                   <p className="text-sm font-semibold text-[#E53935] uppercase tracking-wide">

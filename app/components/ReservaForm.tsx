@@ -252,7 +252,7 @@ export default function ReservaForm() {
                         }}
                         className={`w-full px-4 py-3 text-left flex items-center gap-3 transition-colors ${
                           selectedHorario === horario
-                            ? 'bg-gradient-to-r from-[#d71919] to-[#f98f21] text-white'
+                            ? 'bg-[#d71919] text-white'
                             : 'text-white/70 hover:bg-white/10 hover:text-white'
                         }`}
                       >
@@ -310,7 +310,7 @@ export default function ReservaForm() {
                 className={`
                   p-4 rounded-xl border transition-all duration-200 text-center
                   ${selectedArea === area
-                    ? 'bg-gradient-to-r from-[#d71919] to-[#f98f21] border-transparent text-white shadow-lg'
+                    ? 'bg-[#d71919] border-transparent text-white shadow-lg'
                     : 'bg-white/5 border-white/10 text-white/70 hover:border-[#f98f21]/50 hover:bg-white/10'
                   }
                 `}
@@ -337,7 +337,7 @@ export default function ReservaForm() {
         <div className="border-t border-white/10 pt-6">
           <div className="bg-black/40 rounded-xl p-5 border border-white/10">
             {/* Destaque do benefício */}
-            <div className="bg-gradient-to-r from-[#25bcc0]/20 to-[#25bcc0]/5 border border-[#25bcc0]/30 rounded-lg p-3 mb-4 flex items-center gap-3">
+            <div className="bg-[#25bcc0]/20 border border-[#25bcc0]/30 rounded-lg p-3 mb-4 flex items-center gap-3">
               <div className="bg-[#25bcc0] rounded-full p-2 shrink-0">
                 <svg className="w-5 h-5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
@@ -367,7 +367,7 @@ export default function ReservaForm() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full md:w-auto bg-gradient-to-r from-[#d71919] to-[#f98f21] hover:from-[#b71515] hover:to-[#d97a1c] text-white font-bold text-base px-8 py-4 rounded-xl flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-[#d71919]/30 hover:scale-105"
+                className="w-full md:w-auto bg-[#d71919] hover:bg-[#b71515] text-white font-bold text-base px-8 py-4 rounded-xl flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-[#d71919]/30 hover:scale-105"
               >
                 {loading ? (
                   'Processando...'

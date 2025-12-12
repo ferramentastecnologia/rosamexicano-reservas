@@ -61,7 +61,7 @@ export default function Home() {
               transition={{ duration: 0.8 }}
             >
               {/* Badge colorido */}
-              <div className="inline-flex items-center px-5 py-2 rounded-full bg-gradient-to-r from-[#FFD700] to-[#C2185B] text-white text-xs font-bold mb-6 shadow-lg">
+              <div className="inline-flex items-center px-5 py-2 rounded-full bg-[#C2185B] text-white text-xs font-bold mb-6 shadow-lg">
                 Final de Ano 2024/2025
               </div>
 
@@ -81,13 +81,13 @@ export default function Home() {
               <motion.div
                 animate={{ scale: [1, 1.05, 1] }}
                 transition={{ duration: 3, repeat: Infinity }}
-                className="inline-flex flex-col items-center gap-2 bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-3xl px-10 py-7 mb-8 border border-white/30 shadow-2xl shadow-[#C2185B]/20"
+                className="inline-flex flex-col items-center gap-2 bg-white/10 backdrop-blur-xl rounded-3xl px-10 py-7 mb-8 border border-white/30 shadow-2xl shadow-[#C2185B]/20"
               >
                 <div className="flex items-center gap-3">
                   <span className="text-5xl font-bold text-[#FFD700]">R$ 50</span>
                   <span className="text-white/70 text-lg">de reserva</span>
                 </div>
-                <div className="bg-gradient-to-r from-[#C2185B] via-[#BA68C8] to-[#FFD700] text-white font-bold text-sm px-6 py-2 rounded-full shadow-lg">
+                <div className="bg-[#C2185B] text-white font-bold text-sm px-6 py-2 rounded-full shadow-lg">
                   ✓ 100% VIRA CONSUMAÇÃO
                 </div>
               </motion.div>
@@ -98,11 +98,11 @@ export default function Home() {
                   whileHover={{ scale: 1.08 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={scrollToReserva}
-                  className="relative bg-gradient-to-r from-[#C2185B] to-[#FFD700] text-white font-bold text-lg px-12 py-4 rounded-full transition-all shadow-2xl shadow-[#C2185B]/50 hover:shadow-[#C2185B]/70 border border-white/20"
+                  className="relative bg-[#C2185B] text-white font-bold text-lg px-12 py-4 rounded-full transition-all shadow-2xl shadow-[#C2185B]/50 hover:shadow-[#C2185B]/70 border border-white/20"
                 >
                   <span className="relative z-10">Fazer Reserva Agora</span>
                   <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-[#C2185B]/50 to-[#FFD700]/50 rounded-full blur-lg -z-10"
+                    className="absolute inset-0 bg-[#C2185B]/50 rounded-full blur-lg -z-10"
                     animate={{ opacity: [0.5, 0.8, 0.5] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   />
@@ -156,7 +156,7 @@ export default function Home() {
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                   viewport={{ once: true }}
                   whileHover={{ y: -8 }}
-                  className="relative bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-lg rounded-2xl p-7 text-center border border-white/30 hover:border-white/50 transition-all hover:shadow-2xl"
+                  className="relative bg-white/10 backdrop-blur-lg rounded-2xl p-7 text-center border border-white/30 hover:border-white/50 transition-all hover:shadow-2xl"
                   style={{ borderTopColor: item.color, borderTopWidth: '4px' }}
                 >
                   <motion.div
@@ -208,7 +208,7 @@ export default function Home() {
               </div>
 
               {/* Info Box colorido */}
-              <div className="max-w-3xl mx-auto mb-8 shimmer-gradient bg-gradient-to-r from-[#C2185B]/25 via-[#BA68C8]/25 to-[#FFD700]/25 rounded-2xl p-6 border border-white/30 backdrop-blur-sm shadow-lg shadow-[#C2185B]/15">
+              <div className="max-w-3xl mx-auto mb-8 shimmer-gradient bg-[#C2185B]/25 rounded-2xl p-6 border border-white/30 backdrop-blur-sm shadow-lg shadow-[#C2185B]/15">
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-xs">
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-[#BA68C8]" />
@@ -260,7 +260,7 @@ export default function Home() {
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: item.step * 0.1 }}
                   viewport={{ once: true }}
-                  className="flex gap-4 items-center bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-md rounded-xl p-5 border border-white/20 hover:border-white/40 transition-all hover:shadow-lg hover:shadow-[#BA68C8]/20"
+                  className="flex gap-4 items-center bg-white/10 backdrop-blur-md rounded-xl p-5 border border-white/20 hover:border-white/40 transition-all hover:shadow-lg hover:shadow-[#BA68C8]/20"
                 >
                   <div
                     className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg"
@@ -307,7 +307,7 @@ export default function Home() {
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#C2185B]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute inset-0 bg-[#C2185B]/30 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </motion.div>
               ))}
             </div>
@@ -358,7 +358,7 @@ export default function Home() {
                       href="https://www.google.com/maps/dir/?api=1&destination=Rua+Carlos+Rischbieter,+64+-+Victor+Konder,+Blumenau+-+SC"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-6 py-3 rounded-full bg-gradient-to-r from-[#C2185B] to-[#FFD700] text-white text-sm font-medium hover:opacity-90 transition-all"
+                      className="px-6 py-3 rounded-full bg-[#C2185B] text-white text-sm font-medium hover:opacity-90 transition-all"
                     >
                       Como Chegar
                     </a>

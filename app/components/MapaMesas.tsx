@@ -218,7 +218,7 @@ export default function MapaMesas({ data, horario, numeroPessoas, selectedArea, 
                     aspect-square rounded-lg border flex flex-col items-center justify-center
                     transition-all duration-200 relative
                     ${isSelected
-                      ? 'bg-gradient-to-br from-[#d71919] to-[#f98f21] border-transparent text-white scale-105 shadow-lg shadow-[#d71919]/30'
+                      ? 'bg-[#d71919] border-transparent text-white scale-105 shadow-lg shadow-[#d71919]/30'
                       : isAvailable
                         ? 'bg-white/5 border-white/10 text-white/70 hover:border-[#f98f21]/50 hover:bg-white/10 hover:scale-105'
                         : 'bg-black/30 border-white/5 text-white/20 cursor-not-allowed'
@@ -246,7 +246,7 @@ export default function MapaMesas({ data, horario, numeroPessoas, selectedArea, 
               <span>Disponível</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="w-3 h-3 bg-gradient-to-br from-[#d71919] to-[#f98f21] rounded"></div>
+              <div className="w-3 h-3 bg-[#d71919] rounded"></div>
               <span>Selecionada</span>
             </div>
             <div className="flex items-center gap-1.5">
