@@ -11,6 +11,14 @@ type Mesa = {
   area: TableArea;
 };
 
+// Função auxiliar para calcular capacidade total das mesas selecionadas
+const calculateTotalCapacity = (tableNumbers: number[], allTables: Mesa[]): number => {
+  return tableNumbers.reduce((total, tableNum) => {
+    const table = allTables.find(t => t.number === tableNum);
+    return total + (table?.capacity || 0);
+  }, 0);
+};
+
 type MapaMesasProps = {
   data: string;
   horario: string;
@@ -100,8 +108,6 @@ export default function MapaMesas({ data, horario, numeroPessoas, selectedArea, 
     const table = tables.find(t => t.number === tableNumber);
     if (!table || !table.available) return;
 
-    const mesasNecessarias = Math.ceil(numeroPessoas / 4);
-
     setSelectedTables(prev => {
       const isSelected = prev.includes(tableNumber);
 
@@ -111,7 +117,13 @@ export default function MapaMesas({ data, horario, numeroPessoas, selectedArea, 
         setAlertMessage('');
         return newSelection;
       } else {
-        if (prev.length < mesasNecessarias) {
+        // Calcular capacidade total após adicionar esta mesa
+        const newSelection = [...prev, tableNumber];
+        const totalCapacity = calculateTotalCapacity(newSelection, tables);
+
+        // Validar se não ultrapassa o número de pessoas
+        if (totalCapacity >= numeroPessoas) {
+          // Validação de combinação de mesas
           // Mostrar alerta se a mesa não pode ser combinada
           if (!canTableBeCombined(tableNumber)) {
             let mensagem = `⚠️ Mesa ${tableNumber} não pode ser combinada com outras mesas\n`;
@@ -128,9 +140,8 @@ export default function MapaMesas({ data, horario, numeroPessoas, selectedArea, 
             }
           }
 
-          const newSelection = [...prev, tableNumber].sort((a, b) => a - b);
-          onMesasSelect(newSelection);
-          return newSelection;
+          onMesasSelect(newSelection.sort((a, b) => a - b));
+          return newSelection.sort((a, b) => a - b);
         }
         return prev;
       }
@@ -138,8 +149,8 @@ export default function MapaMesas({ data, horario, numeroPessoas, selectedArea, 
   };
 
   const pessoasValidas = numeroPessoas && !isNaN(numeroPessoas) && numeroPessoas > 0;
-  const mesasNecessarias = pessoasValidas ? Math.ceil(numeroPessoas / 4) : 0;
-  const selecaoCompleta = mesasNecessarias > 0 && selectedTables.length === mesasNecessarias;
+  const capacidadeTotal = pessoasValidas ? calculateTotalCapacity(selectedTables, tables) : 0;
+  const selecaoCompleta = pessoasValidas && capacidadeTotal >= numeroPessoas && selectedTables.length > 0;
 
   if (!data || !horario) {
     return (
@@ -182,9 +193,9 @@ export default function MapaMesas({ data, horario, numeroPessoas, selectedArea, 
           Mesas - {AREA_NAMES[selectedArea]}
         </h4>
         <div className="flex items-center gap-2 text-xs">
-          <span className="text-white/40">Selecionadas:</span>
+          <span className="text-white/40">Capacidade:</span>
           <span className={`font-bold ${selecaoCompleta ? 'text-[#25bcc0]' : 'text-[#ffc95b]'}`}>
-            {selectedTables.length}/{mesasNecessarias}
+            {capacidadeTotal}/{numeroPessoas} lugares
           </span>
         </div>
       </div>
@@ -200,10 +211,10 @@ export default function MapaMesas({ data, horario, numeroPessoas, selectedArea, 
             {selecaoCompleta ? (
               <>
                 <Check className="w-3.5 h-3.5 inline mr-1" />
-                Seleção completa! Mesas: {selectedTables.join(', ')}
+                Seleção completa! Mesas: {selectedTables.join(', ')} ({capacidadeTotal} lugares)
               </>
             ) : (
-              <>Selecione mais {mesasNecessarias - selectedTables.length} mesa(s)</>
+              <>Faltam {numeroPessoas - capacidadeTotal} lugar(es). Mesas: {selectedTables.join(', ')}</>
             )}
           </p>
         </div>
