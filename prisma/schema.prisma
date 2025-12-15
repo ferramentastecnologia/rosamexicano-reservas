@@ -22,7 +22,7 @@ model Reservation {
   status            String   @default("pending")
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
-  mesasSelecionadas String?
+  mesaAtribuida     String?
   observacoes       String?
   voucher           Voucher?
 

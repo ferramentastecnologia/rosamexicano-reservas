@@ -2,10 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
-import { Calendar, User, CreditCard, Clock, ChevronDown, Users, MapPin } from 'lucide-react';
+import { Calendar, User, CreditCard, Clock, ChevronDown, Users } from 'lucide-react';
 import CalendarioReserva from './CalendarioReserva';
-import MapaMesas from './MapaMesas';
-import { TableArea, AREA_NAMES, AREA_DESCRIPTIONS } from '@/lib/tables-config';
 
 type ReservaFormData = {
   nome: string;
@@ -21,10 +19,8 @@ const horarios = ['18:00', '18:30', '19:00', '19:30'];
 export default function ReservaForm() {
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>('');
-  const [selectedTables, setSelectedTables] = useState<number[]>([]);
   const [horarioDropdownOpen, setHorarioDropdownOpen] = useState(false);
   const [selectedHorario, setSelectedHorario] = useState<string>('');
-  const [selectedArea, setSelectedArea] = useState<TableArea | null>(null);
   const horarioDropdownRef = useRef<HTMLDivElement>(null);
 
   // Fechar dropdown ao clicar fora
@@ -55,26 +51,7 @@ export default function ReservaForm() {
     setValue('data', date);
   };
 
-  const handleMesasSelect = (mesas: number[]) => {
-    setSelectedTables(mesas);
-  };
-
   const onSubmit = async (data: ReservaFormData) => {
-    // Validar se há mesas selecionadas
-    if (selectedTables.length === 0) {
-      alert('Por favor, selecione pelo menos uma mesa.');
-      return;
-    }
-
-    // Calcular capacidade total das mesas selecionadas
-    // (será feito na API também para segurança)
-    const mesasNecessarias = Math.ceil(data.numeroPessoas / 4);
-
-    if (selectedTables.length < mesasNecessarias) {
-      alert(`Por favor, selecione pelo menos ${mesasNecessarias} mesa(s) para ${data.numeroPessoas} pessoas.`);
-      return;
-    }
-
     setLoading(true);
 
     try {
@@ -103,10 +80,7 @@ export default function ReservaForm() {
       const response = await fetch('/api/create-payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...data,
-          mesasSelecionadas: JSON.stringify(selectedTables),
-        }),
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
@@ -304,43 +278,6 @@ export default function ReservaForm() {
           </div>
         </div>
 
-        {/* Seleção de Área (largura total) */}
-        <div className="border-t border-white/20 pt-6">
-          <h4 className="text-lg font-semibold flex items-center gap-2 text-white mb-4">
-            <MapPin className="w-4 h-4 text-[#f98f21]" />
-            Área do Restaurante
-          </h4>
-          <div className="grid grid-cols-3 gap-3">
-            {(['interno', 'semi-externo', 'externo'] as TableArea[]).map((area) => (
-              <button
-                key={area}
-                type="button"
-                onClick={() => setSelectedArea(area)}
-                className={`
-                  p-4 rounded-xl border transition-all duration-200 text-center
-                  ${selectedArea === area
-                    ? 'bg-[#d71919] border-transparent text-white shadow-lg'
-                    : 'bg-white/5 border-white/10 text-white/70 hover:border-[#f98f21]/50 hover:bg-white/10'
-                  }
-                `}
-              >
-                <p className="font-medium text-sm">{AREA_NAMES[area]}</p>
-                <p className="text-xs mt-1 opacity-70">{AREA_DESCRIPTIONS[area]}</p>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Mapa de Mesas (largura total) */}
-        <div className="border-t border-white/20 pt-6">
-          <MapaMesas
-            data={watchedData || ''}
-            horario={watchedHorario || ''}
-            numeroPessoas={watchedNumeroPessoas || 0}
-            selectedArea={selectedArea}
-            onMesasSelect={handleMesasSelect}
-          />
-        </div>
 
         {/* Linha 3: Resumo e Botão de Pagamento */}
         <div className="border-t border-white/20 pt-6">
