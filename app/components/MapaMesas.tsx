@@ -117,14 +117,11 @@ export default function MapaMesas({ data, horario, numeroPessoas, selectedArea, 
         setAlertMessage('');
         return newSelection;
       } else {
-        // Validar se pode adicionar esta mesa sem deixar sobra de vagas
+        // Permitir seleção enquanto capacidade < numero de pessoas
         const capacidadeAtual = calculateTotalCapacity(prev, tables);
-        const capacidadeComNovaMesa = capacidadeAtual + table.capacity;
-        const sobra = capacidadeComNovaMesa - numeroPessoas;
 
-        // Bloqueia se a sobra for >= capacidade da mesa que está tentando adicionar
-        // (significa que essas vagas não poderiam ser preenchidas)
-        if (sobra > 0 && sobra >= table.capacity) {
+        // Bloqueia se já tem capacidade suficiente
+        if (capacidadeAtual >= numeroPessoas) {
           // Não deixa clicar - apenas retorna sem fazer nada
           return prev;
         }
