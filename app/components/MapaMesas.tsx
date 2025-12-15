@@ -117,7 +117,19 @@ export default function MapaMesas({ data, horario, numeroPessoas, selectedArea, 
         setAlertMessage('');
         return newSelection;
       } else {
-        // Permitir seleção de qualquer mesa disponível
+        // Validar se pode adicionar esta mesa sem deixar sobra de vagas
+        const capacidadeAtual = calculateTotalCapacity(prev, tables);
+        const capacidadeComNovaMesa = capacidadeAtual + table.capacity;
+        const sobra = capacidadeComNovaMesa - numeroPessoas;
+
+        // Bloqueia se a sobra for >= capacidade da mesa que está tentando adicionar
+        // (significa que essas vagas não poderiam ser preenchidas)
+        if (sobra > 0 && sobra >= table.capacity) {
+          // Não deixa clicar - apenas retorna sem fazer nada
+          return prev;
+        }
+
+        // Permitir seleção de qualquer mesa disponível que não deixe sobra excessiva
         const newSelection = [...prev, tableNumber];
         const totalCapacity = calculateTotalCapacity(newSelection, tables);
 
