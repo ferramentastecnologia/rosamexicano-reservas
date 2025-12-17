@@ -74,16 +74,40 @@ function PagamentoContent() {
     return () => clearInterval(interval);
   }, [paymentData, paymentConfirmed, checkPaymentStatus]);
 
-  // Lê os dados da URL (?data=...)
+  // Lê os dados da URL (?data=...) ou do sessionStorage
   useEffect(() => {
+    let parsed: PaymentData | null = null;
+
+    // Tenta ler da URL primeiro
     const raw = searchParams.get('data');
-    if (!raw) {
+    if (raw) {
+      try {
+        parsed = JSON.parse(decodeURIComponent(raw)) as PaymentData;
+      } catch (e) {
+        console.error('Erro ao parsear data da URL:', e);
+      }
+    }
+
+    // Se não veio na URL, tenta do sessionStorage
+    if (!parsed) {
+      try {
+        const stored = sessionStorage.getItem('paymentData');
+        if (stored) {
+          parsed = JSON.parse(stored) as PaymentData;
+          // Limpa o sessionStorage após ler
+          sessionStorage.removeItem('paymentData');
+        }
+      } catch (e) {
+        console.error('Erro ao ler do sessionStorage:', e);
+      }
+    }
+
+    if (!parsed) {
       setLoading(false);
       return;
     }
 
     try {
-      const parsed = JSON.parse(decodeURIComponent(raw)) as PaymentData;
       setPaymentData(parsed);
 
       // Timer baseado na data de expiração, se vier do Asaas
