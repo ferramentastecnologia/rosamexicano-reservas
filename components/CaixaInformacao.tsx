@@ -18,10 +18,10 @@ export function LembreteReserva({ customerName }: LembreteReservaProps) {
         <div className="flex-1">
           <h4 className="text-base font-semibold text-gray-800 mb-2">Lembrete importante</h4>
           <p className="text-sm text-gray-600">
-            Ao chegar no restaurante, informe ao caixa que você possui uma reserva em nome de <span className="font-semibold text-[#C2185B]">{customerName}</span>.
+            Na hora de pagar a conta, informe ao caixa que você possui uma reserva em nome de <span className="font-semibold text-[#C2185B]">{customerName}</span>.
           </p>
           <p className="text-sm text-gray-500 mt-2">
-            O valor de <span className="text-[#E65100] font-medium">R$ 50,00</span> já foi pago antecipadamente e será descontado da sua conta.
+            O valor de <span className="text-[#E65100] font-medium">R$ 50,00</span> será descontado do total da sua conta.
           </p>
         </div>
       </div>
