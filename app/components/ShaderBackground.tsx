@@ -8,7 +8,7 @@ interface ShaderBackgroundProps {
 
 export function ShaderBackground({ children }: ShaderBackgroundProps) {
   return (
-    <div className="min-h-screen w-full relative overflow-hidden bg-[#1a0505]">
+    <div className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#FFF8E7] via-[#FFF5E0] to-[#FFEDD5]">
       {/* Conteúdo */}
       <div className="relative z-10">
         {children}

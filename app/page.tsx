@@ -15,7 +15,7 @@ export default function Home() {
 
   return (
     <ShaderBackground>
-      <div className="min-h-screen text-white">
+      <div className="min-h-screen text-gray-800">
         {/* Header */}
         <header className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between p-4 md:p-6">
           <div className="flex items-center gap-3">
@@ -140,14 +140,14 @@ export default function Home() {
         {/* Benefícios com cores */}
         <section className="py-16 px-4">
           <div className="container mx-auto max-w-5xl">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-              Por que escolher o <span className="text-[#FFD700]">Rosa Mexicano</span>?
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-[#C2185B]">
+              Por que escolher o <span className="text-[#E65100]">Rosa Mexicano</span>?
             </h2>
             <div className="grid md:grid-cols-3 gap-6">
               {[
                 { title: 'Ambiente Exclusivo', desc: 'Espaço acolhedor para sua confraternização', color: '#C2185B', icon: '🎉' },
-                { title: 'Cardápio Especial', desc: 'Pratos autênticos e bebidas selecionadas', color: '#FFD700', icon: '🌮' },
-                { title: 'Garantia de Mesa', desc: 'Valor retorna 100% em consumação', color: '#BA68C8', icon: '✨' },
+                { title: 'Cardápio Especial', desc: 'Pratos autênticos e bebidas selecionadas', color: '#E65100', icon: '🌮' },
+                { title: 'Garantia de Mesa', desc: 'Valor retorna 100% em consumação', color: '#00897B', icon: '✨' },
               ].map((item, i) => (
                 <motion.div
                   key={i}
@@ -156,7 +156,7 @@ export default function Home() {
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                   viewport={{ once: true }}
                   whileHover={{ y: -8 }}
-                  className="relative bg-white/10 backdrop-blur-lg rounded-2xl p-7 text-center border border-white/30 hover:border-white/50 transition-all hover:shadow-2xl"
+                  className="relative bg-white rounded-2xl p-7 text-center border-2 border-[#C2185B]/20 hover:border-[#C2185B]/40 transition-all shadow-lg hover:shadow-2xl"
                   style={{ borderTopColor: item.color, borderTopWidth: '4px' }}
                 >
                   <motion.div
@@ -167,10 +167,10 @@ export default function Home() {
                     {item.icon}
                   </motion.div>
                   <h4 className="text-lg font-bold mb-2" style={{ color: item.color }}>{item.title}</h4>
-                  <p className="text-white/70 text-sm">{item.desc}</p>
+                  <p className="text-gray-600 text-sm">{item.desc}</p>
                   <motion.div
                     className="absolute top-0 right-0 w-20 h-20 rounded-full blur-2xl -z-10"
-                    style={{ background: `${item.color}30` }}
+                    style={{ background: `${item.color}20` }}
                     animate={{ opacity: [0.3, 0.6, 0.3] }}
                     transition={{ duration: 3, repeat: Infinity }}
                   />
@@ -190,49 +190,49 @@ export default function Home() {
               viewport={{ once: true }}
             >
               <div className="text-center mb-10">
-                <h2 className="text-3xl md:text-4xl font-bold mb-3">
-                  Faça sua <span className="text-[#FFD700]">Reserva</span>
+                <h2 className="text-3xl md:text-4xl font-bold mb-3 text-[#C2185B]">
+                  Faça sua <span className="text-[#E65100]">Reserva</span>
                 </h2>
-                <p className="text-white/60 text-sm">
+                <p className="text-gray-600 text-sm">
                   Preencha os dados abaixo e garanta sua mesa
                 </p>
               </div>
 
               {/* Alerta de Expiração */}
-              <div className="max-w-3xl mx-auto mb-8 bg-amber-950/50 border-l-4 border-amber-500 rounded-lg p-4 flex items-start gap-3">
-                <span className="text-amber-400 text-xl flex-shrink-0">⚠️</span>
+              <div className="max-w-3xl mx-auto mb-8 bg-amber-50 border-l-4 border-amber-500 rounded-lg p-4 flex items-start gap-3 shadow-md">
+                <span className="text-amber-600 text-xl flex-shrink-0">⚠️</span>
                 <div>
-                  <p className="text-amber-100 font-semibold text-sm">Importante: Sua reserva expira em 10 minutos</p>
-                  <p className="text-amber-100/70 text-xs mt-1">Se a reserva for para as 18:00, você precisa estar no restaurante até 18:10. Após este tempo, a mesa será liberada.</p>
+                  <p className="text-amber-800 font-semibold text-sm">Importante: Sua reserva expira em 10 minutos</p>
+                  <p className="text-amber-700 text-xs mt-1">Se a reserva for para as 18:00, você precisa estar no restaurante até 18:10. Após este tempo, a mesa será liberada.</p>
                 </div>
               </div>
 
               {/* Info Box colorido */}
-              <div className="max-w-3xl mx-auto mb-8 bg-[#C2185B]/25 rounded-2xl p-6 border border-white/30 backdrop-blur-sm shadow-lg shadow-[#C2185B]/15">
+              <div className="max-w-3xl mx-auto mb-8 bg-white rounded-2xl p-6 border-2 border-[#C2185B]/20 shadow-lg">
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-xs">
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-[#BA68C8]" />
-                    <span className="text-white/80">2 a 208 pessoas</span>
+                    <Check className="w-4 h-4 text-[#00897B]" />
+                    <span className="text-gray-700">2 a 208 pessoas</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-[#BA68C8]" />
-                    <span className="text-white/80">Múltiplos de 2</span>
+                    <Check className="w-4 h-4 text-[#00897B]" />
+                    <span className="text-gray-700">Múltiplos de 2</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-[#BA68C8]" />
-                    <span className="text-white/80">49 mesas por data</span>
+                    <Check className="w-4 h-4 text-[#00897B]" />
+                    <span className="text-gray-700">49 mesas por data</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-[#FFD700]" />
-                    <span className="text-white/80">208 pessoas/dia</span>
+                    <Check className="w-4 h-4 text-[#E65100]" />
+                    <span className="text-gray-700">208 pessoas/dia</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-[#FFD700]" />
-                    <span className="text-white/80">18:00 às 19:30</span>
+                    <Check className="w-4 h-4 text-[#E65100]" />
+                    <span className="text-gray-700">18:00 às 19:30</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-[#C2185B]" />
-                    <span className="text-white/80">Escolha suas mesas</span>
+                    <span className="text-gray-700">Escolha suas mesas</span>
                   </div>
                 </div>
               </div>
@@ -245,14 +245,14 @@ export default function Home() {
         {/* Como Funciona */}
         <section className="py-16 px-4">
           <div className="container mx-auto max-w-3xl">
-            <h3 className="text-2xl md:text-3xl font-bold text-center mb-10">
-              Como <span className="text-[#FFD700]">funciona</span>?
+            <h3 className="text-2xl md:text-3xl font-bold text-center mb-10 text-[#C2185B]">
+              Como <span className="text-[#E65100]">funciona</span>?
             </h3>
             <div className="space-y-4">
               {[
                 { step: 1, title: 'Escolha data, horário e pessoas', desc: 'Preencha o formulário acima', color: '#C2185B' },
-                { step: 2, title: 'Pague R$ 50,00 via PIX', desc: 'Valor retorna 100% em consumação', color: '#FFD700' },
-                { step: 3, title: 'Receba confirmação', desc: 'Por e-mail e SMS na hora', color: '#BA68C8' },
+                { step: 2, title: 'Pague R$ 50,00 via PIX', desc: 'Valor retorna 100% em consumação', color: '#E65100' },
+                { step: 3, title: 'Receba confirmação', desc: 'Por e-mail e SMS na hora', color: '#00897B' },
               ].map((item) => (
                 <motion.div
                   key={item.step}
@@ -260,17 +260,17 @@ export default function Home() {
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: item.step * 0.1 }}
                   viewport={{ once: true }}
-                  className="flex gap-4 items-center bg-white/10 backdrop-blur-md rounded-xl p-5 border border-white/20 hover:border-white/40 transition-all hover:shadow-lg hover:shadow-[#BA68C8]/20"
+                  className="flex gap-4 items-center bg-white rounded-xl p-5 border-2 border-[#C2185B]/20 hover:border-[#C2185B]/40 transition-all shadow-md hover:shadow-xl"
                 >
                   <div
-                    className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg"
+                    className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg"
                     style={{ background: item.color }}
                   >
                     {item.step}
                   </div>
                   <div>
-                    <h4 className="font-bold text-white">{item.title}</h4>
-                    <p className="text-white/50 text-sm">{item.desc}</p>
+                    <h4 className="font-bold text-gray-800">{item.title}</h4>
+                    <p className="text-gray-500 text-sm">{item.desc}</p>
                   </div>
                 </motion.div>
               ))}
@@ -281,8 +281,8 @@ export default function Home() {
         {/* Galeria */}
         <section className="py-16 px-4">
           <div className="container mx-auto max-w-5xl">
-            <h3 className="text-2xl md:text-3xl font-bold text-center mb-10">
-              Nosso <span className="text-[#FFD700]">Ambiente</span>
+            <h3 className="text-2xl md:text-3xl font-bold text-center mb-10 text-[#C2185B]">
+              Nosso <span className="text-[#E65100]">Ambiente</span>
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {[
@@ -299,7 +299,7 @@ export default function Home() {
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                   viewport={{ once: true }}
-                  className="relative aspect-square overflow-hidden rounded-xl group"
+                  className="relative aspect-square overflow-hidden rounded-xl group shadow-lg border-2 border-white"
                 >
                   <Image
                     src={src}
@@ -317,32 +317,32 @@ export default function Home() {
         {/* Localização */}
         <section className="py-16 px-4">
           <div className="container mx-auto max-w-5xl">
-            <div className="bg-[#C2185B]/20 rounded-2xl p-6 md:p-8 border border-white/30 backdrop-blur-sm shadow-lg shadow-[#BA68C8]/15">
+            <div className="bg-white rounded-2xl p-6 md:p-8 border-2 border-[#C2185B]/20 shadow-xl">
               <div className="grid md:grid-cols-2 gap-8">
                 <div>
-                  <h3 className="text-2xl md:text-3xl font-bold mb-6">
-                    Visite o <span className="text-[#FFD700]">Rosa Mexicano</span>
+                  <h3 className="text-2xl md:text-3xl font-bold mb-6 text-[#C2185B]">
+                    Visite o <span className="text-[#E65100]">Rosa Mexicano</span>
                   </h3>
 
                   <div className="space-y-4">
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-full bg-[#C2185B]/20 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-full bg-[#C2185B]/10 flex items-center justify-center">
                         <MapPin className="w-5 h-5 text-[#C2185B]" />
                       </div>
                       <div>
-                        <p className="font-medium text-white">Localização</p>
-                        <p className="text-white/60 text-sm">Rua Carlos Rischbieter, 64</p>
-                        <p className="text-white/60 text-sm">Victor Konder, Blumenau/SC</p>
+                        <p className="font-medium text-gray-800">Localização</p>
+                        <p className="text-gray-500 text-sm">Rua Carlos Rischbieter, 64</p>
+                        <p className="text-gray-500 text-sm">Victor Konder, Blumenau/SC</p>
                       </div>
                     </div>
 
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-full bg-[#BA68C8]/20 flex items-center justify-center">
-                        <Phone className="w-5 h-5 text-[#BA68C8]" />
+                      <div className="w-10 h-10 rounded-full bg-[#E65100]/10 flex items-center justify-center">
+                        <Phone className="w-5 h-5 text-[#E65100]" />
                       </div>
                       <div>
-                        <p className="font-medium text-white">Contato</p>
-                        <p className="text-white/60 text-sm">(47) 3288-3096</p>
+                        <p className="font-medium text-gray-800">Contato</p>
+                        <p className="text-gray-500 text-sm">(47) 3288-3096</p>
                       </div>
                     </div>
                   </div>
@@ -350,7 +350,7 @@ export default function Home() {
                   <div className="flex gap-3 mt-6">
                     <a
                       href="tel:+554732883096"
-                      className="px-6 py-3 rounded-full bg-white/10 text-white text-sm font-medium hover:bg-white/20 transition-all border border-white/20"
+                      className="px-6 py-3 rounded-full bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition-all border border-gray-200"
                     >
                       Ligar Agora
                     </a>
@@ -358,14 +358,14 @@ export default function Home() {
                       href="https://www.google.com/maps/dir/?api=1&destination=Rua+Carlos+Rischbieter,+64+-+Victor+Konder,+Blumenau+-+SC"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-6 py-3 rounded-full bg-[#C2185B] text-white text-sm font-medium hover:opacity-90 transition-all"
+                      className="px-6 py-3 rounded-full bg-[#C2185B] text-white text-sm font-medium hover:bg-[#a8155a] transition-all shadow-md shadow-[#C2185B]/30"
                     >
                       Como Chegar
                     </a>
                   </div>
                 </div>
 
-                <div className="h-[280px] md:h-auto rounded-xl overflow-hidden border border-white/10">
+                <div className="h-[280px] md:h-auto rounded-xl overflow-hidden border-2 border-[#C2185B]/20 shadow-lg">
                   <iframe
                     src="https://www.google.com/maps?q=Rua+Carlos+Rischbieter,+64+-+Victor+Konder,+Blumenau+-+SC&output=embed"
                     width="100%"
@@ -383,7 +383,7 @@ export default function Home() {
         </section>
 
         {/* Footer */}
-        <footer className="py-10 px-4 border-t border-white/10">
+        <footer className="py-10 px-4 border-t border-[#C2185B]/20 bg-white/50">
           <div className="container mx-auto text-center">
             <Image
               src="/images/logo-rosa-mexicano.png"
@@ -392,12 +392,12 @@ export default function Home() {
               height={47}
               className="h-10 w-auto mx-auto mb-4"
             />
-            <p className="text-white/50 text-sm mb-2">© 2025 Rosa Mexicano Restaurante</p>
-            <p className="text-white/30 text-xs">(47) 3288-3096 • Victor Konder, Blumenau/SC</p>
+            <p className="text-gray-600 text-sm mb-2">© 2025 Rosa Mexicano Restaurante</p>
+            <p className="text-gray-400 text-xs">(47) 3288-3096 • Victor Konder, Blumenau/SC</p>
             <div className="flex justify-center gap-2 mt-4">
               <span className="w-3 h-3 rounded-full bg-[#C2185B]"></span>
-              <span className="w-3 h-3 rounded-full bg-[#BA68C8]"></span>
-              <span className="w-3 h-3 rounded-full bg-[#FFD700]"></span>
+              <span className="w-3 h-3 rounded-full bg-[#E65100]"></span>
+              <span className="w-3 h-3 rounded-full bg-[#00897B]"></span>
             </div>
           </div>
         </footer>
