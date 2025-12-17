@@ -9,7 +9,7 @@
  * - Middleware de autenticação
  */
 
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions, VerifyOptions } from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
 // ============================================
@@ -35,10 +35,10 @@ export interface TokenPair {
 // CONFIGURAÇÕES
 // ============================================
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'your-refresh-secret-key-change-in-production';
-const JWT_EXPIRY = process.env.JWT_EXPIRY || '1h'; // 1 hora
-const JWT_REFRESH_EXPIRY = process.env.JWT_REFRESH_EXPIRY || '7d'; // 7 dias
+const JWT_SECRET = (process.env.JWT_SECRET || 'your-secret-key-change-in-production') as string;
+const JWT_REFRESH_SECRET = (process.env.JWT_REFRESH_SECRET || 'your-refresh-secret-key-change-in-production') as string;
+const JWT_EXPIRY = (process.env.JWT_EXPIRY || '1h') as string; // 1 hora
+const JWT_REFRESH_EXPIRY = (process.env.JWT_REFRESH_EXPIRY || '7d') as string; // 7 dias
 const BCRYPT_ROUNDS = 10;
 
 // ============================================
@@ -74,10 +74,10 @@ export async function comparePassword(password: string, hash: string): Promise<b
  * @returns Token JWT assinado
  */
 export function generateAccessToken(payload: Omit<AuthToken, 'iat' | 'exp'>): string {
-  return jwt.sign(payload, JWT_SECRET, {
-    expiresIn: JWT_EXPIRY,
+  return jwt.sign(payload, JWT_SECRET as any, {
+    expiresIn: JWT_EXPIRY as any,
     algorithm: 'HS256',
-  });
+  } as any);
 }
 
 /**
@@ -86,10 +86,10 @@ export function generateAccessToken(payload: Omit<AuthToken, 'iat' | 'exp'>): st
  * @returns Refresh token assinado
  */
 export function generateRefreshToken(userId: string): string {
-  return jwt.sign({ userId }, JWT_REFRESH_SECRET, {
-    expiresIn: JWT_REFRESH_EXPIRY,
+  return jwt.sign({ userId }, JWT_REFRESH_SECRET as any, {
+    expiresIn: JWT_REFRESH_EXPIRY as any,
     algorithm: 'HS256',
-  });
+  } as any);
 }
 
 /**
@@ -122,9 +122,9 @@ export function generateTokenPair(
  */
 export function verifyAccessToken(token: string): AuthToken {
   try {
-    const payload = jwt.verify(token, JWT_SECRET, {
+    const payload = jwt.verify(token, JWT_SECRET as any, {
       algorithms: ['HS256'],
-    }) as AuthToken;
+    } as any) as unknown as AuthToken;
     return payload;
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
@@ -144,9 +144,9 @@ export function verifyAccessToken(token: string): AuthToken {
  */
 export function verifyRefreshToken(token: string): { userId: string } {
   try {
-    const payload = jwt.verify(token, JWT_REFRESH_SECRET, {
+    const payload = jwt.verify(token, JWT_REFRESH_SECRET as any, {
       algorithms: ['HS256'],
-    }) as { userId: string };
+    } as any) as unknown as { userId: string };
     return payload;
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {

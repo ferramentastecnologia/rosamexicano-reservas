@@ -27,7 +27,7 @@ export function middleware(request: NextRequest) {
 
   // Se é rota protegida, validar token
   if (isProtectedRoute) {
-    const authHeader = request.headers.get('authorization');
+    const authHeader = request.headers.get('authorization') || undefined;
 
     try {
       const token = extractTokenFromHeader(authHeader);

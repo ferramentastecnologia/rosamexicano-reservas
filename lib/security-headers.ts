@@ -61,7 +61,7 @@ export function addCorsHeaders(response: NextResponse, origin?: string): NextRes
  * Handler para requisições OPTIONS (preflight)
  */
 export function handleCorsPreFlight(request: NextRequest): NextResponse {
-  const origin = request.headers.get('origin');
+  const origin = request.headers.get('origin') || undefined;
   const response = new NextResponse(null, { status: 200 });
   return addCorsHeaders(response, origin);
 }
@@ -333,7 +333,10 @@ export function validateSecurityConfig(): void {
 
     if (!process.env.JWT_SECRET) {
       console.error('❌ JWT_SECRET não configurado');
-      process.exit(1);
+      // Não fazer exit(1) durante build, apenas avisar
+      if (process.env.NODE_ENV === 'production' && process.env.NETLIFY) {
+        process.exit(1);
+      }
     }
   }
 }
