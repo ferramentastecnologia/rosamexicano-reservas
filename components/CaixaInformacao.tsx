@@ -1,37 +1,33 @@
 'use client';
 
-import { AlertCircle } from 'lucide-react';
+import { Info } from 'lucide-react';
 
-interface CaixaInformacaoProps {
+interface LembreteReservaProps {
   customerName: string;
 }
 
 /**
- * Componente para exibir informações da reserva para o caixa
- * Mostra: Nome do cliente + lembrete de consumação obrigatória de R$50
+ * Componente de lembrete para o cliente informar ao caixa sobre a reserva
+ * Exibe: Lembrete para apresentar a reserva + valor já pago
  */
-export function CaixaInformacao({ customerName }: CaixaInformacaoProps) {
+export function LembreteReserva({ customerName }: LembreteReservaProps) {
   return (
-    <div className="bg-gradient-to-r from-[#E53935] to-[#B71C1C] rounded-lg p-5 border-2 border-yellow-400 shadow-lg">
+    <div className="bg-[#C2185B]/15 backdrop-blur-sm rounded-2xl p-5 border border-[#C2185B]/30 shadow-lg">
       <div className="flex items-start gap-3">
-        <AlertCircle className="w-6 h-6 text-yellow-300 flex-shrink-0 mt-0.5" />
+        <Info className="w-5 h-5 text-[#C2185B] flex-shrink-0 mt-0.5" />
         <div className="flex-1">
-          <h4 className="text-sm font-bold text-white mb-2">INFORMAÇÃO PARA O CAIXA</h4>
-          <div className="space-y-2">
-            <div className="bg-black/30 rounded px-3 py-2">
-              <p className="text-xs text-yellow-200 uppercase tracking-wider">Cliente</p>
-              <p className="text-lg font-bold text-white">{customerName}</p>
-            </div>
-            <div className="bg-black/30 rounded px-3 py-2">
-              <p className="text-xs text-yellow-200 uppercase tracking-wider">Consumação Mínima</p>
-              <p className="text-lg font-bold text-white">R$ 50,00</p>
-            </div>
-            <p className="text-xs text-yellow-100 italic">
-              ✓ Cliente já pagou R$ 50,00 antecipadamente via PIX
-            </p>
-          </div>
+          <h4 className="text-base font-semibold text-white mb-2">Lembrete importante</h4>
+          <p className="text-sm text-white/80">
+            Ao chegar no restaurante, informe ao caixa que você possui uma reserva em nome de <span className="font-semibold text-[#FFD700]">{customerName}</span>.
+          </p>
+          <p className="text-sm text-white/60 mt-2">
+            O valor de <span className="text-[#FFD700] font-medium">R$ 50,00</span> já foi pago antecipadamente e será descontado da sua conta.
+          </p>
         </div>
       </div>
     </div>
   );
 }
+
+// Manter export antigo para compatibilidade
+export const CaixaInformacao = LembreteReserva;
