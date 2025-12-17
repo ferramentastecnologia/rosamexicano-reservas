@@ -185,7 +185,7 @@ export default function HeroReservaExpandable() {
     setFormStep("submitting")
 
     try {
-      const response = await fetch('/api/reservas', {
+      const response = await fetch('/api/create-payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -206,7 +206,7 @@ export default function HeroReservaExpandable() {
         sessionStorage.setItem('paymentData', JSON.stringify(result))
         // Redirecionar para página de pagamento após breve delay
         setTimeout(() => {
-          router.push(`/pagamento?reservaId=${result.reservaId}`)
+          router.push(`/pagamento?reservaId=${result.reservationId}`)
         }, 1500)
       } else {
         // Em caso de erro, volta ao estado inicial
