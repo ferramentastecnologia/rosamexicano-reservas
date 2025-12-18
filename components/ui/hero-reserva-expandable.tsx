@@ -9,6 +9,209 @@ import Link from "next/link"
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 
+// CSS proporcional para o modal
+const modalStyles = `
+  .reserva-modal-container {
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  .reserva-modal-close {
+    top: clamp(12px, 2vh, 32px);
+    right: clamp(12px, 2vw, 32px);
+    width: clamp(36px, 5vh, 48px);
+    height: clamp(36px, 5vh, 48px);
+  }
+
+  .reserva-modal-close svg {
+    width: clamp(16px, 2.5vh, 24px);
+    height: clamp(16px, 2.5vh, 24px);
+  }
+
+  .reserva-info-side {
+    padding: clamp(20px, 4vh, 64px) clamp(16px, 4vw, 64px);
+    gap: clamp(16px, 3vh, 32px);
+  }
+
+  .reserva-info-logo {
+    height: clamp(40px, 8vh, 64px);
+  }
+
+  .reserva-info-title {
+    font-size: clamp(1.5rem, 4vh, 3rem);
+    line-height: 1.1;
+  }
+
+  .reserva-info-desc {
+    font-size: clamp(0.875rem, 2vh, 1.125rem);
+  }
+
+  .reserva-benefit-card {
+    padding: clamp(12px, 2vh, 16px);
+    border-radius: clamp(10px, 1.5vh, 12px);
+  }
+
+  .reserva-benefit-icon {
+    width: clamp(36px, 5vh, 48px);
+    height: clamp(36px, 5vh, 48px);
+  }
+
+  .reserva-benefit-icon svg {
+    width: clamp(18px, 2.5vh, 24px);
+    height: clamp(18px, 2.5vh, 24px);
+  }
+
+  .reserva-benefit-title {
+    font-size: clamp(0.875rem, 2vh, 1.125rem);
+  }
+
+  .reserva-benefit-desc {
+    font-size: clamp(0.75rem, 1.5vh, 0.875rem);
+  }
+
+  .reserva-form-side {
+    padding: clamp(12px, 2vh, 32px);
+  }
+
+  .reserva-form-card {
+    padding: clamp(16px, 3vh, 24px);
+    border-radius: clamp(14px, 2vh, 20px);
+    max-width: min(420px, 95%);
+  }
+
+  .reserva-form-title {
+    font-size: clamp(1rem, 2.5vh, 1.25rem);
+    margin-bottom: clamp(2px, 0.5vh, 4px);
+  }
+
+  .reserva-form-subtitle {
+    font-size: clamp(0.65rem, 1.3vh, 0.75rem);
+  }
+
+  .reserva-form-label {
+    font-size: clamp(9px, 1.2vh, 11px);
+    margin-bottom: clamp(3px, 0.5vh, 4px);
+  }
+
+  .reserva-form-input {
+    padding: clamp(8px, 1.5vh, 10px) clamp(10px, 1.5vw, 12px);
+    font-size: clamp(0.8rem, 1.6vh, 0.875rem);
+    border-radius: clamp(6px, 1vh, 8px);
+  }
+
+  .reserva-form-grid {
+    gap: clamp(8px, 1.5vh, 12px);
+  }
+
+  .reserva-form-space {
+    gap: clamp(8px, 1.5vh, 12px);
+  }
+
+  .reserva-calendar {
+    padding: clamp(12px, 2vh, 16px);
+    border-radius: clamp(10px, 1.5vh, 12px);
+  }
+
+  .reserva-calendar-header {
+    margin-bottom: clamp(8px, 1.5vh, 12px);
+  }
+
+  .reserva-calendar-title {
+    font-size: clamp(0.75rem, 1.5vh, 0.875rem);
+  }
+
+  .reserva-calendar-nav {
+    padding: clamp(4px, 0.8vh, 6px);
+  }
+
+  .reserva-calendar-nav svg {
+    width: clamp(12px, 1.8vh, 16px);
+    height: clamp(12px, 1.8vh, 16px);
+  }
+
+  .reserva-calendar-weekday {
+    font-size: clamp(9px, 1.2vh, 11px);
+    padding: clamp(3px, 0.5vh, 4px) 0;
+  }
+
+  .reserva-calendar-day {
+    font-size: clamp(10px, 1.3vh, 12px);
+    border-radius: clamp(4px, 0.8vh, 6px);
+  }
+
+  .reserva-price-section {
+    padding-top: clamp(12px, 2vh, 16px);
+    margin-top: clamp(8px, 1.5vh, 12px);
+  }
+
+  .reserva-price {
+    font-size: clamp(1.25rem, 3vh, 1.5rem);
+  }
+
+  .reserva-badge {
+    font-size: clamp(8px, 1.1vh, 10px);
+    padding: clamp(3px, 0.5vh, 4px) clamp(8px, 1vw, 12px);
+  }
+
+  .reserva-terms {
+    font-size: clamp(8px, 1.1vh, 10px);
+    margin-bottom: clamp(8px, 1.5vh, 12px);
+  }
+
+  .reserva-submit-btn {
+    padding: clamp(10px, 2vh, 12px) clamp(16px, 2vw, 24px);
+    font-size: clamp(0.875rem, 1.8vh, 1rem);
+    border-radius: clamp(6px, 1vh, 8px);
+  }
+
+  .reserva-submit-btn svg {
+    width: clamp(16px, 2vh, 20px);
+    height: clamp(16px, 2vh, 20px);
+  }
+
+  /* Layout responsivo para tablet */
+  @media (max-width: 1024px) {
+    .reserva-modal-content {
+      flex-direction: column;
+      overflow-y: auto;
+      height: auto;
+      min-height: 100dvh;
+    }
+
+    .reserva-info-side {
+      flex: none;
+      padding: clamp(16px, 3vh, 32px) clamp(16px, 4vw, 32px);
+    }
+
+    .reserva-form-side {
+      flex: none;
+      padding: clamp(16px, 3vh, 24px);
+    }
+  }
+
+  /* Landscape em telas pequenas */
+  @media (max-height: 600px) and (orientation: landscape) {
+    .reserva-modal-content {
+      flex-direction: row;
+      overflow: hidden;
+    }
+
+    .reserva-info-side,
+    .reserva-form-side {
+      overflow-y: auto;
+      height: 100dvh;
+    }
+
+    .reserva-info-side {
+      padding: clamp(12px, 2vh, 24px) clamp(16px, 3vw, 32px);
+    }
+
+    .reserva-form-side {
+      padding: clamp(8px, 1.5vh, 16px);
+    }
+  }
+`
+
 interface ReservaFormData {
   nome: string
   email: string
@@ -101,30 +304,30 @@ function CalendarioInline({
   const canGoNext = new Date(currentYear, currentMonth + 1, 1) < maxFutureDate
 
   return (
-    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-      <div className="flex items-center justify-between mb-3">
+    <div className="reserva-calendar bg-white/10 backdrop-blur-sm border border-white/20">
+      <div className="reserva-calendar-header flex items-center justify-between">
         <button
           type="button"
           onClick={prevMonth}
           disabled={!canGoPrev}
-          className="p-1.5 hover:bg-white/10 rounded-lg transition disabled:opacity-30"
+          className="reserva-calendar-nav hover:bg-white/10 rounded-lg transition disabled:opacity-30"
         >
-          <ChevronDown className="w-4 h-4 text-white rotate-90" />
+          <ChevronDown className="text-white rotate-90" />
         </button>
-        <h3 className="text-sm font-semibold text-white">{monthNames[currentMonth]} {currentYear}</h3>
+        <h3 className="reserva-calendar-title font-semibold text-white">{monthNames[currentMonth]} {currentYear}</h3>
         <button
           type="button"
           onClick={nextMonth}
           disabled={!canGoNext}
-          className="p-1.5 hover:bg-white/10 rounded-lg transition disabled:opacity-30"
+          className="reserva-calendar-nav hover:bg-white/10 rounded-lg transition disabled:opacity-30"
         >
-          <ChevronDown className="w-4 h-4 text-white -rotate-90" />
+          <ChevronDown className="text-white -rotate-90" />
         </button>
       </div>
 
       <div className="grid grid-cols-7 gap-1 mb-2">
         {weekDays.map((day, i) => (
-          <div key={i} className="text-center text-xs font-medium text-white/80 py-1">{day}</div>
+          <div key={i} className="reserva-calendar-weekday text-center font-medium text-white/80">{day}</div>
         ))}
       </div>
 
@@ -144,7 +347,7 @@ function CalendarioInline({
               disabled={!day.available}
               tabIndex={-1}
               className={`
-                aspect-square rounded-md flex items-center justify-center text-xs font-medium transition-all select-none
+                reserva-calendar-day aspect-square flex items-center justify-center font-medium transition-all select-none
                 ${day.available
                   ? isSelected
                     ? 'bg-[#FFD700] text-[#C2185B] shadow-lg font-bold'
@@ -602,10 +805,13 @@ export default function HeroReservaExpandable() {
         </div>
       </footer>
 
+      {/* Inject CSS */}
+      <style dangerouslySetInnerHTML={{ __html: modalStyles }} />
+
       {/* Modal Expandido */}
       <AnimatePresence initial={false}>
         {isExpanded && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4">
+          <div className="reserva-modal-container fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4">
             <motion.div
               layoutId="cta-card"
               transition={{ type: "spring", bounce: 0, duration: 0.4 }}
@@ -635,9 +841,9 @@ export default function HeroReservaExpandable() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 onClick={handleClose}
-                className="absolute right-4 top-4 sm:right-8 sm:top-8 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition-colors hover:bg-white/20"
+                className="reserva-modal-close absolute z-50 flex items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition-colors hover:bg-white/20"
               >
-                <X className="h-5 w-5" />
+                <X />
               </motion.button>
 
               {/* Modal Content */}
@@ -645,66 +851,66 @@ export default function HeroReservaExpandable() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2, duration: 0.4 }}
-                className="relative z-10 flex flex-col lg:flex-row h-full w-full max-w-7xl mx-auto overflow-hidden"
+                className="reserva-modal-content relative z-10 flex flex-col lg:flex-row h-full w-full max-w-7xl mx-auto overflow-hidden"
               >
                 {/* Left Side: Info */}
-                <div className="flex-1 flex flex-col justify-center p-8 sm:p-12 lg:p-16 gap-8 text-white">
+                <div className="reserva-info-side flex-1 flex flex-col justify-center text-white">
                   <div className="space-y-4">
                     <Image
                       src="/images/logo-rosa-mexicano.png"
                       alt="Rosa Mexicano"
                       width={180}
                       height={60}
-                      className="h-16 w-auto mb-4"
+                      className="reserva-info-logo w-auto mb-4"
                     />
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight tracking-tight">
+                    <h2 className="reserva-info-title font-bold tracking-tight">
                       Reserve sua Mesa
                     </h2>
-                    <p className="text-white/80 text-lg max-w-md">
+                    <p className="reserva-info-desc text-white/80 max-w-md">
                       Garanta seu lugar para celebrar o fim de ano com a autêntica culinária mexicana.
                     </p>
                   </div>
 
-                  <div className="space-y-4">
-                    <div className="flex gap-4 items-center bg-white/15 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                      <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#FFD700] flex items-center justify-center">
-                        <Check className="w-6 h-6 text-[#C2185B]" />
+                  <div className="reserva-form-space flex flex-col">
+                    <div className="reserva-benefit-card flex gap-4 items-center bg-white/15 backdrop-blur-sm border border-white/20">
+                      <div className="reserva-benefit-icon flex-shrink-0 rounded-full bg-[#FFD700] flex items-center justify-center">
+                        <Check className="text-[#C2185B]" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-lg">100% Vira Consumação</h3>
-                        <p className="text-white/80 text-sm">O valor pago é descontado da sua conta</p>
+                        <h3 className="reserva-benefit-title font-semibold">100% Vira Consumação</h3>
+                        <p className="reserva-benefit-desc text-white/80">O valor pago é descontado da sua conta</p>
                       </div>
                     </div>
-                    <div className="flex gap-4 items-center bg-white/15 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                      <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#00897B] flex items-center justify-center">
-                        <Clock className="w-6 h-6 text-white" />
+                    <div className="reserva-benefit-card flex gap-4 items-center bg-white/15 backdrop-blur-sm border border-white/20">
+                      <div className="reserva-benefit-icon flex-shrink-0 rounded-full bg-[#00897B] flex items-center justify-center">
+                        <Clock className="text-white" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-lg">Tolerância de 10 min</h3>
-                        <p className="text-white/80 text-sm">Chegue no horário reservado</p>
+                        <h3 className="reserva-benefit-title font-semibold">Tolerância de 10 min</h3>
+                        <p className="reserva-benefit-desc text-white/80">Chegue no horário reservado</p>
                       </div>
                     </div>
-                    <div className="flex gap-4 items-center bg-white/15 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                      <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#E65100] flex items-center justify-center">
-                        <Users className="w-6 h-6 text-white" />
+                    <div className="reserva-benefit-card flex gap-4 items-center bg-white/15 backdrop-blur-sm border border-white/20">
+                      <div className="reserva-benefit-icon flex-shrink-0 rounded-full bg-[#E65100] flex items-center justify-center">
+                        <Users className="text-white" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-lg">Avise na Saída</h3>
-                        <p className="text-white/80 text-sm">Ganhe o desconto de R$50 na conta</p>
+                        <h3 className="reserva-benefit-title font-semibold">Avise na Saída</h3>
+                        <p className="reserva-benefit-desc text-white/80">Ganhe o desconto de R$50 na conta</p>
                       </div>
                     </div>
                   </div>
 
                   <div className="mt-auto pt-6 border-t border-white/20 hidden lg:block">
-                    <p className="text-white/60 text-sm">
+                    <p className="reserva-benefit-desc text-white/60">
                       Fechado: 24/12, 25/12 e 31/12
                     </p>
                   </div>
                 </div>
 
                 {/* Right Side: Form */}
-                <div className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-black/10 backdrop-blur-sm lg:bg-transparent">
-                  <div className="w-full max-w-md bg-white/15 backdrop-blur-md border border-white/30 rounded-2xl p-5 sm:p-6 shadow-2xl">
+                <div className="reserva-form-side flex-1 flex items-center justify-center bg-black/10 backdrop-blur-sm lg:bg-transparent">
+                  <div className="reserva-form-card w-full bg-white/15 backdrop-blur-md border border-white/30 shadow-2xl">
 
                     {formStep === "success" ? (
                       <motion.div
@@ -712,64 +918,64 @@ export default function HeroReservaExpandable() {
                         animate={{ opacity: 1, scale: 1 }}
                         className="flex flex-col items-center justify-center text-center py-8 space-y-4"
                       >
-                        <div className="w-16 h-16 bg-[#00897B] rounded-full flex items-center justify-center shadow-lg">
-                          <Check className="w-8 h-8 text-white" />
+                        <div className="reserva-benefit-icon bg-[#00897B] rounded-full flex items-center justify-center shadow-lg">
+                          <Check className="text-white" />
                         </div>
                         <div>
-                          <h3 className="text-xl font-bold text-white mb-1">Reserva Criada!</h3>
-                          <p className="text-white/80 text-sm">Redirecionando para pagamento...</p>
+                          <h3 className="reserva-form-title font-bold text-white">Reserva Criada!</h3>
+                          <p className="reserva-form-subtitle text-white/80">Redirecionando para pagamento...</p>
                         </div>
                       </motion.div>
                     ) : (
-                      <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+                      <form onSubmit={handleSubmit(onSubmit)} className="reserva-form-space flex flex-col">
                         <div className="text-center mb-4">
-                          <h3 className="text-xl font-bold text-white mb-0.5">Dados da Reserva</h3>
-                          <p className="text-xs text-white/80">Preencha os campos abaixo</p>
+                          <h3 className="reserva-form-title font-bold text-white">Dados da Reserva</h3>
+                          <p className="reserva-form-subtitle text-white/80">Preencha os campos abaixo</p>
                         </div>
 
                         {/* Nome e Email - lado a lado */}
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="reserva-form-grid grid grid-cols-2">
                           <div>
-                            <label className="block text-[11px] font-semibold text-white mb-1 uppercase tracking-wider">
+                            <label className="reserva-form-label block font-semibold text-white uppercase tracking-wider">
                               Nome
                             </label>
                             <input
                               {...register('nome', { required: 'Nome obrigatório' })}
                               type="text"
                               placeholder="Seu nome"
-                              className="w-full px-3 py-2.5 rounded-lg bg-white/25 border border-white/40 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-[#FFD700] focus:border-transparent text-sm"
+                              className="reserva-form-input w-full bg-white/25 border border-white/40 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-[#FFD700] focus:border-transparent"
                             />
                           </div>
                           <div>
-                            <label className="block text-[11px] font-semibold text-white mb-1 uppercase tracking-wider">
+                            <label className="reserva-form-label block font-semibold text-white uppercase tracking-wider">
                               Telefone
                             </label>
                             <input
                               {...register('telefone', { required: 'Telefone obrigatório' })}
                               type="tel"
                               placeholder="(00) 00000-0000"
-                              className="w-full px-3 py-2.5 rounded-lg bg-white/25 border border-white/40 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-[#FFD700] focus:border-transparent text-sm"
+                              className="reserva-form-input w-full bg-white/25 border border-white/40 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-[#FFD700] focus:border-transparent"
                             />
                           </div>
                         </div>
 
                         {/* Email */}
                         <div>
-                          <label className="block text-[11px] font-semibold text-white mb-1 uppercase tracking-wider">
+                          <label className="reserva-form-label block font-semibold text-white uppercase tracking-wider">
                             Email
                           </label>
                           <input
                             {...register('email', { required: 'Email obrigatório' })}
                             type="email"
                             placeholder="seuemail@exemplo.com"
-                            className="w-full px-3 py-2.5 rounded-lg bg-white/25 border border-white/40 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-[#FFD700] focus:border-transparent text-sm"
+                            className="reserva-form-input w-full bg-white/25 border border-white/40 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-[#FFD700] focus:border-transparent"
                           />
                         </div>
 
                         {/* Pessoas e Horário - lado a lado */}
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="reserva-form-grid grid grid-cols-2">
                           <div>
-                            <label className="block text-[11px] font-semibold text-white mb-1 uppercase tracking-wider">
+                            <label className="reserva-form-label block font-semibold text-white uppercase tracking-wider">
                               Pessoas
                             </label>
                             <input
@@ -778,18 +984,18 @@ export default function HeroReservaExpandable() {
                               min="1"
                               max="50"
                               placeholder="1"
-                              className="w-full px-3 py-2.5 rounded-lg bg-white/25 border border-white/40 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-[#FFD700] focus:border-transparent text-sm text-center"
+                              className="reserva-form-input w-full bg-white/25 border border-white/40 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-[#FFD700] focus:border-transparent text-center"
                             />
                           </div>
                           <div ref={horarioDropdownRef} className="relative">
-                            <label className="block text-[11px] font-semibold text-white mb-1 uppercase tracking-wider">
+                            <label className="reserva-form-label block font-semibold text-white uppercase tracking-wider">
                               Horário
                             </label>
                             <input type="hidden" {...register('horario', { required: true })} />
                             <button
                               type="button"
                               onClick={() => setHorarioDropdownOpen(!horarioDropdownOpen)}
-                              className="w-full px-3 py-2.5 rounded-lg bg-white/25 border border-white/40 text-white text-sm text-center flex items-center justify-center gap-1"
+                              className="reserva-form-input w-full bg-white/25 border border-white/40 text-white text-center flex items-center justify-center gap-1"
                             >
                               <span className={selectedHorario ? 'text-white font-medium' : 'text-white/50'}>
                                 {selectedHorario || 'Selecione'}
@@ -807,7 +1013,7 @@ export default function HeroReservaExpandable() {
                                       setValue('horario', h)
                                       setHorarioDropdownOpen(false)
                                     }}
-                                    className={`w-full px-3 py-2 text-center text-sm ${selectedHorario === h ? 'bg-white/20 text-white font-medium' : 'text-white/80 hover:bg-white/10'}`}
+                                    className={`reserva-form-input w-full text-center ${selectedHorario === h ? 'bg-white/20 text-white font-medium' : 'text-white/80 hover:bg-white/10'}`}
                                   >
                                     {h}
                                   </button>
@@ -819,28 +1025,28 @@ export default function HeroReservaExpandable() {
 
                         {/* Calendário */}
                         <div>
-                          <label className="block text-[11px] font-semibold text-white mb-1 uppercase tracking-wider">
+                          <label className="reserva-form-label block font-semibold text-white uppercase tracking-wider">
                             Data
                           </label>
                           <input type="hidden" {...register('data', { required: true })} />
                           <CalendarioInline selectedDate={selectedDate} onSelectDate={handleDateSelect} />
                           {selectedDate && (
-                            <p className="text-[#FFD700] text-xs mt-2 font-medium text-center">
+                            <p className="reserva-form-subtitle text-[#FFD700] mt-2 font-medium text-center">
                               {new Date(selectedDate + 'T00:00:00').toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}
                             </p>
                           )}
                         </div>
 
                         {/* Valor e Botão */}
-                        <div className="pt-4 border-t border-white/20 mt-3">
+                        <div className="reserva-price-section border-t border-white/20">
                           <div className="flex items-center justify-center gap-3 mb-3">
-                            <span className="text-2xl font-bold text-[#FFD700]">R$ 50,00</span>
-                            <span className="bg-[#00897B] text-white text-[10px] font-bold px-3 py-1 rounded-full">
+                            <span className="reserva-price font-bold text-[#FFD700]">R$ 50,00</span>
+                            <span className="reserva-badge bg-[#00897B] text-white font-bold rounded-full">
                               100% CONSUMAÇÃO
                             </span>
                           </div>
 
-                          <p className="text-[10px] text-white/60 text-center mb-3">
+                          <p className="reserva-terms text-white/60 text-center">
                             Ao continuar, você declara que leu e concorda com a{' '}
                             <Link href="/privacidade" className="text-[#FFD700] hover:underline" target="_blank">
                               Política de Privacidade
@@ -854,7 +1060,7 @@ export default function HeroReservaExpandable() {
                           <button
                             disabled={formStep === "submitting"}
                             type="submit"
-                            className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[#FFD700] to-[#FFC107] text-[#C2185B] text-base font-bold hover:scale-[1.02] transition-all disabled:opacity-70 disabled:cursor-not-allowed shadow-lg"
+                            className="reserva-submit-btn w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#FFD700] to-[#FFC107] text-[#C2185B] font-bold hover:scale-[1.02] transition-all disabled:opacity-70 disabled:cursor-not-allowed shadow-lg"
                           >
                             {formStep === "submitting" ? (
                               <span className="flex items-center gap-2">
@@ -863,7 +1069,7 @@ export default function HeroReservaExpandable() {
                               </span>
                             ) : (
                               <>
-                                <CreditCard className="w-5 h-5" />
+                                <CreditCard />
                                 Continuar para Pagamento
                               </>
                             )}
