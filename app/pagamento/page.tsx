@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import QRCode from 'qrcode';
 import { Check, Copy, Clock, CheckCircle } from 'lucide-react';
+import Link from 'next/link';
 import { CaixaInformacao } from '@/components/CaixaInformacao';
 
 type ReservationData = {
@@ -304,6 +305,18 @@ function PagamentoContent() {
                   <p className="text-xs text-gray-500 mb-1">Valor a pagar</p>
                   <p className="text-3xl font-bold text-[#E65100]">{valor}</p>
                 </div>
+
+                {/* Texto de consentimento LGPD */}
+                <p className="text-[11px] text-gray-500 text-center mb-4">
+                  Ao efetuar o pagamento, você declara que leu e concorda com a{' '}
+                  <Link href="/privacidade" className="text-[#C2185B] hover:underline">
+                    Política de Privacidade
+                  </Link>{' '}
+                  e os{' '}
+                  <Link href="/termos" className="text-[#C2185B] hover:underline">
+                    Termos de Serviço
+                  </Link>.
+                </p>
 
                 {/* Código PIX copia e cola */}
                 {(paymentData.pixCopyPaste || paymentData.pixQrCode) && (
