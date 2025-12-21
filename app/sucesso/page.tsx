@@ -4,16 +4,16 @@ import SucessoContent from './SucessoContent';
 
 export default function SucessoPage() {
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white overflow-x-hidden">
       <header className="bg-[#8b1a1a] shadow-lg">
-        <div className="container mx-auto px-4 py-4">
+        <div className="w-full px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-center">
             <Image
               src="/images/logo-rosa-mexicano.png"
               alt="Rosa Mexicano"
               width={160}
               height={53}
-              className="h-12 w-auto drop-shadow-lg"
+              className="h-10 sm:h-12 w-auto drop-shadow-lg"
             />
           </div>
         </div>

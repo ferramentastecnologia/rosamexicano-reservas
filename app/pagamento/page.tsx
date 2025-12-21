@@ -238,33 +238,33 @@ function PagamentoContent() {
   const valor = 'R$ 50,00'; // mesmo valor usado na API (value: 50.00)
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FFF8E7] via-[#FFF5E0] to-[#FFEDD5] text-gray-800">
+    <div className="min-h-screen bg-gradient-to-b from-[#FFF8E7] via-[#FFF5E0] to-[#FFEDD5] text-gray-800 overflow-x-hidden">
       {/* Header */}
       <header className="bg-gradient-to-r from-[#C2185B] to-[#E65100] shadow-lg">
-        <div className="container mx-auto px-4 py-4">
+        <div className="w-full px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-center">
             <Image
               src="/images/logo-rosa-mexicano.png"
               alt="Rosa Mexicano"
               width={140}
               height={47}
-              className="h-12 w-auto"
+              className="h-10 sm:h-12 w-auto"
             />
           </div>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="w-full px-3 sm:px-4 py-4 sm:py-8">
         <div className="max-w-4xl mx-auto">
           {/* Título centralizado */}
-          <h1 className="text-2xl md:text-3xl font-bold text-center mb-8 text-[#C2185B]">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-4 sm:mb-8 text-[#C2185B]">
             Finalize seu <span className="text-[#E65100]">Pagamento</span>
           </h1>
 
-          <div className="grid lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             {/* Coluna 1 - Pagamento PIX */}
-            <div className="space-y-5">
-              <div className="bg-white rounded-2xl p-6 border-2 border-[#C2185B]/20 shadow-xl">
+            <div className="space-y-4 sm:space-y-5">
+              <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border-2 border-[#C2185B]/20 shadow-xl">
                 {/* Timer */}
                 <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-200">
                   <div className="flex items-center gap-2">
@@ -289,13 +289,13 @@ function PagamentoContent() {
 
                 {/* QR Code */}
                 {qrCodeImage && (
-                  <div className="bg-gray-50 rounded-xl p-4 mb-4 flex justify-center border border-gray-200">
+                  <div className="bg-gray-50 rounded-xl p-3 sm:p-4 mb-4 flex justify-center border border-gray-200">
                     <Image
                       src={qrCodeImage}
                       alt="QR Code PIX"
                       width={240}
                       height={240}
-                      className="h-auto w-auto"
+                      className="h-auto w-auto max-w-[200px] sm:max-w-[240px]"
                     />
                   </div>
                 )}
@@ -324,16 +324,16 @@ function PagamentoContent() {
                     <label className="block text-xs font-medium mb-2 text-gray-600">
                       Código PIX copia e cola
                     </label>
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2">
                       <input
                         type="text"
                         value={paymentData.pixCopyPaste || paymentData.pixQrCode || ''}
                         readOnly
-                        className="flex-1 px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-800 text-xs font-mono"
+                        className="flex-1 px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-800 text-xs font-mono truncate"
                       />
                       <button
                         onClick={copyPixCode}
-                        className="px-4 py-2 bg-[#C2185B] hover:bg-[#a8155a] text-white rounded-lg transition flex items-center gap-2 text-sm font-medium shadow-md"
+                        className="px-4 py-2 bg-[#C2185B] hover:bg-[#a8155a] text-white rounded-lg transition flex items-center justify-center gap-2 text-sm font-medium shadow-md whitespace-nowrap"
                       >
                         {copied ? (
                           <>
@@ -357,9 +357,9 @@ function PagamentoContent() {
             </div>
 
             {/* Coluna 2 - Instruções + detalhes */}
-            <div className="space-y-5">
+            <div className="space-y-4 sm:space-y-5">
               {/* Instruções */}
-              <div className="bg-white rounded-2xl p-6 border-2 border-[#C2185B]/20 shadow-xl">
+              <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border-2 border-[#C2185B]/20 shadow-xl">
                 <h3 className="text-base font-semibold mb-4 text-gray-800">Como pagar com PIX</h3>
                 <ol className="space-y-3 text-sm text-gray-600">
                   <li className="flex gap-3">
@@ -397,7 +397,7 @@ function PagamentoContent() {
 
               {/* Detalhes da reserva */}
               {paymentData.reservationData && (
-                <div className="bg-white rounded-2xl p-6 border-2 border-[#C2185B]/20 shadow-xl">
+                <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border-2 border-[#C2185B]/20 shadow-xl">
                   <h3 className="text-base font-semibold mb-4 text-gray-800">Detalhes da reserva</h3>
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between">

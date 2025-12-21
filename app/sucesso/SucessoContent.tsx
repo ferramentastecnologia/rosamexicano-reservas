@@ -57,18 +57,18 @@ export default function SucessoContent() {
   }, [paymentId]);
 
   return (
-    <div className="flex items-center justify-center p-4 py-12">
+    <div className="flex items-center justify-center px-3 sm:px-4 py-6 sm:py-12">
       <div className="max-w-3xl w-full">
-        <div className="bg-zinc-900 rounded-lg p-8 md:p-12 border border-zinc-800">
-          <div className="w-24 h-24 bg-[#E53935] rounded-full flex items-center justify-center mx-auto mb-6">
-            <Check className="w-12 h-12 text-white" strokeWidth={3} />
+        <div className="bg-zinc-900 rounded-xl sm:rounded-2xl p-5 sm:p-8 md:p-12 border border-zinc-800">
+          <div className="w-16 h-16 sm:w-24 sm:h-24 bg-[#E53935] rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+            <Check className="w-8 h-8 sm:w-12 sm:h-12 text-white" strokeWidth={3} />
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-center">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4 text-center">
             Pagamento Confirmado!
           </h1>
 
-          <p className="text-xl text-zinc-300 mb-8 text-center">
+          <p className="text-base sm:text-xl text-zinc-300 mb-6 sm:mb-8 text-center">
             Sua reserva foi confirmada com sucesso
           </p>
 
@@ -83,38 +83,38 @@ export default function SucessoContent() {
 
           {voucher && (
             <>
-              <div className="bg-[#E53935]/20 border-2 border-[#E53935] rounded-lg p-8 mb-8 text-center">
-                <div className="flex items-center justify-center gap-2 mb-4">
-                  <Ticket className="w-6 h-6 text-[#E53935]" />
-                  <p className="text-sm font-semibold text-[#E53935] uppercase tracking-wide">
+              <div className="bg-[#E53935]/20 border-2 border-[#E53935] rounded-lg p-5 sm:p-8 mb-6 sm:mb-8 text-center">
+                <div className="flex items-center justify-center gap-2 mb-3 sm:mb-4">
+                  <Ticket className="w-5 h-5 sm:w-6 sm:h-6 text-[#E53935]" />
+                  <p className="text-xs sm:text-sm font-semibold text-[#E53935] uppercase tracking-wide">
                     Código do Voucher
                   </p>
                 </div>
 
-                <p className="text-4xl md:text-5xl font-bold text-white font-mono mb-4 tracking-wider">
+                <p className="text-2xl sm:text-4xl md:text-5xl font-bold text-white font-mono mb-3 sm:mb-4 tracking-wider break-all">
                   {voucher.codigo}
                 </p>
 
-                <p className="text-sm text-zinc-300">
+                <p className="text-xs sm:text-sm text-zinc-300">
                   Apresente este código na chegada ao restaurante
                 </p>
               </div>
 
-              <div className="bg-black rounded-lg p-6 md:p-8 mb-8 border border-zinc-700">
-                <h2 className="text-2xl font-semibold mb-6 text-center flex items-center justify-center gap-2">
-                  <Calendar className="w-6 h-6 text-[#E53935]" />
+              <div className="bg-black rounded-lg p-4 sm:p-6 md:p-8 mb-6 sm:mb-8 border border-zinc-700">
+                <h2 className="text-lg sm:text-2xl font-semibold mb-4 sm:mb-6 text-center flex items-center justify-center gap-2">
+                  <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-[#E53935]" />
                   Detalhes da Reserva
                 </h2>
 
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="text-center md:text-left">
-                    <p className="text-sm text-zinc-400 mb-1">Nome</p>
-                    <p className="text-lg font-semibold">{voucher.reservation.nome}</p>
+                <div className="grid grid-cols-2 gap-3 sm:gap-6">
+                  <div className="text-center">
+                    <p className="text-xs sm:text-sm text-zinc-400 mb-1">Nome</p>
+                    <p className="text-sm sm:text-lg font-semibold">{voucher.reservation.nome}</p>
                   </div>
 
-                  <div className="text-center md:text-left">
-                    <p className="text-sm text-zinc-400 mb-1">Data</p>
-                    <p className="text-lg font-semibold">
+                  <div className="text-center">
+                    <p className="text-xs sm:text-sm text-zinc-400 mb-1">Data</p>
+                    <p className="text-sm sm:text-lg font-semibold">
                       {new Date(voucher.reservation.data + 'T00:00:00').toLocaleDateString('pt-BR', {
                         day: '2-digit',
                         month: 'long',
@@ -123,57 +123,57 @@ export default function SucessoContent() {
                     </p>
                   </div>
 
-                  <div className="text-center md:text-left">
-                    <p className="text-sm text-zinc-400 mb-1">Horário</p>
-                    <p className="text-lg font-semibold">{voucher.reservation.horario}</p>
+                  <div className="text-center">
+                    <p className="text-xs sm:text-sm text-zinc-400 mb-1">Horário</p>
+                    <p className="text-sm sm:text-lg font-semibold">{voucher.reservation.horario}</p>
                   </div>
 
-                  <div className="text-center md:text-left">
-                    <p className="text-sm text-zinc-400 mb-1">Pessoas</p>
-                    <p className="text-lg font-semibold">{voucher.reservation.numeroPessoas} pessoas</p>
+                  <div className="text-center">
+                    <p className="text-xs sm:text-sm text-zinc-400 mb-1">Pessoas</p>
+                    <p className="text-sm sm:text-lg font-semibold">{voucher.reservation.numeroPessoas} pessoas</p>
                   </div>
                 </div>
               </div>
             </>
           )}
 
-          <div className="bg-[#E53935]/10 border border-[#E53935]/30 rounded-lg p-6 mb-8">
-            <p className="text-sm text-zinc-400 mb-2 text-center">Valor Pago</p>
-            <p className="text-4xl font-bold text-[#E53935] mb-3 text-center">R$ 50,00</p>
-            <p className="text-base text-zinc-200 text-center font-medium">
+          <div className="bg-[#E53935]/10 border border-[#E53935]/30 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8">
+            <p className="text-xs sm:text-sm text-zinc-400 mb-2 text-center">Valor Pago</p>
+            <p className="text-2xl sm:text-4xl font-bold text-[#E53935] mb-2 sm:mb-3 text-center">R$ 50,00</p>
+            <p className="text-sm sm:text-base text-zinc-200 text-center font-medium">
               <span className="text-[#E53935]">✨ 100% conversível</span> em consumação
             </p>
-            <p className="text-sm text-zinc-400 text-center mt-2">
+            <p className="text-xs sm:text-sm text-zinc-400 text-center mt-2">
               Este valor retorna integralmente no dia da sua reserva
             </p>
           </div>
 
-          <div className="bg-black rounded-lg p-6 mb-8 border border-zinc-700">
-            <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <Clock className="w-5 h-5 text-[#E53935]" />
+          <div className="bg-black rounded-lg p-4 sm:p-6 mb-6 sm:mb-8 border border-zinc-700">
+            <h3 className="text-base sm:text-xl font-semibold mb-3 sm:mb-4 flex items-center gap-2">
+              <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-[#E53935]" />
               Próximos Passos
             </h3>
-            <ul className="space-y-4 text-zinc-300">
-              <li className="flex items-start gap-3">
-                <span className="flex-shrink-0 w-6 h-6 bg-[#E53935] rounded-full flex items-center justify-center text-white text-sm font-bold">
+            <ul className="space-y-3 sm:space-y-4 text-zinc-300 text-sm sm:text-base">
+              <li className="flex items-start gap-2 sm:gap-3">
+                <span className="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 bg-[#E53935] rounded-full flex items-center justify-center text-white text-xs sm:text-sm font-bold">
                   1
                 </span>
                 <span>Verifique seu e-mail - enviamos o voucher em PDF</span>
               </li>
-              <li className="flex items-start gap-3">
-                <span className="flex-shrink-0 w-6 h-6 bg-[#E53935] rounded-full flex items-center justify-center text-white text-sm font-bold">
+              <li className="flex items-start gap-2 sm:gap-3">
+                <span className="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 bg-[#E53935] rounded-full flex items-center justify-center text-white text-xs sm:text-sm font-bold">
                   2
                 </span>
                 <span>Guarde o código do voucher ({voucher?.codigo || 'que receberá'})</span>
               </li>
-              <li className="flex items-start gap-3">
-                <span className="flex-shrink-0 w-6 h-6 bg-[#E53935] rounded-full flex items-center justify-center text-white text-sm font-bold">
+              <li className="flex items-start gap-2 sm:gap-3">
+                <span className="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 bg-[#E53935] rounded-full flex items-center justify-center text-white text-xs sm:text-sm font-bold">
                   3
                 </span>
                 <span>Apresente o código na chegada ao restaurante</span>
               </li>
-              <li className="flex items-start gap-3">
-                <span className="flex-shrink-0 w-6 h-6 bg-[#E53935] rounded-full flex items-center justify-center text-white text-sm font-bold">
+              <li className="flex items-start gap-2 sm:gap-3">
+                <span className="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 bg-[#E53935] rounded-full flex items-center justify-center text-white text-xs sm:text-sm font-bold">
                   4
                 </span>
                 <span>Aproveite sua experiência gastronômica!</span>
@@ -181,22 +181,22 @@ export default function SucessoContent() {
             </ul>
           </div>
 
-          <div className="bg-black rounded-lg p-6 mb-8 border border-zinc-700">
-            <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-[#E53935]" />
+          <div className="bg-black rounded-lg p-4 sm:p-6 mb-6 sm:mb-8 border border-zinc-700">
+            <h3 className="text-base sm:text-xl font-semibold mb-3 sm:mb-4 flex items-center gap-2">
+              <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-[#E53935]" />
               Localização
             </h3>
-            <p className="text-zinc-300 mb-2">
+            <p className="text-zinc-300 mb-2 text-sm sm:text-base">
               <strong>Rosa Mexicano Restaurante</strong>
             </p>
-            <p className="text-zinc-400 mb-4">
+            <p className="text-zinc-400 mb-4 text-sm sm:text-base">
               Rua Carlos Rischbieter, 64 - Victor Konder<br />
               Blumenau/SC
             </p>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-3 sm:gap-4">
               <a
                 href="tel:+554732883096"
-                className="inline-flex items-center gap-2 bg-[#E53935] hover:bg-[#B71C1C] text-white px-4 py-2 rounded-lg transition text-sm font-medium"
+                className="inline-flex items-center gap-2 bg-[#E53935] hover:bg-[#B71C1C] text-white px-3 sm:px-4 py-2 rounded-lg transition text-xs sm:text-sm font-medium"
               >
                 Telefone: (47) 3288-3096
               </a>
@@ -206,7 +206,7 @@ export default function SucessoContent() {
           <div className="text-center">
             <Link
               href="/"
-              className="inline-block bg-zinc-800 hover:bg-zinc-700 text-white font-semibold py-4 px-10 rounded-lg transition"
+              className="inline-block bg-zinc-800 hover:bg-zinc-700 text-white font-semibold py-3 sm:py-4 px-8 sm:px-10 rounded-lg transition text-sm sm:text-base"
             >
               Voltar para o início
             </Link>
